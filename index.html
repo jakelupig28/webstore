@@ -1,0 +1,665 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            Clothing Store  
+        </title>
+    </head>
+    <style>
+     .header {
+         background-color: black;
+         letter-spacing: 2px;
+
+        }
+        a { 
+            text-decoration: none;
+            color: #000000; 
+        }
+        .Background img {
+            justify-content: center;
+            margin-top: none;
+            border: none;
+
+        }
+
+        @media (min-width: 475px){}
+        @media (min-width:640px) {}
+        @media (min-width:768px) {}
+        @media (min-width:1024px) {}
+        @media (min-width:1280px) {}
+        @media (min-width:1536px) {}
+
+
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+                .navbar{
+                        background: white; font-family: calibri; padding-right: 15px; padding-left: 15px;
+            font-size: 27px;
+
+
+                }
+
+                .navdiv{
+                        display: flex; align-items: center; justify-content: space-between;
+            text-decoration: none;
+            cursor: pointer;
+
+                }
+
+                li{
+                        list-style: none; display: inline-block;
+            cursor: pointer;
+                }
+
+                li a{
+                        color: black; font-size: 18px; font-weight: bold; margin-right: 25px;
+            cursor: pointer;
+                }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .card {
+            width: 290px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+
+        }
+        .card img {
+            width: 100%;
+            height: auto;
+            margin-bottom: auto;
+        }
+
+        .Collection {
+            margin-top: 50px;
+            font-family: "Lucida Console", "Courier New", monospace;
+
+        }
+        .card-content {
+            padding: 15px;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+            background-color: #fff;
+            font-family: "Lucida Console", "Courier New", monospace;
+        }
+        .card-description {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .card button {
+            background-color: #0c7ef0;
+            color: #fff;
+            border: none;
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 120px;
+            margin-right: 12px;
+            display: inline-flexbox;
+
+
+        }
+        .card button:hover {
+            background-color: #0056b3;
+        }
+
+        .overlay {
+            margin-top: 8%;
+            position: absolute;
+            background-size: cover;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 110%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .Body background img {
+            background-size: cover;
+
+        }
+
+        .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            padding: 20px;
+            font-family: "Lucida Console", "Courier New", monospace;
+        }
+
+
+        .content h1 {
+            font-size: 3.5rem;
+            font-family: "Lucida Console", "Courier New", monospace;
+            margin-top: 300px;
+            justify-content: center;
+            display: flex;
+        }
+
+        .content h3 {
+            margin-top: 20px;
+        }
+
+
+        .quote {
+            margin-top: 80px;
+            font-size: 23px;
+
+        }
+        .Description {
+
+            letter-spacing: 1px;
+            margin-top: 30px;
+            font-size: 18px;
+            line-height: 1.5;
+
+        }
+
+
+     .card-container1 {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 102vh;
+      margin: 0;
+      position: relative;
+      text-align: center;
+
+    }
+
+        .card1 {
+      width: 300px;
+      margin-top: 60px;
+      padding: 20px;
+      border-radius: 2px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      color: #fff;
+      font-size: 18px;
+      text-decoration: none;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      border-radius: 10px;
+      margin-bottom: 30px;
+
+
+    }
+    .facebook {
+      background: linear-gradient(135deg, #535455, #616877);
+    }
+    .instagram {
+      background: linear-gradient(135deg, #535455, #616877, #535455, #616877, #535455);
+    }
+    .tiktok {
+      background: linear-gradient(135deg, #535455, #535455, #616877);
+    }
+    .card1 h3 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .card1 p {
+      font-size: 16px;
+    }
+
+    .videorep {
+        background-color: #000000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+
+    .video-container {
+        position: relative;
+        width: 100%;
+        max-width: 1000px;
+        border: 2px solid black;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+    video {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .visit {
+        position: absolute;
+        text-align: center;
+        justify-content: center;
+        color:#fff; 
+        margin-left: 460px;
+        margin-top: 30px;
+        font-size: 35px;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
+
+    .abouts {
+        position: absolute;
+        text-align: center;
+        justify-content: center;
+        color:#fff; 
+        margin-left: 620px;
+        margin-top: 50px;
+        font-size: 35px;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
+
+    .lastpage {
+        margin: none;
+        width:100%; 
+        position: absolute; 
+        background-size: cover;
+        min-height: 100%;
+
+    }
+    .aboutus {
+        margin-top: 150px;
+        color: #fff;
+        font-size: 20px;
+        font-family: "Lucida Console", "Courier New", monospace;
+        line-height: 1.5;
+    }
+    .pictures {
+        display: flex;
+        margin-right: 30px;
+        gap: 60px;
+        justify-content: center;
+
+    }
+    .profile {
+        text-align: center;
+    }
+
+    .profile img {
+        justify-content: center;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #fff;
+    }
+    .profile h3 {
+        justify-content: center;
+        margin-top: 10px;
+        font-size: 14px;
+        color: #f8f6f6;
+        letter-spacing: 2px;
+        margin: none;
+
+    }
+    .profile h4 {
+        justify-content: center;
+        font-size: 14px;
+        color: #555;
+        padding: none;
+        margin-bottom: 30px;
+    }
+
+    .footer {
+        padding: 2px;
+        margin-top: 800px;
+        position: absolute;
+        min-height: 1%;
+        text-decoration: none;
+        min-width: 100%;
+    }
+
+    .abouts {
+    justify-content: center;
+    align-items: center;
+    }
+
+
+
+
+
+
+
+
+
+
+     </style>
+
+     <header>
+     <div class="Header">
+          <font face="Serif" size="1">
+            <div id="topcontent"></div>
+       <marquee direction= "left" scrollamount="5" height="35">
+<h2 style="color:white;"> FREE SHIPPING NATIONWIDE. </h2></header></div></marquee>
+
+<nav class="navbar">
+                <div class="navdiv">
+                        <div class="logo"><img src="C:\Users\LUPIG FAMILY\Desktop\HTML\codin\print\logo2.jpg" width="120" height="50"></div>
+
+                        <ul>
+                                <li><a href="#topcontent">Home</a></li>
+                                <li><a href="#products">Products</a></li>
+                                <li><a href="#socials">Social Media</a></li>
+                <li><a href="#aboutweb">About us</a></li>
+                                <li><a href="#"><img src="C:\Users\LUPIG FAMILY\Desktop\HTML\codin\print\search.png" width="20"></a></li>
+                <li><a href="#"><img src="C:\Users\LUPIG FAMILY\Desktop\HTML\codin\print\cart.png" width="23"></a></li>
+                                <li><a href="#"><img src="C:\Users\LUPIG FAMILY\Desktop\HTML\codin\print\user.png" width="20"></a></li>
+                        </ul>
+                </div>
+        </nav>
+
+     </h2>                 
+          </tr>         
+        </center> 
+         </td> 
+         </tr>      
+       </font>
+    <body><section></section>
+
+<div class="Body background"><img src="C:\Users\LUPIG FAMILY\Desktop\HTML\codin\print\Background img.jpg" width="1500" height="1500">
+    <div class="background">
+        <div class="overlay"></div>
+        <div class="content">
+            <h1>LARO SPORTS</h1>
+            <h3><center>CONCRETE JUNGLERS COLLECTION - 2025</center></h3>
+            <h4 class="Description"><center> As the night comes, we my brothers start the hustle that some sees the movement a hard catch.
+            Dwell all-day with big dreams, we started small but doesn't loosen much passion in everything
+            which fuels these clothing heads. LARO SPORTS is'nt just about what you wear. It's about the connections you build through creative design from every clothes we made.
+            As we shared vision, this dream of us started small but not our dedication to make it big just like those local clothing brand here in the Philippines.
+            Our Logo, Phantom. Represents the brands with symbolism of night owl as we pull the nights out to come up with various concept
+            yet catch trends to youngers on streets.</center>
+     </h4>
+
+     <h4 class="quote"><b><center>WE ONLY COME OUT AT NIGHT.</center></b></h4>
+
+            <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap">
+        </div>
+    </div>
+</div>
+</font>
+</section>
+
+<section>
+<div id="products"> 
+<div class="Collection">
+<h1 style="text-align: center; margin-top: 20px;"><font color="#fff">Clothing Collection: Concrete Junglers 2025</h1></font></div>
+<div class="container">
+    <!-- Product 1 -->
+    <div class="card">
+        <img src="shirt.jpg" alt="Clothing 1">
+        <div class="card-content">
+            <h3 class="card-title">CROWS Tee</h3>
+            <p class="card-description">Available Sizes:
+                <br> Small, Medium, Large, XL <br> Oversize Fit <br> 230gsm <br><h4>400php</h4></p>
+                <button>Add to Cart</button>
+                <button>Buy Now</button>
+        </div>
+    </div>
+    <!-- Product 2 -->
+    <div class="card">
+        <img src="shirt1.jpg" alt="Clothing 2">
+        <div class="card-content">
+            <h3 class="card-title">EVIDENCE Tee</h3>
+            <p class="card-description">Available Sizes:
+                <br> Small, Medium, Large, XL <br> Oversize Fit <br> 230gsm <br><h4>400php</h4>
+            </p>
+            <button>Add to Cart</button>
+            <button>Buy Now</button>
+        </div>
+    </div>
+
+     <!-- Product 3 -->
+     <div class="card">
+        <img src="shirt2.jpg" alt="Clothing 3">
+        <div class="card-content">
+            <h3 class="card-title">RECORDS Tee</h3>
+            <p class="card-description">Available Sizes:
+                <br> Small, Medium, Large, XL <br> Oversize Fit <br> 230gsm <br><h4>400php</h4></p>
+            <button>Add to Cart</button>
+            <button>Buy Now</button>
+        </div>
+    </div>
+    <!-- Product 4 -->
+    <div class="card">
+        <img src="shirt3.jpg" alt="Clothing 4">
+        <div class="card-content">
+            <h3 class="card-title">LOGO Tee</h3>
+            <p class="card-description">Available Sizes:
+                <br> Small, Medium, Large, XL <br> Oversize Fit <br> 230gsm <br><h4>350php</h4></p>
+            <button>Add to Cart</button>
+            <button>Buy Now</button>
+        </div>
+    </div>
+      <!-- Product 5 -->
+      <div class="card">
+        <img src="shirt4.jpg" alt="Clothing 5">
+        <div class="card-content">
+            <h3 class="card-title">Classic Jersey</h3>
+            <p class="card-description">Available Sizes:
+                <br> Medium, Large, XL <br> Box Fit <br> Knitmesh Fabric <br> <h4>400php</h4></p>
+            <button>Add to Cart</button>
+            <button>Buy Now</button>
+        </div>
+    </div>
+    <!-- Product 6 -->
+    <div class="card">
+        <img src="bag.jpg" alt="Clothing 6">
+        <div class="card-content">
+            <h3 class="card-title"> STRING Bag</h3>
+            <p class="card-description">Available Sizes:
+                <br> One Size <br> Nylon-Cotton Fabric <br> 230gsm <br><h4>400php</h4></p>
+            <button>Add to Cart</button>
+            <button>Buy Now</button>
+        </div>
+    </div>
+     <!-- Product 7 -->
+     <div class="card">
+        <img src="accessories.jpg" alt="Clothing 7">
+        <div class="card-content">
+            <h3 class="card-title">VISION Shades</h3>
+            <p class="card-description">Available Sizes:
+               <br> Matte Black <br> With Hard Case <br> One Colorway <h4>200php</h4></p>
+            <button>Add to Cart</button>
+            <button>Buy Now</button>
+        </div>
+    </div>
+    <!-- Product 8 -->
+    <div class="card">
+        <img src="pants5.jpg" alt="Clothing 8">
+        <div class="card-content">
+            <h3 class="card-title">SWAET Pants</h3>
+            <p class="card-description">Available Sizes:
+                <br> Medium, Large <br> French Terry <br> 400gsm <br><h4>600php</h4></p>
+            <button>Add to Cart</button>
+            <button>Buy Now</button>
+        </div>
+    </div>
+      <!-- Product 9 -->
+      <div class="card">
+        <img src="short.jpg" alt="Clothing 9">
+        <div class="card-content">
+            <h3 class="card-title">SWEATS</h3>
+            <p class="card-description">Available Sizes:
+                <br> Medium, Large, XL <br> String Adjustable <br> Cotton Fabric <h4>400php</h4></p>
+            <button>Add to Cart</button>
+            <button>Buy Now</button>
+        </div>
+    </div>
+     <!-- Product 10 -->
+     <div class="card">
+       <img src="cap.jpg" alt="Clothing 10">
+       <div class="card-content">
+           <h3 class="card-title">PHANTOM Cap</h3>
+           <p class="card-description">Available Sizes:
+            <br> Adjustable <br> One Colorway <br> Mesh-Cotton Fabric <br><h4>250php</h4></p>
+           <button>Add to Cart</button>
+           <button>Buy Now</button>
+      </div>
+     </div>
+
+<!-- Product 11 -->
+<div class="card">
+    <img src="cap2.jpg" alt="Clothing 11">
+    <div class="card-content">
+        <h3 class="card-title">LOGO Cap</h3>
+        <p class="card-description">Available Sizes:
+            <br> Adjustable <br> Mesh-Cotton Fabric <br> One Colorway <br><h4>250php</h4></p>
+        <button>Add to Cart</button>
+        <button>Buy Now</button>
+     </div>
+</div>
+         <!-- Product 12 -->
+<div class="card">
+<img src="head.jpg" alt="Clothing 12">
+    <div class="card-content">
+        <h3 class="card-title">Classic Ski MASK</h3>
+        <p class="card-description">Available Sizes:
+            <br> ONE SIZE <br> Nylon-Cotton Fabric <br> 230gsm <br><h4>400php</h4></p>
+        <button>Add to Cart</button>
+        <button>Buy Now</button>
+     </div>
+</div>
+</div>
+</div> 
+<br>
+</section>
+
+<div id="socials">
+<section>
+    <div class="lolo"><img src="back3.jpg" style="width:100%; opacity: 0.5; position: absolute;" >
+        <h1 class="visit"><center>VISIT US ON OUR SOCIALS</center></h1>
+
+      <div class="card-container1">
+         <div class="card1 facebook">
+           <img src="Fb.jpg"  style="width:100%; border-radius: 10px;">
+           <h3>Facebook</h3>
+           <a href="https://www.facebook.com/share/1KCwrEWbat/"><p><b>@LAROSPORTS</b></p></a>
+
+           <p></p>
+        </div>
+
+         <div class="card1 instagram">
+           <img src="Ig.jpg"  style="width:100%; border-radius: 10px;">
+           <h3>Instagram</h3>
+           <a href="https://www.instagram.com/larosportsclub?igsh=MWNmaTc1YmdkMnMyZQ==>"><p><b>@LAROSPORTSCLUB</b></p></a>
+
+           <p></p>
+        </div>
+
+         <div class="card1 tiktok">
+           <img src="Tiktok.jpg"  style="width:100%; border-radius: 10px;">
+           <h3>TikTok</h3>
+           <a href="https://www.tiktok.com/@larosports?_t=ZS-8tKBQ5MKMy8&_r=1>"><p><b>@LAROSPORTS</b></p></a>
+
+            <p></p>
+        </div>
+     </div>
+    </div>
+</div>
+
+</section>
+
+<section>
+
+<div class="videorep">    
+<div class="video-container">
+    <video controls>
+        <source src="video brand2.mp4" type="video/mp4">
+    </video>
+</div>
+</div>
+</section>
+
+<div id="aboutweb">
+<section>
+    <div class="lastpage" style="background: rgb(1,1,4); background: linear-gradient(9deg, rgba(1,1,4,1) 0%, rgba(38,38,41,1) 85%, rgba(51,53,54,1) 100%);">
+      <h1 class="abouts" style="color: #fff;"><center>ABOUT US</center></h1>
+       <h3 class="aboutus"><center> Welcome to LARO SPORTS, where passion meets street-fashion. <br> We are a dedicated team of five ambitious individuals
+    who started from humble<br> beginnings, driven by the dream of making a mark in the clothing line industry. <br>
+Our mission is to provide high-quality of stylish and in-trends clothing that <br> caters to your needs and preferences of young street hustlers.<br>
+<br> Founded by a group of teenage friends, LAROSPORTS was born out of shared vision <br>to create a difference not
+only for our families but also to elevate the street clothing <br> game in the scene of the Philippines. What
+began as a dream has now evolved <br> into a thriving clothing brand that blends style, comfort, and quality. <br> <br> <br></center></h3>
+       <h2 style="color: white; font-family: Arial, Helvetica, sans-serif; font-size: 40px; margin-right: 30px;"><center>OUR DEVELOPERS</center></h2>
+
+
+     <div class="pictures">
+        <div class="profile">
+            <img src="adona2.jpg">
+            <h3>Adona, Andrei A.</h3>
+            <h4>Web Developer </h4>
+        </div>
+
+        <div class="profile">
+            <img src="MAGADAN.jpg">
+            <h3>Magadan, Jhon Kien M.</h3>
+            <h4>Web Developer </h4>
+        </div>
+
+        <div class="profile">
+            <img src="jake.jpg">
+            <h3>Lupig, Jake G.</h3>
+            <h4>Web Developer </h4>
+        </div>
+
+        <div class="profile">
+            <img src="calica.JPG">
+            <h3>Calica, Railee B.</h3>
+            <h4>Web Developer </h4>
+        </div>
+
+        <div class="profile">
+            <img src="DITAN.JPG">
+            <h3>Ditan, Jefferson E.</h3>
+            <h4>Web Developer </h4>
+        </div>   
+        </div>
+       </div>
+    </div>
+
+</section>
+
+<section>
+   <div class="footer" style="background-color: black; ">
+    <div class="color">
+    <center>
+       <h4 style="color: white; line-height: 1.5;">LAROSPORTS COPYRIGHT INFRINGEMENT © SINCE 2023. <br> 
+    <a href="#topcontent" style="color: white;">BACK TO TOP</a></h4>
+    </center></div>
+
+</div>
+</section>
+
+</body>
+</html>
