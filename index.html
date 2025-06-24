@@ -1,156 +1,88 @@
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>
-            LARO SPORTS  
-        </title>
-        <link rel="icon" href="img and vid/icon3.png" type="image/png">
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LARO SPORTS</title>
+    <link rel="icon" href="img and vid/icon3.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0
+,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,
+900&display=swap" rel="stylesheet">
     <style>
-
-     .header {
-         background-color: black;
-         letter-spacing: 2px;
-
-        }
-        a { 
-            text-decoration: none;
-            color: #000000; 
-        }
-
-        .Background img {
-            justify-content: center;
-            margin-top: none;
-            border: none;
-            background-size: cover;
-           
-
-
-        }
-
-        @media (min-width: 475px){}
-        @media (min-width:640px) {}
-        @media (min-width:768px) {}
-        @media (min-width:1024px) {}
-        @media (min-width:1280px) {}
-        @media (min-width:1536px) {}
-
-
-
         body {
             margin: 0;
             padding: 0;
+            background-color: #000;
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            background-color: black;
+            letter-spacing: 2px;
+        }
+
+        marquee h4 {
+            margin: none;
+            font-size: 12px;
+            line-height: 0px;
+            margin-top: 13px;
+
+
+        }
+
+        a {
+            text-decoration: none;
+            color: #000;
+        }
+
+        .navbar {
+            background: white;
+            font-family: calibri;
+            font-size: 22px;
+            padding: 0px 15px;
+
+            
+        }
+
+        .navdiv {
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
 
-                .navbar{
-                        background: white; font-family: calibri; padding-right: 15px; padding-left: 15px;
-            font-size: 27px;
-
-
-                }
-
-                .navdiv{
-                        display: flex; align-items: center; justify-content: space-between;
-            text-decoration: none;
-            cursor: pointer;
-
-                }
-
-                li{
-                        list-style: none; display: inline-block;
-            cursor: pointer;
-                }
-
-                li a{
-                        color: black; font-size: 18px; font-weight: bold; margin-right: 25px;
-            cursor: pointer;
-                }
-
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-        }
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            padding: 20px;
-        }
-        .card {
-            width: 290px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-
-        }
-        .card img {
-            width: 100%;
-            height: auto;
-            margin-bottom: auto;
+        li {
+            list-style: none;
+            display: inline-block;
         }
 
-        .Collection {
-            margin-top: 50px;
-            font-family: "Lucida Console", "Courier New", monospace;
-
-        }
-        .card-content {
-            padding: 15px;
-        }
-        .card-title {
+        li a {
+            color: black;
             font-size: 18px;
             font-weight: bold;
-            margin: 20px 0;
-            background-color: #fff;
+            margin-right: 25px;
+        }
+
+        .background-img {
+            position: relative;
+            width: 100%;
+            height: 130vh;
+            background-image: url('img and vid/background img.jpg');
+            background-size: cover;
+            background-position: center;
             font-family: "Lucida Console", "Courier New", monospace;
-        }
-        .card-description {
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 30px;
+            line-height: 10px;
         }
 
-        .card button {
-            background-color: #0c7ef0;
-            color: #fff;
-            border: none;
-            margin-bottom: 10px;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 120px;
-            margin-right: 12px;
-            display: inline-flexbox;
 
-
-        }
-        .card button:hover {
-            background-color: #0056b3;
-        }
 
         .overlay {
-            margin-top: 8%;
             position: absolute;
-            background-size: cover;
             top: 0;
             left: 0;
             width: 100%;
-            height: 110%;
+            height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .Body background img {
-            background-size: cover;
-
         }
 
         .content {
@@ -159,286 +91,342 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
-            padding: 20px;
-            font-family: "Lucida Console", "Courier New", monospace;
+            text-align: center;
+            
         }
-
 
         .content h1 {
             font-size: 3.5rem;
             font-family: "Lucida Console", "Courier New", monospace;
-            margin-top: 300px;
-            justify-content: center;
-            display: flex;
+            margin-bottom: 40px;
         }
 
         .content h3 {
+            font-family: "Lucida Console", "Courier New", monospace;
+        }
+
+        .quote {
+            font-size: 23px;
             margin-top: 20px;
         }
 
-
-        .quote {
-            margin-top: 80px;
-            font-size: 23px;
-
-        }
         .Description {
-
-            letter-spacing: 1px;
             margin-top: 30px;
             font-size: 18px;
             line-height: 1.5;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
+        .Collection {
+            margin-top: 50px;
+            color: white;
+            text-align: center;
+            font-family: "Lucida Console", "Courier New", monospace;
+        }
+
+       
+
+        #products {
+            background-color: black;
         }
 
 
-     .card-container1 {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 102vh;
-      margin: 0;
-      position: relative;
-      text-align: center;
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            background-color: black;
+        }
 
-    }
+        .card {
+            width: 245px;
+            height: auto;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
 
-        .card1 {
-      width: 300px;
-      margin-top: 60px;
-      padding: 20px;
-      border-radius: 2px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      color: #fff;
-      font-size: 18px;
-      text-decoration: none;
-      font-family: Verdana, Geneva, Tahoma, sans-serif;
-      border-radius: 10px;
-      margin-bottom: 30px;
+        .card img {
+            width: 100%;
+            height: auto;
+        }
+
+        .card-content {
+            padding: 15px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .card button {
+            background-color: #101111;
+            color: #fff;
+            border: none;
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 120px;
+            margin-right: 8px;
+        }
+
+        .card button:hover {
+            background-color: #78797a;
+        }
+
+        .background-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.background-container {
+  position: absolute;
+  background-size: cover;
+  width: 110%;
+  height: 100%;
+  opacity: 0.5;
+  z-index: 0;
+}
+
+.overlay-content {
+  position: absolute;
+  z-index: 1;
+
+  text-align: center;
+  color: #000;
+}
 
 
-    }
-    .facebook {
-      background: linear-gradient(135deg, #535455, #616877);
-    }
-    .instagram {
-      background: linear-gradient(135deg, #535455, #616877, #535455, #616877, #535455);
-    }
-    .tiktok {
-      background: linear-gradient(135deg, #535455, #535455, #616877);
-    }
-    .card1 h3 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-    .card1 p {
-      font-size: 16px;
-    }
+.card-container {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
 
-    .videorep {
-        background-color: #000000;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        margin: 0;
-    }
+.socials h1 {
+     font-family: "Lucida Console", "Courier New", monospace;
+}
 
+.card-container1 {
+    margin-bottom: 50px;
+    font-family: 'Poppins', sans-serif;
+}
 
-    .video-container {
-        position: relative;
-        width: 100%;
-        max-width: 1000px;
-        border: 2px solid black;
-        overflow: hidden;
-        margin-top: 10px;
-    }
-    video {
-        width: 100%;
-        height: 100%;
-        display: block;
-    }
-
-    .visit {
-        position: absolute;
-        text-align: center;
-        justify-content: center;
-        color:#fff; 
-        margin-left: 460px;
-        margin-top: 30px;
-        font-size: 35px;
-        font-family: Verdana, Geneva, Tahoma, sans-serif;
-    }
-
-    .abouts {
-        position: absolute;
-        text-align: center;
-        justify-content: center;
-        color:#fff; 
-        margin-left: 620px;
-        margin-top: 50px;
-        font-size: 35px;
-        font-family: Verdana, Geneva, Tahoma, sans-serif;
-    }
-
-    .lastpage {
-        margin: none;
-        width:100%; 
-        position: absolute; 
-        background-size: cover;
-        min-height: 100%;
-
-    }
-    .aboutus {
-        margin-top: 150px;
-        color: #fff;
-        font-size: 20px;
-        font-family: "Lucida Console", "Courier New", monospace;
-        line-height: 1.5;
-    }
-    .pictures {
-        display: flex;
-        margin-right: 30px;
-        gap: 60px;
-        justify-content: center;
-
-    }
-    .profile {
-        text-align: center;
-    }
-
-    .profile img {
-        justify-content: center;
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid #fff;
-    }
-    .profile h3 {
-        justify-content: center;
-        margin-top: 10px;
-        font-size: 14px;
-        color: #f8f6f6;
-        letter-spacing: 2px;
-        margin: none;
-
-    }
-    .profile h4 {
-        justify-content: center;
-        font-size: 14px;
-        color: #555;
-        padding: none;
-        margin-bottom: 30px;
-    }
-
-    .footer {
-        padding: 2px;
-        margin-top: 800px;
-        position: absolute;
-        min-height: 1%;
-        text-decoration: none;
-        min-width: 100%;
-    }
-
-    .abouts {
+.videorep {
+    background-color: #000;
+    display: flex;
     justify-content: center;
     align-items: center;
-    }
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px; /* added some padding for better spacing on mobile */
+}
+
+.video-container {
+    margin-top: 80px;
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    border: 2px solid #000;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* optional: nice shadow */
+}
+
+.video-container video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+.lastpage {
+    background: linear-gradient(9deg, rgba(1,1,4,1) 0%, rgba(38,38,41,1) 85%, rgb(45, 45, 46) 100%);
+    padding: 50px 20px;
+    color: #fff;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.abouts {
+    font-size: 48px;
+    margin-bottom: 30px;
+    margin-top: 5px;
+    font-family: "Poppins", sans-serif;
+}
+
+.aboutus {
+    font-size: 20px;
+    line-height: 1.6;
+    font-weight: normal;
+    max-width: 1000px;
+    margin: 0 auto;
+    font-family: "Lucida Console", "Courier New", monospace;
+}
+
+.developer-title {
+    font-size: 30px;
+    margin-top: 55px;
+    margin-bottom: 20px;
+    font-family: "Poppins", sans-serif;
+}
+
+.pictures {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.profile {
+    text-align: center;
+    color: white;
+    max-width: 220px;
+}
+
+.profile img {
+    width: 100px;
+    height: 100px; /* ensure circle */
+    border-radius: 50%; /* circle shape */
+    object-fit: cover; /* so it doesn't stretch */
+    border: 2px solid #fff;
+}
+
+.profile h3 {
+    font-size: 18px;
+    margin: none;
+  
+}
+
+.profile h4 {
+    font-size: 14px;
+    color: #aaa; /* lighter/darker gray */
+    margin-bottom: none;
+    top: 50px;
+    
+}
+
+.footer {
+    background-color: black;
+    padding: 3px 0; /* smaller height */
+    margin-top: -30px;
+    margin-bottom: 1px;
+}
+
+.footer .color {
+    text-align: center;
+    color: white;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.footer .color a {
+    color: white;
+    text-decoration: underline;
+}
+
+.container h3 {
+    margin-top: -30px;
+}
+
+.container p {
+    line-height: 1.5;
+}
 
 
 
+    </style>
+</head>
 
+<body>
+    <section id="topcontent"></section>
+    <header class="header">
+        <marquee direction="left" scrollamount="5" height="25">
+            <font face="Serif" size="1"></font>
+            <h4 style="color:white; margin: none;"><b>FREE SHIPPING NATIONWIDE.</b></h4>
+        </marquee>
 
-
-
-
-
-
-     </style>
-
-     <header>
-     <div class="Header">
-          <font face="Serif" size="1">
-            <div id="topcontent"></div>
-       <marquee direction= "left" scrollamount="5" height="35">
-<h2 style="color:white;"> FREE SHIPPING NATIONWIDE. </h2></header></div></marquee>
-
-<nav class="navbar">
-                <div class="navdiv">
-                        <div class="logo"><img src="img and vid/logo.gif" width="120" height="50"></div>
-
-                        <ul>
-                                <li><a href="#topcontent">Home</a></li>
-                                <li><a href="#products">Products</a></li>
-                                <li><a href="#socials">Social Media</a></li>
-                <li><a href="#aboutweb">About us</a></li>
-                                <li><a href="#"><img src="img and vid/search.png" width="20"></a></li>
-                <li><a href="#"><img src="img and vid/cart.png" width="23"></a></li>
-                                <li><a href="#"><img src="img and vid/user.png" width="20"></a></li>
-                        </ul>
+        <nav class="navbar">
+            <div class="navdiv">
+                <div class="logo">
+                    <img src="img and vid/logo.gif" width="120" height="40">
                 </div>
+                <ul>
+                    <li><a href="#topcontent">Home</a></li>
+                    <li><a href="#products">Products</a></li>
+                    <li><a href="#socials">Social Media</a></li>
+                    <li><a href="#aboutweb">About Us</a></li>
+                    <li><a href="#"><img src="img and vid/search.png" width="20"></a></li>
+                    <li><a href="#"><img src="img and vid/cart.png" width="20"></a></li>
+                    <li><a href="#"><img src="img and vid/user.png" width="20"></a></li>
+                </ul>
+            </div>
         </nav>
+    </header>
 
-     </h2>                 
-          </tr>         
-        </center> 
-         </td> 
-         </tr>      
-       </font>
-    <body><section></section>
-
-<div class="Body background"><img src = "img and vid/background img.jpg" width="1500" height="1500">
-    <div class="background">
+    <section class="background-img">
         <div class="overlay"></div>
         <div class="content">
             <h1>LARO SPORTS</h1>
-            <h3><center>CONCRETE JUNGLERS COLLECTION - 2025</center></h3>
-            <h4 class="Description"><center> As the night comes, we my brothers start the hustle that some sees the movement a hard catch.
-            Dwell all-day with big dreams, we started small but doesn't loosen much passion in everything
-            which fuels these clothing heads. LARO SPORTS is'nt just about what you wear. It's about the connections you build through creative design from every clothes we made.
-            As we shared vision, this dream of us started small but not our dedication to make it big just like those local clothing brand here in the Philippines.
-            Our Logo, Phantom. Represents the brands with symbolism of night owl as we pull the nights out to come up with various concept
-            yet catch trends to youngers on streets.</center>
-     </h4>
-
-     <h4 class="quote"><b><center>WE ONLY COME OUT AT NIGHT.</center></b></h4>
-
-            <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap">
+            <h3>PAIN STAIN COLLECTION - 2025</h3>
+            <div class="Description">
+                As the night comes, we my brothers start the hustle that some sees the movement a hard catch.
+                Dwell all-day with big dreams, we started small but doesn't loosen much passion in everything
+                which fuels these clothing heads. LARO SPORTS isn't just about what you wear. It's about the connections you build through creative design from every clothes we made.
+                Our Logo, Phantom. Represents the brands with symbolism of night owl as we pull the nights out to come up with various concept
+                yet catch trends to youngers on streets.
+            </div>
+            <div class="quote">
+                <b>WE ONLY COME OUT AT NIGHT.</b>
+            </div>
         </div>
-    </div>
-</div>
-</font>
-</section>
+    </section>
 
-<section>
-<div id="products"> 
-<div class="Collection">
-<h1 style="text-align: center; margin-top: 20px;"><font color="#fff">Clothing Collection: Concrete Junglers 2025</h1></font></div>
-<div class="container">
-    <!-- Product 1 -->
-    <div class="card">
-        <img src="img and vid/shirt.jpg" alt="Clothing 1">
-        <div class="card-content">
-            <h3 class="card-title">CROWS Tee</h3>
-            <p class="card-description">Available Sizes:
-                <br> Small, Medium, Large, XL <br> Oversize Fit <br> 230gsm <br><h4>400php</h4></p>
-                <button>Add to Cart</button>
-                <button>Buy Now</button>
+    <section id="products">
+        <div class="Collection">
+            <h1>Clothing Collection: PAIN STAIN 2025</h1>
         </div>
-    </div>
-    <!-- Product 2 -->
+        <div class="container">
+            <!-- Example Product Card -->
+            <div class="card">
+                <img src="img and vid/shirt.jpg" alt="Clothing 1">
+                <div class="card-content">
+                    <h3 class="card-title">CROWS Tee</h3>
+                    <p class="card-description">Available Sizes:
+                        <br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm <br><h4>400php</h4>
+                    </p>
+                    <button>Add to Cart</button>
+                    <button>Buy Now</button>
+                </div>
+            </div>
+            <!-- repeat more cards... -->
+              <!-- Product 2 -->
     <div class="card">
         <img src="img and vid/shirt1.jpg" alt="Clothing 2">
         <div class="card-content">
             <h3 class="card-title">EVIDENCE Tee</h3>
             <p class="card-description">Available Sizes:
-                <br> Small, Medium, Large, XL <br> Oversize Fit <br> 230gsm <br><h4>400php</h4>
+                <br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm <br><h4>400php</h4>
             </p>
             <button>Add to Cart</button>
             <button>Buy Now</button>
@@ -451,7 +439,7 @@
         <div class="card-content">
             <h3 class="card-title">RECORDS Tee</h3>
             <p class="card-description">Available Sizes:
-                <br> Small, Medium, Large, XL <br> Oversize Fit <br> 230gsm <br><h4>400php</h4></p>
+                <br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm <br><h4>400php</h4></p>
             <button>Add to Cart</button>
             <button>Buy Now</button>
         </div>
@@ -462,7 +450,7 @@
         <div class="card-content">
             <h3 class="card-title">LOGO Tee</h3>
             <p class="card-description">Available Sizes:
-                <br> Small, Medium, Large, XL <br> Oversize Fit <br> 230gsm <br><h4>350php</h4></p>
+                <br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm <br><h4>350php</h4></p>
             <button>Add to Cart</button>
             <button>Buy Now</button>
         </div>
@@ -556,44 +544,34 @@
         <button>Buy Now</button>
      </div>
 </div>
-</div>
-</div> 
-<br>
 </section>
 
-<div id="socials">
-<section>
-    <div class="lolo"><img src="img and vid/back3.jpg" style="width:100%; opacity: 0.5; position: absolute;" >
-        <h1 class="visit"><center>VISIT US ON OUR SOCIALS</center></h1>
+<section id="socials">
+    <div class="lolo" style="position: relative; overflow: hidden;">
+        <img src="img and vid/back3.jpg" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.5; position: absolute; top: 0; left: 0; z-index: -1;">
 
-      <div class="card-container1">
-         <div class="card1 facebook">
-           <img src="img and vid/Fb.jpg"  style="width:100%; border-radius: 10px;">
-           <h3>Facebook</h3>
-           <a href="https://www.facebook.com/share/1KCwrEWbat/"><p><b>@LAROSPORTS</b></p></a>
+        <h1 class="visit" style="text-align: center; color: white; padding: 20px 0; font-size: 30px;">VISIT US ON OUR SOCIALS</h1>
 
-           <p></p>
+        <div class="card-container1" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; padding: 20px;">
+            <div class="card1 facebook" style="width: 250px; text-align: center; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px; color: white;">
+                <img src="img and vid/Fb.jpg" style="width: 100%; border-radius: 10px;">
+                <h3>Facebook</h3>
+                <a href="https://www.facebook.com/share/1KCwrEWbat/" style="color: white;"><p><b>@LAROSPORTS</b></p></a>
+            </div>
+
+            <div class="card1 instagram" style="width: 250px; text-align: center; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px; color: white;">
+                <img src="img and vid/Ig.jpg" style="width: 100%; border-radius: 10px;">
+                <h3>Instagram</h3>
+                <a href="https://www.instagram.com/larosportsclub" style="color: white;"><p><b>@LAROSPORTSCLUB</b></p></a>
+            </div>
+
+            <div class="card1 tiktok" style="width: 250px; text-align: center; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px; color: white;">
+                <img src="img and vid/Tiktok.jpg" style="width: 100%; border-radius: 10px;">
+                <h3>TikTok</h3>
+                <a href="https://www.tiktok.com/@larosports" style="color: white;"><p><b>@LAROSPORTS</b></p></a>
+            </div>
         </div>
-
-         <div class="card1 instagram">
-           <img src="img and vid/Ig.jpg"  style="width:100%; border-radius: 10px;">
-           <h3>Instagram</h3>
-           <a href="https://www.instagram.com/larosportsclub?igsh=MWNmaTc1YmdkMnMyZQ==>"><p><b>@LAROSPORTSCLUB</b></p></a>
-
-           <p></p>
-        </div>
-
-         <div class="card1 tiktok">
-           <img src="img and vid/Tiktok.jpg"  style="width:100%; border-radius: 10px;">
-           <h3>TikTok</h3>
-           <a href="https://www.tiktok.com/@larosports?_t=ZS-8tKBQ5MKMy8&_r=1>"><p><b>@LAROSPORTS</b></p></a>
-
-            <p></p>
-        </div>
-     </div>
     </div>
-</div>
-
 </section>
 
 <section>
@@ -607,43 +585,39 @@
 </div>
 </section>
 
+
+You sent
 <div id="aboutweb">
-<section>
-    <div class="lastpage" style="background: rgb(1,1,4); background: linear-gradient(9deg, rgba(1,1,4,1) 0%, rgba(38,38,41,1) 85%, rgba(51,53,54,1) 100%);">
-      <h1 class="abouts" style="color: #fff;"><center>ABOUT US</center></h1>
-       <h3 class="aboutus"><center> Welcome to LARO SPORTS, where passion meets street-fashion. <br> We are a dedicated team of five ambitious individuals
-    who started from humble<br> beginnings, driven by the dream of making a mark in the clothing line industry. <br>
-Our mission is to provide high-quality of stylish and in-trends clothing that <br> caters to your needs and preferences of young street hustlers.<br>
-<br> Founded by a group of teenage friends, LAROSPORTS was born out of shared vision <br>to create a difference not
-only for our families but also to elevate the street clothing <br> game in the scene of the Philippines. What
-began as a dream has now evolved <br> into a thriving clothing brand that blends style, comfort, and quality. <br> <br> <br></center></h3>
-       <h2 style="color: white; font-family: Arial, Helvetica, sans-serif; font-size: 40px; margin-right: 30px;"><center>OUR DEVELOPER</center></h2>
+    <section class="lastpage">
+        <h1 class="abouts">ABOUT US</h1>
+        <h3 class="aboutus">
+            Welcome to LARO SPORTS, where passion meets street-fashion. <br>
+            We are a dedicated team of five ambitious individuals who started from humble beginnings, driven by the dream of making a mark in the clothing line industry. <br>
+            Our mission is to provide high-quality, stylish and on-trend clothing that caters to the needs and preferences of young street hustlers. <br><br>
+            Founded by a group of teenage friends, LARO SPORTS was born out of a shared vision to create a difference not only for our families but also to elevate the street clothing game in the Philippines. <br><br>
+            What began as a dream has now evolved into a thriving clothing brand that blends style, comfort, and quality.
+        </h3>
 
+        <h2 class="developer-title">OUR DEVELOPER</h2>
 
-     <div class="pictures">
-
-        <div class="profile">
-            <img src="img and vid/jake1.jpg">
-            <h3>Jake G. Lupig</h3>
-            <h4>Web Developer </h4>
+        <div class="pictures">
+            <div class="profile">
+                <img src="img and vid/jake1.jpg" alt="Jake G. Lupig">
+                <h3>Jake G. Lupig</h3>
+                <h4>Web Developer</h4>
+            </div>
         </div>
-   
+    </section>
+
+    <section class="footer">
+        <div class="color">
+            <h4>
+                LARO SPORTS COPYRIGHT INFRINGEMENT © SINCE 2023. <br>
+                <a href="#topcontent">BACK TO TOP</a>
+            </h4>
         </div>
-       </div>
-    </div>
-
-</section>
-
-<section>
-   <div class="footer" style="background-color: black; ">
-    <div class="color">
-    <center>
-       <h4 style="color: white; line-height: 1.5;">LAROSPORTS COPYRIGHT INFRINGEMENT © SINCE 2023. <br> 
-    <a href="#topcontent" style="color: white;">BACK TO TOP</a></h4>
-    </center></div>
-
+    </section>
 </div>
-</section>
 
 </body>
 </html>
