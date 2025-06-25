@@ -1,0 +1,119 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Helvetica Neue', sans-serif;
+}
+
+body, html {
+  height: 100%;
+}
+
+.hero {
+  background: url("../img and vid/homepage pic.jpg") no-repeat center center/cover;
+  height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+.overlay {
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.2); /* Optional overlay */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.logo {
+  font-size: 3rem;
+  color: white;
+  margin-bottom: 20px;
+  font-family: "Lucida Console", "Courier New", monospace;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: "Lucida Console", "Courier New", monospace;
+  line-height: 1.5;
+}
+
+.nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+.nav a:hover {
+  color: #ccc;
+}
+
+.social-icons {
+  position: absolute;
+  bottom: 5px;
+  display: flex;
+  gap: 30px;
+  width: auto;
+  height: auto;
+  margin: none;
+  text-align: center;
+  object-fit: contain;
+  margin-bottom: 80px;
+  cursor: pointer;
+}
+
+.icon {
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.icon:hover {
+  transform: scale(1.2);
+}
+
+.social-icons a {
+  color: white;
+  font-size: 1.2rem;
+  text-decoration: none;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+  .logo {
+    font-size: 2.2rem;
+  }
+
+  .nav a {
+    font-size: 0.95rem;
+  }
+
+  .social-icons {
+    bottom: 20px;
+    font-size: 5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    font-size: 1.8rem;
+  }
+
+  .nav {
+    gap: 8px;
+  }
+
+  .nav a {
+    font-size: 0.9rem;
+  }
+
+  .social-icons {
+    gap: 10px;
+    font-size: 0.9rem;
+  }
+}
