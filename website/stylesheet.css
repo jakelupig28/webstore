@@ -30,8 +30,10 @@ body, html {
 
 .logo {
   font-size: 3rem;
+  position: absolute;
+  left: 20%;
+  top: 50px;
   color: white;
-  margin-bottom: 20px;
   font-family: "Lucida Console", "Courier New", monospace;
 }
 
@@ -39,7 +41,10 @@ body, html {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  font-family: "Lucida Console", "Courier New", monospace;
+  letter-spacing: 0.1em;
+  font-family: 'Inter', sans-serif;
+  font-style: italic;
+  font-weight: 600;
   line-height: 1.5;
 }
 
