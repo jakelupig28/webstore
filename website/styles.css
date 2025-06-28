@@ -1,0 +1,137 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #000;
+  color: #fff;
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+.site-header {
+  background-color: #111;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+.site-nav a {
+  color: #ccc;
+  text-decoration: none;
+  margin-left: 1.5rem;
+  transition: color 0.2s ease;
+}
+.site-nav a:hover {
+  color: #fff;
+}
+
+/* Main content */
+.product-collection {
+  padding: 2rem;
+}
+.product-collection h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #333;
+  padding-bottom: 0.5rem;
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+}
+.product-card {
+  background-color: #111;
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+.product-card:hover {
+  transform: scale(1.03);
+}
+.product-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+.product-card h2 {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+}
+.product-card .price {
+  color: #0f0;
+  font-weight: bold;
+}
+
+/* Email signup */
+.email-signup {
+  background-color: #111;
+  text-align: center;
+  padding: 2rem 1rem;
+  margin-top: 2rem;
+}
+.email-signup h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.email-signup p {
+  margin-bottom: 1rem;
+  color: #ccc;
+}
+.email-signup form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.email-signup input {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  width: 250px;
+  max-width: 100%;
+}
+.email-signup button {
+  padding: 0.5rem 1rem;
+  background-color: #fff;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.email-signup button:hover {
+  background-color: #ccc;
+}
+
+/* Footer */
+.site-footer {
+  background-color: #111;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  font-size: 0.9rem;
+  margin-top: auto;
+}
+.footer-links {
+  margin-top: 0.5rem;
+}
+.footer-links a {
+  color: #ccc;
+  margin: 0 0.5rem;
+  text-decoration: none;
+}
+.footer-links a:hover {
+  color: #fff;
+}

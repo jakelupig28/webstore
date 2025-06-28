@@ -31,10 +31,12 @@ body, html {
 .logo {
   font-size: 3rem;
   position: absolute;
-  left: 20%;
+  left: 50%;
   top: 50px;
+  transform: translateX(-50%);
   color: white;
   font-family: "Lucida Console", "Courier New", monospace;
+  text-align: center;
 }
 
 .nav {
