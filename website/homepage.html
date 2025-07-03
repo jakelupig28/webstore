@@ -232,28 +232,9 @@
     font-family: 'Poppins', sans-serif;
 }
 
-.videorep {
-    background-color: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    padding: 20px; /* added some padding for better spacing on mobile */
-}
-
-.video-container {
-    margin-top: 80px;
-    position: relative;
-    width: 100%;
-    max-width: 1000px;
-    border: 2px solid #000;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* optional: nice shadow */
-}
 
 .video-container video {
-    width: 100%;
+    width: 20%;
     height: auto;
     display: block;
 }
@@ -371,6 +352,228 @@
     border: none;
     font-family: "Lucida Console", "Courier New", monospace;
 }
+
+.parent {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: 60px repeat(4, 1fr);
+  height: 100vh;
+  gap: 0;
+  padding: 0 20px;
+  margin: 45 15 45px;
+}
+
+.parent > div {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.div1:hover,
+.div2:hover,
+.div3:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.div0 {
+  grid-area: 1 / 1 / 2 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: bold;
+  color: white;
+  font-family: "Poppins", sans-serif;
+  top: -18px;
+
+}
+
+.div1 { grid-area: 2 / 1 / 4 / 5; margin: 10 10 10px; }
+.div2 { grid-area: 4 / 1 / 6 / 3; margin: 10 10 10px; }
+.div3 { grid-area: 4 / 3 / 6 / 5; margin: 10 10 10px; }
+.div4 {
+  grid-area: 2 / 5 / 6 / 9;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.div4 video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.slider img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.slider {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* Modal Lightbox */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  max-width: 90%;
+  max-height: 90%;
+  position: relative;
+}
+
+.modal-content img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.modal button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: none;
+  font-size: 2rem;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.modal .prev { left: 10px; }
+.modal .next { right: 10px; }
+.modal .close {
+  top: 10px;
+  right: 20px;
+  transform: none;
+  font-size: 2rem;
+  position: absolute;
+}
+
+.div4 video {
+  width: 90%;
+  max-width: 1000px;
+  border: 2px solid #000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+
+    /* Optional overlay text */
+    .text-overlay {
+      position: absolute;
+      bottom: 15px;
+      left: 20px;
+      color: white;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    }
+
+    .text-overlay h2 {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .text-overlay p {
+      font-size: 14px;
+      border-bottom: 2px solid white;
+      width: fit-content;
+      margin-top: 5px;
+    }
+
+
+    /* Responsive Layout for Tablets */
+@media (max-width: 1024px) {
+  .parent {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 60px repeat(6, 1fr);
+    padding: 0 10px;
+  }
+
+  .div0 { grid-area: 1 / 1 / 2 / 5; }
+  .div1 { grid-area: 2 / 1 / 4 / 5; }
+  .div2 { grid-area: 4 / 1 / 5 / 3; }
+  .div3 { grid-area: 4 / 3 / 5 / 5; }
+  .div4 { grid-area: 5 / 1 / 7 / 5; }
+
+  .div4 video {
+    width: 100%;
+  }
+}
+
+/* Responsive Layout for Mobile Phones */
+@media (max-width: 600px) {
+  .parent {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    height: auto;
+    padding: 0 5px;
+  }
+
+  .div0,
+  .div1,
+  .div2,
+  .div3,
+  .div4 {
+    grid-area: unset;
+    width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+  }
+
+  .slider img {
+    height: auto;
+  }
+
+  .modal-content {
+    max-width: 95%;
+  }
+
+  .modal button {
+    font-size: 1.5rem;
+  }
+
+  .div0 {
+    font-size: 1.5rem;
+    padding: 10px 0;
+  }
+}
+
+
+
+
+
+
+
+
+     
+
+
+
+
+
+
+
+
 
 
 
@@ -646,16 +849,100 @@
     </div>
 </section>
 
-<section id="videoman">
+<section id="videomann">
+<div class="parent">
+  <!-- Title -->
+  <div class="div0">Gallery Studio</div>
 
-<div class="videorep">    
-<div class="video-container">
+  <!-- Gallery 1 -->
+  <div class="div1" onclick="openModal('gallery1')">
+    <div class="slider" data-index="0" data-group="gallery1">
+      <img src="../img and vid/mandem.jpg" alt="Gallery 1">
+        <div class="text-overlay">
+      <h2>Gallery 1</h2>
+      <p>View</p>
+    </div>
+    </div>
+  </div>
+
+  <!-- Gallery 2 -->
+  <div class="div2" onclick="openModal('gallery2')">
+    <div class="slider" data-index="0" data-group="gallery2">
+      <img src="../img and vid/mandem2.jpg" alt="Gallery 2">
+        <div class="text-overlay">
+      <h2>Gallery 2</h2>
+      <p>View</p>
+    </div>
+    </div>
+  </div>
+
+  <!-- Gallery 3 -->
+  <div class="div3" onclick="openModal('gallery3')">
+    <div class="slider" data-index="0" data-group="gallery3">
+      <img src="../img and vid/gallery1.jpg" alt="Gallery 3">
+        <div class="text-overlay">
+      <h2>Gallery 3</h2>
+      <p>View</p>
+    </div>
+    </div>
+  </div>
+
+  <!-- Video Player -->
+  <div class="div4">
     <video controls>
-        <source src="../img and vid/video brand2.mp4" type="video/mp4">
+      <source src="../img and vid/video brand2.mp4" type="video/mp4">
+      Your browser does not support the video tag.
     </video>
+  </div>
 </div>
+
+<!-- Modal Lightbox -->
+<div class="modal" id="lightbox">
+  <button class="close" onclick="closeModal()">×</button>
+  <button class="prev" onclick="prevModal()">‹</button>
+  <div class="modal-content">
+    <img id="lightbox-img" src="" alt="Gallery View">
+  </div>
+  <button class="next" onclick="nextModal()">›</button>
 </div>
 </section>
+
+<script>
+  const galleries = {
+    gallery1: ['img1.jpg', 'img2.jpg', 'img3.jpg'],
+    gallery2: ['img4.jpg', 'img5.jpg', 'img6.jpg'],
+    gallery3: ['img7.jpg', 'img8.jpg', 'img9.jpg']
+  };
+
+  let currentGallery = '';
+  let currentIndex = 0;
+
+  function openModal(galleryName) {
+    currentGallery = galleryName;
+    currentIndex = 0;
+    document.getElementById('lightbox-img').src = galleries[galleryName][currentIndex];
+    document.getElementById('lightbox').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('lightbox').style.display = 'none';
+  }
+
+  function nextModal() {
+    currentIndex = (currentIndex + 1) % galleries[currentGallery].length;
+    document.getElementById('lightbox-img').src = galleries[currentGallery][currentIndex];
+  }
+
+  function prevModal() {
+    currentIndex = (currentIndex - 1 + galleries[currentGallery].length) % galleries[currentGallery].length;
+    document.getElementById('lightbox-img').src = galleries[currentGallery][currentIndex];
+  }
+</script>
+
+
+
+
+
 
 
 You sent
