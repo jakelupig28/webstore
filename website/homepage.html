@@ -558,6 +558,26 @@
   }
 }
 
+#lightbox {
+  display: none; /* Shown when active */
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8); /* Dark background */
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  flex-direction: column;
+}
+
+#lightbox-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  
+}
+
+
 
 
 
@@ -909,9 +929,17 @@
 
 <script>
   const galleries = {
-    gallery1: ['img1.jpg', 'img2.jpg', 'img3.jpg'],
-    gallery2: ['img4.jpg', 'img5.jpg', 'img6.jpg'],
-    gallery3: ['img7.jpg', 'img8.jpg', 'img9.jpg']
+    gallery1: ['../img and vid/gal1-1.jpg', '../img and vid/gal1-2.jpg', '../img and vid/gal1-3.jpg','../img and vid/gal1-4.jpg','../img and vid/gal1-5.jpg', '../img and vid/gal1-6.jpg',
+     '../img and vid/gal1-7.jpg', '../img and vid/gal1-8.jpg', '../img and vid/gal1-9.jpg', '../img and vid/gal1-10.jpg', '../img and vid/gal1-11.jpg', '../img and vid/gal1-12.jpg', 
+     '../img and vid/gal1-13.jpg', '../img and vid/gal1-14.jpg', '../img and vid/gal1-15.jpg', '../img and vid/gal1-16.jpg'],
+
+    gallery2: ['../img and vid/gal2-1.jpg', '../img and vid/gal2-2.jpg', '../img and vid/gal2-3.jpg', '../img and vid/gal2-4.jpg', '../img and vid/gal2-5.jpg', '../img and vid/gal2-6.jpg',
+     '../img and vid/gal2-7.jpg', '../img and vid/gal2-8.jpg', '../img and vid/gal2-9.jpg', '../img and vid/gal2-10.jpg', '../img and vid/gal2-11.jpg', 
+     '../img and vid/gal2-12.jpg', '../img and vid/gal2-13.jpg', '../img and vid/gal2-14.jpg', '../img and vid/gal2-15.jpg', '../img and vid/gal2-17.jpg', '../img and vid/gal2-16.jpg', '../img and vid/gal2-18.jpg'],
+
+    gallery3: ['../img and vid/gal3-1.jpg', '../img and vid/gal3-2.jpg', '../img and vid/gal3-3.jpg', '../img and vid/gal3-4.jpg', '../img and vid/gal3-5.jpg', '../img and vid/gal3-6.jpg', '../img and vid/gal3-7.jpg',
+     '../img and vid/gal3-8.jpg', '../img and vid/gal3-9.jpg', '../img and vid/gal3-10.jpg', '../img and vid/gal3-11.jpg', '../img and vid/gal3-12.jpg', '../img and vid/gal3-13.jpg', '../img and vid/gal3-14.jpg',
+      '../img and vid/gal3-15.jpg', '../img and vid/gal3-16.jpg', '../img and vid/gal3-17.jpg', '../img and vid/gal3-18.jpg', '../img and vid/gal3-19.jpg', '../img and vid/gal3-20.jpg', '../img and vid/gal3-21.jpg']
   };
 
   let currentGallery = '';
@@ -937,6 +965,25 @@
     currentIndex = (currentIndex - 1 + galleries[currentGallery].length) % galleries[currentGallery].length;
     document.getElementById('lightbox-img').src = galleries[currentGallery][currentIndex];
   }
+
+  document.addEventListener('keydown', function (event) {
+  // Only respond if lightbox is open
+  const lightbox = document.getElementById('lightbox');
+  if (lightbox.style.display !== 'flex') return;
+
+  switch (event.key) {
+    case 'ArrowRight': // → Next
+      nextModal();
+      break;
+    case 'ArrowLeft': // ← Previous
+      prevModal();
+      break;
+    case 'Escape': // Esc to close
+      closeModal();
+      break;
+  }
+});
+
 </script>
 
 
