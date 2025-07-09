@@ -653,7 +653,31 @@
   border-radius: 5px;
 }
 
+.quantity {
+  display: flex;
+  align-items: center;
+}
 
+.qty-btn {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 10 15px;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 4px;
+
+}
+
+.qty-input {
+  width: 60px;
+  text-align: center;
+  padding: 8px;
+  font-size: 16px;
+  margin: 0 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 
 
 
@@ -1139,7 +1163,7 @@
   <h3>Shopping Cart</h3>
   <div id="cart-items"></div>
   <hr>
-  <div class="sidebuttons" style="margin-top: 20px;">
+  <div class="sidebuttons" style="margin-top: 20px; margin-bottom: 40px;">
     <button class="cancel" onclick="clearCart()" style="margin-right: 10px;">Cancel All</button>
     <button class="checkout" onclick="checkout()">Checkout</button>
   </div>
@@ -1211,43 +1235,51 @@ document.getElementById('closeCart').addEventListener('click', () => {
   cart.forEach((item, index) => {
     subtotal += item.price * item.quantity;
 
-    container.innerHTML += `
-      <div style="display: flex; gap: 10px; border-bottom: 1px solid #ccc; padding: 10px 0;">
-        <img src="${item.image}" alt="${item.name}" style="width: 130px; height: 130px; object-fit: cover;">
-        <div style="flex: 1;">
-          <strong>${item.name}</strong><br>
-          <div style="font-size: 14px; margin: 10px;">₱${item.price} x ${item.quantity} = ₱${item.price * item.quantity}</div>
+   container.innerHTML += `
+  <div style="position: relative; display: flex; gap: 10px; border-bottom: 1px solid #ccc; padding: 10px 0;">
+    
+    <!-- Remove X button -->
+    <button onclick="removeItem(${index})" 
+      style="position: absolute; top: 5px; right: -15px; background: none; border: none; font-size: 18px; color: #888; cursor: pointer;">
+      &times;
+    </button>
+    
+    <img src="${item.image}" alt="${item.name}" style="width: 130px; height: 130px; object-fit: cover;">
+    
+    <div style="flex: 1;">
+      <strong>${item.name}</strong><br>
+      <div style="font-size: 14px; margin: 10px;">₱${item.price} x ${item.quantity} = ₱${item.price * item.quantity}</div>
 
-          <div style="margin-top: 5px;">
-            <label>Size:</label>
-            <select onchange="updateSize(${index}, this.value)">
-              <option value="Small"${item.size === 'Small' ? ' selected' : ''}>Small</option>
-              <option value="Medium"${item.size === 'Medium' ? ' selected' : ''}>Medium</option>
-              <option value="Large"${item.size === 'Large' ? ' selected' : ''}>Large</option>
-              <option value="XL"${item.size === 'XL' ? ' selected' : ''}>XL</option>
-            </select>
-          </div>
-
-          <div style="margin-top: 5px;">
-            <label>Color:</label>
-            <select onchange="updateColor(${index}, this.value)">
-              <option value="Black"${item.color === 'Black' ? ' selected' : ''}>Black</option>
-              <option value="White"${item.color === 'White' ? ' selected' : ''}>White</option>
-              <option value="Red"${item.color === 'Red' ? ' selected' : ''}>Red</option>
-            </select>
-          </div>
-
-          <div style="margin: 5px 0;">
-            <label>Qty:</label>
-            <button onclick="changeQty(${index}, -1)">-</button>
-            <span style="margin: 0 8px;">${item.quantity}</span>
-            <button onclick="changeQty(${index}, 1)">+</button>
-          </div>
-
-          <button onclick="removeItem(${index})" style="color: red; background: none; border: none; cursor: pointer; font-size: 13px;">🗑 Remove</button>
-        </div>
+      <!-- Size -->
+      <div style="margin-top: 5px;">
+        <label style="font-size: 14px; font-weight: 600; color: #333;">Size:</label>
+        <select onchange="updateSize(${index}, this.value)" style="padding: 8px 30px 8px 10px; border: 1px solid #ccc; border-radius: 5px; appearance: none; background: white url('data:image/svg+xml;utf8,<svg fill=%22black%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/></svg>') no-repeat right 10px center; background-size: 16px;">
+          <option value="Small"${item.size === 'Small' ? ' selected' : ''}>Small</option>
+          <option value="Medium"${item.size === 'Medium' ? ' selected' : ''}>Medium</option>
+          <option value="Large"${item.size === 'Large' ? ' selected' : ''}>Large</option>
+          <option value="XL"${item.size === 'XL' ? ' selected' : ''}>XL</option>
+        </select>
       </div>
-    `;
+
+      <!-- Color -->
+      <div style="margin-top: 5px;">
+        <label style="font-size: 14px; font-weight: 600; color: #333;">Color:</label>
+        <select onchange="updateColor(${index}, this.value)" style="padding: 8px 30px 8px 10px; border: 1px solid #ccc; border-radius: 5px; appearance: none; background: white url('data:image/svg+xml;utf8,<svg fill=%22black%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/></svg>') no-repeat right 10px center; background-size: 16px;">
+          <option value="Black"${item.color === 'Black' ? ' selected' : ''}>Black</option>
+          <option value="White"${item.color === 'White' ? ' selected' : ''}>White</option>
+        </select>
+      </div>
+
+      <!-- Quantity -->
+      <div style="margin: 10px 0; display: flex; align-items: center; gap: 8px;">
+        <label style="font-size: 14px; font-weight: 600; color: #333;">Qty:</label>
+        <button onclick="changeQty(${index}, -1)" style="background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 16px;">−</button>
+        <span style="min-width: 24px; text-align: center;">${item.quantity}</span>
+        <button onclick="changeQty(${index}, 1)" style="background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 16px;">+</button>
+      </div>
+    </div>
+  </div>
+`;
   });
 
   // Subtotal display
