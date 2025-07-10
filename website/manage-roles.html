@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Manage Roles</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 40px; background: #f7f7f7; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+    select, button { padding: 5px; }
+  </style>
+</head>
+<body>
+
+<h2>👑 Admin Panel: Manage User Roles</h2>
+<table id="users-table">
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Current Role</th>
+      <th>Change Role</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+   const client = supabase.createClient(
+    "",""   // 🔁 Replace with your Supabase URL
+  );
+
+  async function loadUsers() {
+    const session = await supabase.auth.getSession();
+    const currentUserId = session.data.session?.user?.id;
+
+    // Check if current user is admin
+    const { data: me } = await supabase.from("profiles").select("role").eq("id", currentUserId).single();
+    if (me.role !== "admin") {
+      alert("Access denied");
+      window.location.href = "unauthorized.html";
+      return;
+    }
+
+    // Fetch all users & roles
+    const { data: users } = await supabase
+      .from("profiles")
+      .select("id, role")
+      .order("role", { ascending: false });
+
+    const { data: authUsers } = await supabase
+      .from("users")
+      .select("id, email");
+
+    const table = document.querySelector("#users-table tbody");
+    table.innerHTML = "";
+
+    for (let user of users) {
+      const match = authUsers.find(u => u.id === user.id);
+      const email = match?.email || "Unknown";
+
+      table.innerHTML += `
+        <tr>
+          <td>${email}</td>
+          <td>${user.role}</td>
+          <td>
+            <select onchange="updateRole('${user.id}', this.value)">
+              <option ${user.role === "user" ? "selected" : ""}>user</option>
+              <option ${user.role === "admin" ? "selected" : ""}>admin</option>
+            </select>
+          </td>
+        </tr>`;
+    }
+  }
+
+  async function updateRole(userId, newRole) {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ role: newRole })
+      .eq("id", userId);
+
+    if (error) {
+      alert("Update failed: " + error.message);
+    } else {
+      alert("Role updated successfully!");
+      loadUsers();
+    }
+  }
+
+  loadUsers();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Admin-Only Page</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+<body>
+
+<h1>Admin-Only Action</h1>
+<p>Only admins should see this page. You can put forms, CRUD logic, etc. here.</p>
+
+<script>
+     const client = supabase.createClient(
+    "",""   // 🔁 Replace with your Supabase URL
+  );
+
+  window.onload = async () => {
+    const session = await supabase.auth.getSession();
+    const userId = session.data.session?.user?.id;
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .single();
+
+    if (data.role !== "admin") {
+      alert("Admins only. Redirecting...");
+      window.location.href = "unauthorized.html";
+    }
+  };
+</script>
+
+</body>
+</html>

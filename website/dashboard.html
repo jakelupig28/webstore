@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <link rel="icon" href="img and vid/icon3.png" type="image/png">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .user-info {
+      margin: 15px 0;
+      font-size: 16px;
+      color: #333;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: #dc3545;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #bb2d3b;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Welcome to Your Dashboard</h2>
+  <div id="user-info" class="user-info">Loading user info...</div>
+  <button onclick="logout()"><a href="../website/login.html">Logout</button></a>
+</div>
+
+<script>
+  // Initialize Supabase
+   const client = supabase.createClient(
+    "",""   // 🔁 Replace with your Supabase URL
+  );
+
+  // Check session on page load
+ window.onload = async () => {
+    const { data: { session } } = await client.auth.getSession();
+    if (!session?.user) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    const userId = session.user.id;
+
+    const { data: profile, error } = await client
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .single();
+
+    if (error) {
+      alert("Failed to fetch role: " + error.message);
+      return;
+    }
+
+    const role = profile.role;
+
+    // Example: Redirect based on role
+    if (role === "admin") {
+      window.location.href = "admin-dashboard.html";
+    } else if (role === "user") {
+      window.location.href = "user-dashboard.html";
+    } else {
+      window.location.href = "unauthorized.html";
+    }
+  };
+</script>
+
+</body>
+</html>

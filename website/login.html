@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Supabase Login</title>
+  <link rel="icon" href="img and vid/icon3.png" type="image/png">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    h2 {
+      text-align: center;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #0070f3;
+      color: white;
+      border: none;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #0057c2;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Login</h2>
+  <input type="email" id="email" placeholder="Email" required />
+  <input type="password" id="password" placeholder="Password" required />
+  <button onclick="login()">Login</button>
+  <button onclick="window.location.href='register.html'" style="background:#eee; color:#333; margin-top: 5px;">
+    Don't have an account? Register
+  </button>
+</div>
+
+<script>
+  // Initialize Supabase
+     const client = supabase.createClient(
+    "",""   // 🔁 Replace with your Supabase URL
+  );
+
+  async function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    if (!email || !password) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    const { data, error } = await client.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      alert("Login failed: " + error.message);
+    } else {
+      alert("Login successful!");
+      // Redirect to dashboard or another protected page
+      window.location.href = "dashboard.html";
+    }
+  }
+</script>
+
+</body>
+</html>
