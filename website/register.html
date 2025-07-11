@@ -59,9 +59,11 @@
 
 <script>
   // Initialize Supabase client
-  const client = supabase.createClient(
-    "",""   // 🔁 Replace with your Supabase URL
+    const client = supabase.createClient(
+    "",
+    ""   // 🔁 Replace with your Supabase URL
   );
+  
   async function register() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;

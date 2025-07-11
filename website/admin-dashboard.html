@@ -7,80 +7,152 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f8f9fa;
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f5f5f5;
+    }
+    .layout {
       display: flex;
-      justify-content: center;
-      align-items: center;
       height: 100vh;
     }
-    .container {
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      max-width: 500px;
-      width: 100%;
+    .sidebar {
+      width: 240px;
+      background-color: #004d40;
+      color: white;
+      padding-top: 20px;
+      flex-shrink: 0;
+    }
+    .sidebar h2 {
       text-align: center;
+      font-size: 20px;
+      margin-bottom: 30px;
     }
-    h2 {
-      color: #0d6efd;
+    .sidebar a {
+      display: block;
+      padding: 12px 24px;
+      color: white;
+      text-decoration: none;
     }
-    .info {
-      margin: 20px 0;
-      font-size: 16px;
+    .sidebar a:hover {
+      background-color: #00796b;
+    }
+    .main {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .topbar {
+      background-color: #009688;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .cards {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      flex: 1 1 250px;
+    }
+    .card h3 {
+      margin-top: 0;
     }
     button {
-      padding: 10px 20px;
-      background-color: #dc3545;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
+      background-color: transparent;
+      border: 1px solid white;
+      padding: 6px 12px;
+      color: white;
       cursor: pointer;
-      font-weight: bold;
+    }
+    button:hover {
+      background-color: #00796b;
     }
   </style>
 </head>
 <body>
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>Admin Panel</h2>
+      <a href="#">Dashboard</a>
+      <!-- Add more links as needed -->
+    </div>
 
-<div class="container">
-  <h2>👑 Admin Dashboard</h2>
-  <div class="info" id="admin-info">Loading admin info...</div>
-  <button onclick="logout()">Logout</button>
-</div>
+    <!-- Main Content -->
+    <div class="main">
+      <div class="topbar">
+        <span id="welcome-text">Admin Dashboard</span>
+        <button onclick="logout()">Logout</button>
+      </div>
+
+      <h2 id="welcome-header">Welcome!</h2>
+      <div id="admin-info" style="margin-top: 20px;"></div>
+
+
+      <div class="cards">
+        <div class="card">
+          <h3>Admin Panel</h3>
+          <p>Manage system controls</p>
+        </div>
+        <div class="card">
+          <h3>Reports</h3>
+          <p>View activity logs</p>
+        </div>
+        <div class="card">
+          <h3>Messages</h3>
+          <p>No new messages</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <script>
    const client = supabase.createClient(
-    "",""   // 🔁 Replace with your Supabase URL
+    "",
+    ""   // 🔁 Replace with your Supabase URL
   );
 
   window.onload = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await client.auth.getSession();
 
-    if (!session || !session.user) {
-      window.location.href = "login.html";
-      return;
-    }
-
-    const user = session.user;
-    const role = user.user_metadata?.role;
-
-    if (role !== "admin") {
-      alert("Access denied. Admins only.");
-      window.location.href = "unauthorized.html";
-      return;
-    }
-
-    document.getElementById("admin-info").innerHTML = `
-      <strong>Email:</strong> ${user.email}<br/>
-      <strong>Role:</strong> ${role}
-    `;
-  };
-
-  async function logout() {
-    await supabase.auth.signOut();
+  if (!session || !session.user) {
     window.location.href = "login.html";
+    return;
   }
+
+  const user = session.user;
+  const role = user.user_metadata?.role || "admin";
+
+  if (role !== "admin") {
+    alert("Access denied. Admins only.");
+    window.location.href = "unauthorized.html";
+    return;
+  }
+
+  document.getElementById("admin-info").innerHTML = `
+    <strong>Email:</strong> ${user.email}<br/>
+    <strong>Role:</strong> ${role}
+  `;
+};
+
+
+ async function logout() {
+  console.log("Logging out...");
+  await client.auth.signOut();
+  window.location.href = "login.html";
+}
+
 </script>
 
 </body>
