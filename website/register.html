@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Supabase Register</title>
-  <link rel="icon" href="img and vid/icon3.png" type="image/png">
+  <title>Register</title>
+  <link rel="icon" href="../img and vid/icon3.png" type="image/png">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
     body {
@@ -20,11 +20,12 @@
       padding: 30px;
       border-radius: 10px;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 400px;
+      width: 70%;
+      max-width: 350px;
     }
-    h2 {
+    h1 {
       text-align: center;
+      
     }
     input, button {
       width: 100%;
@@ -32,12 +33,28 @@
       margin-top: 10px;
       border-radius: 6px;
       border: 1px solid #ccc;
+      margin-left: 30px;
+      
     }
+
+    input[type="text"] {
+      width: calc(30% - 20px);
+    }
+
+      input[type="email"] {
+      width: calc(80% - 15px);
+    }
+
+      input[type="password"] {
+      width: calc(80% - 15px);
+    }
+    
     button {
       background-color: #0070f3;
       color: white;
       border: none;
       font-weight: bold;
+      width: calc(87% - 15px);
     }
     button:hover {
       background-color: #0057c2;
@@ -47,7 +64,7 @@
 <body>
 
 <div class="container">
-  <h2>Register</h2>
+  <h1>Register</h1>
   <input type="email" id="email" placeholder="Email" required />
   <input type="password" id="password" placeholder="Password" required />
   <input type="text" id="role" placeholder="Role (optional)" />
@@ -63,7 +80,7 @@
     "",
     ""   // 🔁 Replace with your Supabase URL
   );
-  
+
   async function register() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;

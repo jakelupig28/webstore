@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Supabase Login</title>
-  <link rel="icon" href="img and vid/icon3.png" type="image/png">
+  <title>Login</title>
+  <link rel="icon" href="../img and vid/icon3.png" type="image/png">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
     body {
@@ -21,9 +21,9 @@
       border-radius: 10px;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
       width: 100%;
-      max-width: 400px;
+      max-width: 350px;
     }
-    h2 {
+    h1 {
       text-align: center;
     }
     input, button {
@@ -32,12 +32,15 @@
       margin-top: 10px;
       border-radius: 6px;
       border: 1px solid #ccc;
+      width: calc(80% - 15px);
+      margin-left: 30px;
     }
     button {
       background-color: #0070f3;
       color: white;
       border: none;
       font-weight: bold;
+      width: calc(88% - 18px);
     }
     button:hover {
       background-color: #0057c2;
@@ -47,7 +50,7 @@
 <body>
 
 <div class="container">
-  <h2>Login</h2>
+  <h1>Login</h1>
   <input type="email" id="email" placeholder="Email" required />
   <input type="password" id="password" placeholder="Password" required />
   <button onclick="login()">Login</button>

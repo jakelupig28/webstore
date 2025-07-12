@@ -56,7 +56,7 @@
   );
 
   window.onload = async () => {
-    const { data: { session } } = await client.auth.getSession();
+    const { data: { session } } = await supabase.auth.getSession();
 
     if (!session || !session.user) {
       window.location.href = "login.html";

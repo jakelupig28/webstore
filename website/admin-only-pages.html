@@ -4,11 +4,173 @@
   <meta charset="UTF-8"/>
   <title>Admin-Only Page</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f5f5f5;
+    }
+    .layout {
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 240px;
+      background-color: #004d40;
+      color: white;
+      padding-top: 20px;
+      flex-shrink: 0;
+      height: 100vh;
+    }
+    .sidebar h2 {
+      text-align: center;
+      font-size: 20px;
+      margin-bottom: 30px;
+    }
+    .sidebar a {
+      display: block;
+      padding: 12px 24px;
+      color: white;
+      text-decoration: none;
+    }
+    .sidebar a:hover {
+      background-color: #00796b;
+    }
+    .main {
+      flex: 1;
+      
+      overflow-y: auto;
+    }
+
+    .main h2 {
+      margin-top: 80px;
+      margin-left: 25px;
+    }
+    .topbar {
+      background-color: #009688;
+      color: white;
+      padding: 20px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: absolute;
+      top: 0;
+      z-index: 1;
+      margin-bottom: 20px;
+      width: 1045px;
+      
+
+   
+    }
+    .cards {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      flex: 1 1 250px;
+    }
+    .card h3 {
+      margin-top: 0;
+    }
+    button {
+      background-color: transparent;
+      border: 1px solid #009688;
+      padding: 6px 12px;
+      color: #009688;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-right: 4px;
+      transition: background 0.2s, color 0.2s;
+    }
+    button:hover {
+      background-color: #00796b;
+      color: white;
+      border-color: #00796b;
+    }
+
+    #product-form {
+      margin-top: -20px;
+    }
+    form {
+      background: white;
+      padding: 24px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+      max-width: 400px;
+      margin-bottom: 24px;
+      top: 30%;
+    }
+    label {
+      font-weight: 500;
+      color: #004d40;
+    }
+    input[type="text"], input[type="number"], textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0 16px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 15px;
+    }
+    #product-result {
+      background: #fff3e0;
+      border: 1px solid #ffe0b2;
+      border-radius: 6px;
+      padding: 12px;
+      color: #333;
+      font-family: monospace;
+      white-space: pre-wrap;
+      margin-top: 12px;
+      max-width: 400px;
+    }
+  </style>
 </head>
 <body>
 
-<h1>Admin-Only Action</h1>
-<p>Only admins should see this page. You can put forms, CRUD logic, etc. here.</p>
+<div class="layout">
+  <div class="sidebar">
+    <h2>Admin Panel</h2>
+    <a href="admin-dashboard.html">Dashboard</a>
+    <a href="admin-only-pages.html">Manage Products</a>
+    <a href="manage-roles.html">Manage Roles</a>
+    <a href="products.html">Products</a>
+    <a href="user-dashboard.html">User Dashboard</a>
+    <a href="login.html">Logout</a>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <span>Admin-Only Action</span>
+      <span>Welcome, Admin</span>
+    </div>
+    <h2>Manage Clothing Products</h2>
+    <form id="product-form">
+      <label for="product-id">Product ID (for Update/Delete):</label>
+      <input type="text" id="product-id" name="product-id" placeholder="Leave blank to create new">
+      <label for="product-name">Name:</label>
+      <input type="text" id="product-name" name="product-name" required>
+      <label for="product-description">Description:</label>
+      <textarea id="product-description" name="product-description" required></textarea>
+      <label for="product-price">Price:</label>
+      <input type="number" id="product-price" name="product-price" step="0.01" required>
+      <label for="product-image">Image URL:</label>
+      <input type="text" id="product-image" name="product-image">
+      <div style="margin-top:10px;">
+        <button type="button" onclick="createProduct()">Create</button>
+        <button type="button" onclick="readProduct()">Read</button>
+        <button type="button" onclick="updateProduct()">Update</button>
+        <button type="button" onclick="deleteProduct()">Delete</button>
+      </div>
+    </form>
+    <div id="product-result"></div>
+  </div>
+</div>
 
 <script>
      const client = supabase.createClient(
@@ -31,6 +193,45 @@
       window.location.href = "unauthorized.html";
     }
   };
+</script>
+
+<script>
+// CRUD functions for clothing products
+async function createProduct() {
+  const name = document.getElementById('product-name').value;
+  const description = document.getElementById('product-description').value;
+  const price = parseFloat(document.getElementById('product-price').value);
+  const image = document.getElementById('product-image').value;
+  const { data, error } = await client.from('products').insert([{ name, description, price, image }]);
+  document.getElementById('product-result').innerText = error ? error.message : 'Product created!';
+}
+
+async function readProduct() {
+  const id = document.getElementById('product-id').value;
+  let query = client.from('products').select('*');
+  if (id) query = query.eq('id', id);
+  const { data, error } = await query;
+  document.getElementById('product-result').innerText = error ? error.message : JSON.stringify(data, null, 2);
+}
+
+async function updateProduct() {
+  const id = document.getElementById('product-id').value;
+  if (!id) return document.getElementById('product-result').innerText = 'Product ID required for update.';
+  const name = document.getElementById('product-name').value;
+  const description = document.getElementById('product-description').value;
+  const price = parseFloat(document.getElementById('product-price').value);
+  const image = document.getElementById('product-image').value;
+  const { data, error } = await client.from('products').update({ name, description, price, image }).eq('id', id);
+  document.getElementById('product-result').innerText = error ? error.message : 'Product updated!';
+}
+
+async function deleteProduct() {
+  const id = document.getElementById('product-id').value;
+  if (!id) return document.getElementById('product-result').innerText = 'Product ID required for delete.';
+  const { data, error } = await client.from('products').delete().eq('id', id);
+  document.getElementById('product-result').innerText = error ? error.message : 'Product deleted!';
+}
+</script>
 </script>
 
 </body>
