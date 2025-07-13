@@ -6,6 +6,7 @@
   <title>Login</title>
   <link rel="icon" href="../img and vid/icon3.png" type="image/png">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase-keys.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -60,10 +61,10 @@
 </div>
 
 <script>
-  // Initialize Supabase
-    const client = supabase.createClient(
-    "",
-    ""   // 🔁 Replace with your Supabase URL
+  // Initialize Supabase using variables from supabase-keys.js
+  const client = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
   );
   
   async function login() {
@@ -83,9 +84,28 @@
     if (error) {
       alert("Login failed: " + error.message);
     } else {
-      alert("Login successful!");
-      // Redirect to dashboard or another protected page
-      window.location.href = "dashboard.html";
+      // Get user id from session
+      const userId = data.session?.user?.id;
+      if (!userId) {
+        alert("Login error: No user session.");
+        return;
+      }
+      // Fetch user role from Supabase profiles table
+      const { data: profile, error: profileError } = await client
+        .from("profiles")
+        .select("role")
+        .eq("id", userId)
+        .single();
+      if (profileError || !profile) {
+        alert("Could not fetch user role. Redirecting to user dashboard.");
+        window.location.href = "user-dashboard.html";
+        return;
+      }
+      if (profile.role === "admin") {
+        window.location.href = "admin-dashboard.html";
+      } else {
+        window.location.href = "user-dashboard.html";
+      }
     }
   }
 </script>

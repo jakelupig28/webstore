@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="supabase-keys.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>User Dashboard</title>
@@ -51,8 +52,8 @@
 
 <script>
     const client = supabase.createClient(
-    "",
-    ""   // 🔁 Replace with your Supabase URL
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
   );
 
   window.onload = async () => {

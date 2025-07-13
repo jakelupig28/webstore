@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Register</title>
   <link rel="icon" href="../img and vid/icon3.png" type="image/png">
+  <script src="supabase-keys.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
     body {
@@ -14,6 +15,7 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
+      
     }
     .container {
       background: white;
@@ -67,7 +69,7 @@
   <h1>Register</h1>
   <input type="email" id="email" placeholder="Email" required />
   <input type="password" id="password" placeholder="Password" required />
-  <input type="text" id="role" placeholder="Role (optional)" />
+ 
   <button onclick="register()">Register</button>
   <button onclick="window.location.href='login.html'" style="background:#eee; color:#333; margin-top: 5px;">
     Already have an account? Login
@@ -77,9 +79,9 @@
 <script>
   // Initialize Supabase client
     const client = supabase.createClient(
-    "",
-    ""   // 🔁 Replace with your Supabase URL
-  );
+   SUPABASE_URL,
+   SUPABASE_ANON_KEY
+);
 
   async function register() {
     const email = document.getElementById("email").value;

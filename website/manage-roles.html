@@ -4,6 +4,7 @@
   <meta charset="UTF-8"/>
   <title>Manage Roles</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase-keys.js"></script>
   <style>
     body { font-family: sans-serif; padding: 40px; background: #f7f7f7; }
     table { width: 100%; border-collapse: collapse; background: white; }
@@ -27,8 +28,8 @@
 
 <script>
    const client = supabase.createClient(
-    "",
-    ""   // 🔁 Replace with your Supabase URL
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
   );
 
   async function loadUsers() {
