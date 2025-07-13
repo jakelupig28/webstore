@@ -10,8 +10,8 @@ module.exports = async (req, res) => {
     .from('profiles')
     .select('id, role, created_at');
 
-  if (error) {
+  if (error) 
     return res.status(500).json({ error: error.message });
-  }
   res.status(200).json(data);
+
 };
