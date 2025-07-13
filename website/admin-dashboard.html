@@ -138,25 +138,27 @@
     );
 
   window.onload = async () => {
-  const { data: { session } } = await client.auth.getSession();
 
+  const { data: { session } } = await client.auth.getSession();
   if (!session || !session.user) {
     window.location.href = "login.html";
     return;
   }
-
   const user = session.user;
-  const role = user.user_metadata?.role || "admin";
-
-  if (role !== "admin") {
+  // Fetch role from Supabase profiles table for extra security
+  const { data: profile, error } = await client
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+  if (error || !profile || profile.role !== "admin") {
     alert("Access denied. Admins only.");
     window.location.href = "unauthorized.html";
     return;
   }
-
   document.getElementById("admin-info").innerHTML = `
     <strong>Email:</strong> ${user.email}<br/>
-    <strong>Role:</strong> ${role}
+    <strong>Role:</strong> ${profile.role}
   `;
 };
 
