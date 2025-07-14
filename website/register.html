@@ -78,10 +78,11 @@
 
 <script>
   // Initialize Supabase client
-   const client = supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
+  const client = supabase.createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_ANON_KEY
     );
+
 
 
   async function register() {
