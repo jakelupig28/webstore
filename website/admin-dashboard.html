@@ -133,9 +133,9 @@
 
 <script>
     const client = supabase.createClient(
-     process.env.SUPABASE_URL,
-    process.env.SUPABASE_ANON_KEY
-  );
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
 
   window.onload = async () => {
 
@@ -145,20 +145,20 @@
     return;
   }
   const user = session.user;
-  // Fetch role from Supabase profiles table for extra security
-  const { data: profile, error } = await client
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-  if (error || !profile || profile.role !== "admin") {
+  const accessToken = session.access_token || session.user?.access_token;
+  // Validate JWT on backend for admin access
+  const res = await fetch('/api/getProfiles', {
+    headers: accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {}
+  });
+  if (res.status === 401) {
     alert("Access denied. Admins only.");
     window.location.href = "unauthorized.html";
     return;
   }
+  // Optionally show admin info if needed
   document.getElementById("admin-info").innerHTML = `
     <strong>Email:</strong> ${user.email}<br/>
-    <strong>Role:</strong> ${profile.role}
+    <strong>Role:</strong> admin
   `;
 };
 

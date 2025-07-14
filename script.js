@@ -5,7 +5,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!profilesList) return;
 
   try {
-    const res = await fetch('/api/getProfiles');
+    // Get the user's JWT access token from Supabase session
+    let accessToken = null;
+    if (window.supabase && window.supabase.auth) {
+      const session = await window.supabase.auth.getSession();
+      accessToken = session.data.session?.access_token;
+    } else if (window.client && window.client.auth) {
+      const session = await window.client.auth.getSession();
+      accessToken = session.data.session?.access_token;
+    }
+
+    const res = await fetch('/api/getProfiles', {
+      headers: accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {}
+    });
     if (!res.ok) throw new Error('Failed to fetch profiles');
     const profiles = await res.json();
     profilesList.innerHTML = '';

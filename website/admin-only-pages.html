@@ -135,7 +135,8 @@
 </head>
 <body>
 
-<div class="layout">
+<div id="admin-loading" style="text-align:center;margin-top:40px;font-size:18px;">Checking admin access...</div>
+<div class="layout" style="display:none;" id="admin-content">
   <div class="sidebar">
     <h2>Admin Panel</h2>
     <a href="admin-dashboard.html">Dashboard</a>
@@ -180,19 +181,21 @@
   );
 
   window.onload = async () => {
+    document.getElementById('admin-loading').style.display = '';
+    document.getElementById('admin-content').style.display = 'none';
     const session = await supabase.auth.getSession();
-    const userId = session.data.session?.user?.id;
-
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", userId)
-      .single();
-
-    if (data.role !== "admin") {
-      alert("Admins only. Redirecting...");
+    const accessToken = session.data.session?.access_token;
+    // Validate JWT on backend for admin access
+    const res = await fetch('/api/getProfiles', {
+      headers: accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {}
+    });
+    if (res.status === 401 || res.status === 403) {
       window.location.href = "unauthorized.html";
+      return;
     }
+    // If authorized, show content
+    document.getElementById('admin-loading').style.display = 'none';
+    document.getElementById('admin-content').style.display = '';
   };
 </script>
 

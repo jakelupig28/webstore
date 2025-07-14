@@ -44,7 +44,9 @@
 </head>
 <body>
 
-<div class="container">
+
+<div id="user-loading" style="text-align:center;margin-top:40px;font-size:18px;">Checking user access...</div>
+<div class="container" style="display:none;" id="user-content">
   <h2>👤 User Dashboard</h2>
   <div class="info" id="user-info">Loading user info...</div>
   <button onclick="logout()">Logout</button>
@@ -52,32 +54,37 @@
 
 <script>
     const client = supabase.createClient(
-      process.env.SUPABASE_URL,
-    process.env.SUPABASE_ANON_KEY
-  );
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
 
-  window.onload = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
 
-    if (!session || !session.user) {
-      window.location.href = "login.html";
-      return;
-    }
-
-    const user = session.user;
-    const role = user.user_metadata?.role;
-
-    if (role !== "user") {
-      alert("Access denied. Users only.");
-      window.location.href = "unauthorized.html";
-      return;
-    }
-
-    document.getElementById("user-info").innerHTML = `
-      <strong>Email:</strong> ${user.email}<br/>
-      <strong>Role:</strong> ${role}
-    `;
-  };
+    window.onload = async () => {
+      document.getElementById('user-loading').style.display = '';
+      document.getElementById('user-content').style.display = 'none';
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session || !session.user) {
+        window.location.href = "login.html";
+        return;
+      }
+      const user = session.user;
+      // Fetch role from Supabase profiles table for extra security
+      const { data: profile, error } = await client
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      if (error || !profile || profile.role !== "user") {
+        window.location.href = "unauthorized.html";
+        return;
+      }
+      document.getElementById("user-info").innerHTML = `
+        <strong>Email:</strong> ${user.email}<br/>
+        <strong>Role:</strong> ${profile.role}
+      `;
+      document.getElementById('user-loading').style.display = 'none';
+      document.getElementById('user-content').style.display = '';
+    };
 
   async function logout() {
     await client.auth.signOut();

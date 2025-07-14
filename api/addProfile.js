@@ -11,6 +11,29 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // 1. Get JWT from Authorization header
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.replace('Bearer ', '');
+
+  // 2. Validate JWT with Supabase
+  const userRes = await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!userRes.ok) {
+    return res.status(401).json({ error: 'Invalid or missing JWT' });
+  }
+  const user = await userRes.json();
+
+  // 3. Check user role in profiles table
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+  if (profileError || !profile || profile.role !== 'admin') {
+    return res.status(403).json({ error: 'Forbidden: Admins only' });
+  }
+
   try {
     const { role } = req.body;
 
