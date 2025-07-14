@@ -61,54 +61,54 @@
 </div>
 
 <script>
-  // Initialize Supabase using variables from supabase-keys.js
-   const client = supabase.createClient(
+  document.addEventListener('DOMContentLoaded', function() {
+    const client = supabase.createClient(
       SUPABASE_URL,
       SUPABASE_ANON_KEY
     );
 
-  
-  async function login() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    window.login = async function() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-    if (!email || !password) {
-      alert("Please fill in all fields");
-      return;
-    }
-
-    const { data, error } = await client.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      alert("Login failed: " + error.message);
-    } else {
-      // Get user id from session
-      const userId = data.session?.user?.id;
-      if (!userId) {
-        alert("Login error: No user session.");
+      if (!email || !password) {
+        alert("Please fill in all fields");
         return;
       }
-      // Fetch user role from Supabase profiles table
-      const { data: profile, error: profileError } = await client
-        .from("profiles")
-        .select("role")
-        .eq("id", userId)
-        .single();
-      if (profileError || !profile) {
-        alert("Could not fetch user role. Redirecting to user dashboard.");
-        window.location.href = "user-dashboard.html";
-        return;
-      }
-      if (profile.role === "admin") {
-        window.location.href = "admin-dashboard.html";
+
+      const { data, error } = await client.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        alert("Login failed: " + error.message);
       } else {
-        window.location.href = "user-dashboard.html";
+        // Get user id from session
+        const userId = data.session?.user?.id;
+        if (!userId) {
+          alert("Login error: No user session.");
+          return;
+        }
+        // Fetch user role from Supabase profiles table
+        const { data: profile, error: profileError } = await client
+          .from("profiles")
+          .select("role")
+          .eq("id", userId)
+          .single();
+        if (profileError || !profile) {
+          alert("Could not fetch user role. Redirecting to user dashboard.");
+          window.location.href = "user-dashboard.html";
+          return;
+        }
+        if (profile.role === "admin") {
+          window.location.href = "admin-dashboard.html";
+        } else {
+          window.location.href = "user-dashboard.html";
+        }
       }
     }
-  }
+  });
 </script>
 
 </body>
