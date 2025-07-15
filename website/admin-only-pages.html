@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="supabase-keys.js"></script>
+  <script src="control.js"></script>
   <meta charset="UTF-8"/>
   <title>Admin-Only Page</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
@@ -135,15 +135,13 @@
 </head>
 <body>
 
-<div id="admin-loading" style="text-align:center;margin-top:40px;font-size:18px;">Checking admin access...</div>
-<div class="layout" style="display:none;" id="admin-content">
+<div class="layout" id="admin-content">
   <div class="sidebar">
     <h2>Admin Panel</h2>
     <a href="admin-dashboard.html">Dashboard</a>
     <a href="admin-only-pages.html">Manage Products</a>
     <a href="manage-roles.html">Manage Roles</a>
-    <a href="products.html">Products</a>
-    <a href="user-dashboard.html">User Dashboard</a>
+    
     <a href="login.html">Logout</a>
   </div>
   <div class="main">
@@ -181,23 +179,7 @@
     );
 
 
-  window.onload = async () => {
-    document.getElementById('admin-loading').style.display = '';
-    document.getElementById('admin-content').style.display = 'none';
-    const session = await supabase.auth.getSession();
-    const accessToken = session.data.session?.access_token;
-    // Validate JWT on backend for admin access
-    const res = await fetch('/api/getProfiles', {
-      headers: accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {}
-    });
-    if (res.status === 401 || res.status === 403) {
-      window.location.href = "unauthorized.html";
-      return;
-    }
-    // If authorized, show content
-    document.getElementById('admin-loading').style.display = 'none';
-    document.getElementById('admin-content').style.display = '';
-  };
+
 </script>
 
 <script>

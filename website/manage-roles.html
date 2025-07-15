@@ -4,80 +4,233 @@
   <meta charset="UTF-8"/>
   <title>Manage Roles</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="supabase-keys.js"></script>
+  <script src="control.js"></script>
   <style>
-    body { font-family: sans-serif; padding: 40px; background: #f7f7f7; }
-    table { width: 100%; border-collapse: collapse; background: white; }
-    th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
-    select, button { padding: 5px; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f5f5f5;
+    }
+    .layout {
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 240px;
+      background-color: #004d40;
+      color: white;
+      padding-top: 20px;
+      flex-shrink: 0;
+      height: 100vh;
+    }
+    .sidebar h2 {
+      text-align: center;
+      font-size: 20px;
+      margin-bottom: 30px;
+    }
+    .sidebar a {
+      display: block;
+      padding: 12px 24px;
+      color: white;
+      text-decoration: none;
+    }
+    .sidebar a:hover {
+      background-color: #00796b;
+    }
+    .main {
+      flex: 1;
+      overflow-y: auto;
+    }
+    .main h2 {
+      margin-top: 80px;
+      margin-left: 25px;
+    }
+    .topbar {
+      background-color: #009688;
+      color: white;
+      padding: 20px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: absolute;
+      top: 0;
+      z-index: 1;
+      margin-bottom: 20px;
+      width: 1045px;
+    }
+    table {
+      width: 90%;
+      border-collapse: collapse;
+      background: white;
+      margin: 40px auto 0 auto;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 14px 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background: #e0f2f1;
+      color: #004d40;
+    }
+    select, button {
+      padding: 5px;
+      border-radius: 4px;
+      border: 1px solid #009688;
+      color: #009688;
+      background: transparent;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    select:focus, button:focus {
+      outline: none;
+      border-color: #00796b;
+    }
+    button:hover {
+      background-color: #00796b;
+      color: white;
+      border-color: #00796b;
+    }
+    #roles-loading {
+      text-align:center;
+      margin-top:40px;
+      font-size:18px;
+    }
+
+    .main h2 {
+      position: relative;
+      margin-left: 5%;
+      top: 2%;
+    }
+    
   </style>
 </head>
-<body>
 
-<h2>👑 Admin Panel: Manage User Roles</h2>
-<table id="users-table">
-  <thead>
-    <tr>
-      <th>Email</th>
-      <th>Current Role</th>
-      <th>Change Role</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+<div id="roles-loading">Loading users...</div>
+<div class="layout" style="display:none;" id="roles-content">
+  <div class="sidebar">
+    <h2>Admin Panel</h2>
+    <a href="admin-dashboard.html">Dashboard</a>
+    <a href="admin-only-pages.html">Manage Products</a>
+    <a href="manage-roles.html">Manage Roles</a>
+   
+    <a href="login.html">Logout</a>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <span>Manage User Roles</span>
+      <span>Welcome, Admin</span>
+    </div>
+    <h2> Admin Panel: Manage User Roles </h2>
+    <table id="users-table">
+      <thead>
+  <tr>
+    <th>Email</th>
+    <th>Role</th>
+    <th>Change Role</th>
+    <th>Created At</th>
+  </tr>
+</thead>
+
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
 
 <script>
- const client = supabase.createClient(
-        SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
-
+  const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   async function loadUsers() {
-    const session = await supabase.auth.getSession();
-    const currentUserId = session.data.session?.user?.id;
+    document.getElementById('roles-loading').style.display = '';
+    document.getElementById('roles-content').style.display = 'none';
 
-    // Check if current user is admin
-    const { data: me } = await supabase.from("profiles").select("role").eq("id", currentUserId).single();
-    if (me.role !== "admin") {
-      alert("Access denied");
-      window.location.href = "unauthorized.html";
+    const { data: sessionData, error: sessionError } = await client.auth.getSession();
+
+if (sessionError) {
+  console.error("Failed to get session:", sessionError.message);
+  return;
+}
+
+const session = sessionData.session;
+
+if (!session || !session.user) {
+  alert("Not logged in. Redirecting to login...");
+  window.location.href = "login.html";
+  return;
+}
+
+const currentUserId = session.user.id;
+console.log("✅ Current logged-in user ID:", currentUserId);
+
+    // Redirect to login if not logged in
+    if (!session || !session.user) {
+      window.location.href = "login.html";
       return;
     }
 
-    // Fetch all users & roles
-    const { data: users } = await supabase
+    
+
+    // Check if user is admin
+    const { data: me, error: meError } = await client
       .from("profiles")
-      .select("id, role")
-      .order("role", { ascending: false });
+      .select("role")
+      .eq("id", currentUserId)
+      .single();
 
-    const { data: authUsers } = await supabase
-      .from("users")
-      .select("id, email");
+    if (meError) {
+  alert("Error loading your profile: " + meError.message);
+  return;
+}
+if (!me) {
+  alert("Profile not found for your user. Are you registered?");
+  return;
+}
+if (me.role !== "admin") {
+  window.location.href = "unauthorized.html";
+  return;
+}
 
-    const table = document.querySelector("#users-table tbody");
-    table.innerHTML = "";
 
-    for (let user of users) {
-      const match = authUsers.find(u => u.id === user.id);
-      const email = match?.email || "Unknown";
+    // Fetch user data
+  const { data: users, error: userError } = await client
+  .from("user_profiles")
+  .select("id, email, role, created_at")
+  .order("created_at", { ascending: false });
 
-      table.innerHTML += `
-        <tr>
-          <td>${email}</td>
-          <td>${user.role}</td>
-          <td>
-            <select onchange="updateRole('${user.id}', this.value)">
-              <option ${user.role === "user" ? "selected" : ""}>user</option>
-              <option ${user.role === "admin" ? "selected" : ""}>admin</option>
-            </select>
-          </td>
-        </tr>`;
-    }
+if (userError) {
+  alert("Failed to load users: " + userError.message);
+  return;
+}
+
+const table = document.querySelector("#users-table tbody");
+table.innerHTML = "";
+
+for (let user of users) {
+  table.innerHTML += `
+    <tr>
+      <td>${user.email}</td>
+      <td>${user.role}</td>
+      <td>
+        <select onchange="updateRole('${user.id}', this.value)">
+          <option value="user" ${user.role === "user" ? "selected" : ""}>user</option>
+          <option value="admin" ${user.role === "admin" ? "selected" : ""}>admin</option>
+        </select>
+      </td>
+      <td>${new Date(user.created_at).toLocaleString()}</td>
+    </tr>`;
+}
+    // Hide loading message and show content
+
+
+    document.getElementById('roles-loading').style.display = 'none';
+    document.getElementById('roles-content').style.display = '';
   }
 
   async function updateRole(userId, newRole) {
-    const { error } = await supabase
+    const { error } = await client
       .from("profiles")
       .update({ role: newRole })
       .eq("id", userId);
@@ -90,8 +243,17 @@
     }
   }
 
+  // Optional fallback if Supabase fails
+  setTimeout(() => {
+    if (document.getElementById('roles-content').style.display === 'none') {
+      alert("Session expired or failed to load. Redirecting...");
+      window.location.href = "login.html";
+    }
+  }, 7000);
+
   loadUsers();
 </script>
+
 
 </body>
 </html>

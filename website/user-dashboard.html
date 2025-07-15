@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="supabase-keys.js"></script>
+  <script src="control.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>User Dashboard</title>
@@ -53,39 +53,44 @@
 </div>
 
 <script>
-   const client = supabase.createClient(
-        SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
 
+  const client = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 
-
-    window.onload = async () => {
-      document.getElementById('user-loading').style.display = '';
-      document.getElementById('user-content').style.display = 'none';
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session || !session.user) {
-        window.location.href = "login.html";
-        return;
-      }
-      const user = session.user;
-      // Fetch role from Supabase profiles table for extra security
-      const { data: profile, error } = await client
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-      if (error || !profile || profile.role !== "user") {
-        window.location.href = "unauthorized.html";
-        return;
-      }
-      document.getElementById("user-info").innerHTML = `
-        <strong>Email:</strong> ${user.email}<br/>
-        <strong>Role:</strong> ${profile.role}
-      `;
-      document.getElementById('user-loading').style.display = 'none';
-      document.getElementById('user-content').style.display = '';
-    };
+  window.onload = async () => {
+    document.getElementById('user-loading').style.display = '';
+    document.getElementById('user-content').style.display = 'none';
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session || !session.user) {
+      window.location.href = "login.html";
+      return;
+    }
+    const user = session.user;
+    const accessToken = session.access_token || session.user?.access_token || session.data?.session?.access_token;
+    // Validate JWT on backend for user access
+    const res = await fetch('/api/getProfiles', {
+      headers: accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {}
+    });
+    if (res.status === 401 || res.status === 403) {
+      window.location.href = "unauthorized.html";
+      return;
+    }
+    // If authorized, show content and fetch user info
+    // Fetch role from Supabase profiles table for extra security (optional, for display)
+    const { data: profile, error } = await client
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    document.getElementById("user-info").innerHTML = `
+      <strong>Email:</strong> ${user.email}<br/>
+      <strong>Role:</strong> ${profile?.role || 'user'}
+    `;
+    document.getElementById('user-loading').style.display = 'none';
+    document.getElementById('user-content').style.display = '';
+  };
 
   async function logout() {
     await client.auth.signOut();
