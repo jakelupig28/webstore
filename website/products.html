@@ -1,12 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>LARO SPORTS</title>
-    <link rel="icon" href="../img and vid/icon3.png" type="image/png">
-
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -22,6 +15,20 @@
         font-family: Arial, sans-serif;
     }
 
+    .collection-filter {
+      margin: 20px auto 0 auto;
+      text-align: center;
+    }
+    .collection-filter select {
+      font-size: 18px;
+      padding: 6px 18px;
+      border-radius: 6px;
+      border: 1px solid #009688;
+      color: #009688;
+      background: #fff;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
 body, html {
   height: 100%;
 }
@@ -106,7 +113,14 @@ body, html {
         font-family: "Lucida Console", "Courier New", monospace;
         position: absolute;
         top: 75%;
-         left: 32%;
+         left: 31%;
+    }
+
+    .menu li{
+        display: inline-block;
+        
+        text-align: center;
+        align-items: center;
     }
 
     .secondpage {
@@ -178,10 +192,11 @@ body, html {
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
-            padding-top: 50px;
-            padding: 20px;
+            padding-top: 100px;
+            padding-bottom: 60px;
+            padding: 18 0 0 50px;
             background-color: black;
-            margin-top: -250px;
+            margin-top: -373px;
         }
 
         .card {
@@ -193,6 +208,10 @@ body, html {
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             text-align: center;
+        }
+
+        .container h3 {
+            margin-top: -30px;
         }
 
         .card img {
@@ -230,6 +249,33 @@ body, html {
 
         .card button:hover {
             background-color: #78797a;
+        }
+
+        #collection-dropdown a {
+            margin-left: auto;
+            width: 110px;
+            text-align: center;
+           
+           
+        }
+        .sort {
+            position: absolute;
+            top: 91.2%;
+            left: 87.5%;
+            color: white;
+            font-family: "Lucida Console", "Courier New", monospace;
+            width: auto;
+            font-size: 14px;
+        }
+
+         .sorts {
+            position: absolute;
+            top: 91%;
+            left: 67%;
+            color: white;
+            font-family: "Lucida Console", "Courier New", monospace;
+            width: auto;
+
         }
 
 
@@ -272,10 +318,21 @@ body, html {
       <ul>
         <li><a href="homepage.html">Home</a></li>
         <li><a href="#">Shop</a></li>
-        <li><a href="#">Collection</a></li>
+        <li style="position:relative;">
+          <a href="#" id="collection-link" onclick="event.preventDefault(); toggleDropdown();">Collection ▼</a>
+          <div id="collection-dropdown" style="display:none; position:absolute;  top:30px; background:#eeecec; border-radius:6px; box-shadow:5 10px 20px rgba(0,0,0,0.15); z-index:1;">
+            <a href="#" onclick="selectCategory('all'); return false;" style="display:block; margin-left: 12px; padding:10px ; color: black;">All</a>
+            <a href="#" onclick="selectCategory('tees'); return false;" style="display:block; text-align: center; margin-left: 12px;  padding:10px; color: black;">Tees</a>
+            <a href="#" onclick="selectCategory('shorts'); return false;" style="display:block; text-align: center; margin-left: 12px; padding:10px; color:black;">Shorts</a>
+            <a href="#" onclick="selectCategory('headwear'); return false;" style="display:block; text-align: center; margin-left: 12px; padding:10px;  color: black;">Headwear</a>
+            <a href="#" onclick="selectCategory('accessories'); return false;" style="display:block; text-align: center; margin-left: 12px; padding:10px; color: black;">Accessories</a>
+          </div>
+        </li>
         <li><a href="#" onclick="openLightbox('../img and vid/sizechart.jpg')">Size Chart</a></li>
       </ul>
     </div>
+    <div class="sorts"> Sort by: Date, new to old</div>
+    <div class="sort"> 21 products</div>
   </section>
 
   <!-- Lightbox -->
@@ -297,20 +354,185 @@ body, html {
       document.getElementById('lightbox').classList.remove('show');
       document.getElementById('lightbox-img').src = '';
     }
+
+    // Dropdown logic for Collection nav
+    function toggleDropdown() {
+      const dd = document.getElementById('collection-dropdown');
+      dd.style.display = dd.style.display === 'block' ? 'none' : 'block';
+    }
+    function selectCategory(cat) {
+      renderProducts(cat);
+      document.getElementById('collection-dropdown').style.display = 'none';
+    }
+    // Hide dropdown if click outside
+    document.addEventListener('click', function(e) {
+      const dd = document.getElementById('collection-dropdown');
+      const link = document.getElementById('collection-link');
+      if (!dd.contains(e.target) && e.target !== link) {
+        dd.style.display = 'none';
+      }
+    });
+
+    // Product data with categories
+    const products = [
+      {
+        title: 'CROWS Tee',
+        img: '../img and vid/shirt.jpg',
+        description: 'Available Sizes:<br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm',
+        price: '400php',
+        category: 'tees'
+      },
+      {
+        title: 'EVIDENCE Tee',
+        img: '../img and vid/shirt1.jpg',
+        description: 'Available Sizes:<br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm',
+        price: '400php',
+        category: 'tees'
+      },
+      {
+        title: 'RECORDS Tee',
+        img: '../img and vid/shirt2.jpg',
+        description: 'Available Sizes:<br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm',
+        price: '400php',
+        category: 'tees'
+      },
+      {
+        title: 'BOGO Tee',
+        img: '../img and vid/bogo.jpg',
+        description: 'Available Sizes:<br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm',
+        price: '400php',
+        category: 'tees'
+      },
+      {
+        title: 'BLOOD Tee',
+        img: '../img and vid/tshirt-blood.jpg',
+        description: 'Available Sizes:<br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm',
+        price: '400php',
+        category: 'tees'
+      },
+      {
+        title: 'ADRENALINE Tee',
+        img: '../img and vid/polo shirt.jpg',
+        description: 'Available Sizes:<br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm',
+        price: '300php',
+        category: 'tees'
+      },
+      {
+        title: 'LOGO Tee',
+        img: '../img and vid/shirt3.jpg',
+        description: 'Available Sizes:<br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm',
+        price: '300php',
+        category: 'tees'
+      },
+      {
+        title: 'Classic Jersey',
+        img: '../img and vid/shirt4.jpg',
+        description: 'Available Sizes:<br> Medium, Large, XL <br> Box Fit <br> Knitmesh Fabric',
+        price: '400php',
+        category: 'tees'
+      },
+      {
+        title: 'SWEAT Pants',
+        img: '../img and vid/FB_IMG_1737269235831.jpg',
+        description: 'Available Sizes:<br> Medium, Large <br> French Terry <br> 400gsm',
+        price: '600php',
+        category: 'shorts'
+      },
+      {
+        title: 'STRING Bag',
+        img: '../img and vid/bag.jpg',
+        description: 'Available Sizes:<br> One Size <br> Nylon-Cotton Fabric <br> 230gsm',
+        price: '400php',
+        category: 'accessories'
+      },
+      {
+        title: 'VISION Shades',
+        img: '../img and vid/accessories.jpg',
+        description: 'Available Sizes:<br> Matte Black <br> With Hard Case <br> One Colorway',
+        price: '200php',
+        category: 'accessories'
+      },
+      {
+        title: 'LARO Sticker Pack',
+        img: '../img and vid/sticker.jpg',
+        description: 'Unique Design Stickers<br> Purchase Tee for Freebie <br> Random Pick <br> 8 Stickers',
+        price: '150php',
+        category: 'accessories'
+      },
+      {
+        title: 'LSPORTS Cap',
+        img: '../img and vid/capper.jpg',
+        description: 'Available Sizes:<br> Adjustable <br> One Colorway <br> Mesh-Cotton Fabric',
+        price: '250php',
+        category: 'headwear'
+      },
+      {
+        title: 'PHANTOM Cap',
+        img: '../img and vid/cap.jpg',
+        description: 'Available Sizes:<br> Adjustable <br> One Colorway <br> Mesh-Cotton Fabric',
+        price: '250php',
+        category: 'headwear'
+      },
+      {
+        title: 'PURPYETI Head',
+        img: '../img and vid/yeti.jpg',
+        description: 'Available Sizes:<br> Adjustable <br> Mesh-Cotton Fabric <br> One Colorway',
+        price: '250php',
+        category: 'headwear'
+      },
+      {
+        title: 'Classic Ski MASK',
+        img: '../img and vid/head.jpg',
+        description: 'Available Sizes:<br> ONE SIZE <br> Nylon-Cotton Fabric <br> 230gsm',
+        price: '400php',
+        category: 'headwear'
+      }
+    ];
+
+    function renderProducts(category = 'all') {
+      const container = document.getElementById('products-container');
+      container.innerHTML = '';
+      let filtered = products;
+      if (category && category !== 'all') {
+        filtered = products.filter(p => p.category === category);
+      }
+      if (filtered.length === 0) {
+        container.innerHTML = '<p style="color:white;text-align:center;width:100%">No products found.</p>';
+        return;
+      }
+      for (const p of filtered) {
+        container.innerHTML += `
+          <div class="card">
+            <img src="${p.img}" alt="${p.title}">
+            <div class="card-content">
+              <h3 class="card-title">${p.title}</h3>
+              <p class="card-description">${p.description}<br><h4>${p.price}</h4></p>
+              <button>Add to Cart</button>
+              <button>Buy Now</button>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Initial render
+    renderProducts();
   </script>
 
 
  
-        <div class="container">
-            <div class="card">
+    <div class="container" id="products-container">
+      <!-- Product cards will be rendered here by JS -->
+        <div class="card">
                 <img src="../img and vid/shirt.jpg" alt="Clothing 1">
                 <div class="card-content">
                     <h3 class="card-title">CROWS Tee</h3>
                     <p class="card-description">Available Sizes:
                         <br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm <br><h4>400php</h4>
                     </p>
-                    <button>Add to Cart</button>
-                    <button>Buy Now</button>
+                  <button class="add-to-cart" data-image="../img and vid/shirt.jpg">Add to Cart</button>
+                  <button class="buy-now">Buy Now</button>
+
                 </div>
             </div>
             <!-- repeat more cards... -->
@@ -322,8 +544,8 @@ body, html {
             <p class="card-description">Available Sizes:
                 <br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm <br><h4>400php</h4>
             </p>
-            <button>Add to Cart</button>
-            <button>Buy Now</button>
+            <button class="add-to-cart" data-image="../img and vid/shirt1.jpg">Add to Cart</button>
+            <button class="buy-now">Buy Now</button>
         </div>
     </div>
 
@@ -334,8 +556,8 @@ body, html {
             <h3 class="card-title">RECORDS Tee</h3>
             <p class="card-description">Available Sizes:
                 <br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm <br><h4>400php</h4></p>
-            <button>Add to Cart</button>
-            <button>Buy Now</button>
+            <button class="add-to-cart" data-image="../img and vid/shirt2.jpg">Add to Cart</button>
+            <button class="buy-now">Buy Now</button>
         </div>
     </div>
 
@@ -347,8 +569,8 @@ body, html {
             <h3 class="card-title">BOGO Tee</h3>
             <p class="card-description">Available Sizes:
                 <br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm <br><h4>400php</h4></p>
-            <button>Add to Cart</button>
-            <button>Buy Now</button>
+             <button class="add-to-cart" data-image="../img and vid/bogo.jpg">Add to Cart</button>
+             <button class="buy-now">Buy Now</button>
         </div>
     </div>
 
@@ -358,8 +580,8 @@ body, html {
             <h3 class="card-title">BLOOD Tee</h3>
             <p class="card-description">Available Sizes:
                 <br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm <br><h4>400php</h4></p>
-            <button>Add to Cart</button>
-            <button>Buy Now</button>
+             <button class="add-to-cart" data-image="../img and vid/tshirt-blood.jpg">Add to Cart</button>
+             <button class="buy-now">Buy Now</button>
         </div>
     </div>
 
@@ -369,8 +591,8 @@ body, html {
             <h3 class="card-title">ADRENALINE Tee</h3>
             <p class="card-description">Available Sizes:
                 <br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm <br><h4>300php</h4></p>
-            <button>Add to Cart</button>
-            <button>Buy Now</button>
+            <button class="add-to-cart" data-image="../img and vid/polo shirt.jpg">Add to Cart</button>
+            <button class="buy-now">Buy Now</button>
         </div>
     </div>
 
@@ -380,8 +602,8 @@ body, html {
             <h3 class="card-title">LOGO Tee</h3>
             <p class="card-description">Available Sizes:
                 <br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm <br><h4>300php</h4></p>
-            <button>Add to Cart</button>
-            <button>Buy Now</button>
+             <button class="add-to-cart" data-image="../img and vid/shirt3.jpg">Add to Cart</button>
+             <button class="buy-now">Buy Now</button>
         </div>
     </div>
 
@@ -396,8 +618,8 @@ body, html {
              <h3 class="card-title">Classic Jersey</h3>
              <p class="card-description">Available Sizes:
                 <br> Medium, Large, XL <br> Box Fit <br> Knitmesh Fabric <br> <h4>400php</h4></p>
-            <button>Add to Cart</button>
-            <button>Buy Now</button>
+          <button class="add-to-cart" data-image="../img and vid/shirt4.jpg">Add to Cart</button>
+           <button class="buy-now">Buy Now</button>
         </div>
     </div>
       <!-- Product 5 -->
@@ -407,8 +629,8 @@ body, html {
             <h3 class="card-title">SWEAT Pants</h3>
             <p class="card-description">Available Sizes:
                 <br> Medium, Large <br> French Terry <br> 400gsm <br><h4>600php</h4></p>
-            <button>Add to Cart</button>
-            <button>Buy Now</button>
+          <button class="add-to-cart" data-image="../img and vid/FB_IMG_1737269235831.jpg">Add to Cart</button>
+           <button class="buy-now">Buy Now</button>
         </div>
     </div>
     <!-- Product 6 -->
@@ -418,8 +640,8 @@ body, html {
             <h3 class="card-title"> STRING Bag</h3>
             <p class="card-description">Available Sizes:
                 <br> One Size <br> Nylon-Cotton Fabric <br> 230gsm <br><h4>400php</h4></p>
-            <button>Add to Cart</button>
-            <button>Buy Now</button>
+           <button class="add-to-cart" data-image="../img and vid/bag.jpg">Add to Cart</button>
+           <button class="buy-now">Buy Now</button>
         </div>
     </div>
      <!-- Product 7 -->
@@ -429,8 +651,8 @@ body, html {
             <h3 class="card-title">VISION Shades</h3>
             <p class="card-description">Available Sizes:
                <br> Matte Black <br> With Hard Case <br> One Colorway <h4>200php</h4></p>
-            <button>Add to Cart</button>
-            <button>Buy Now</button>
+            <button class="add-to-cart" data-image="../img and vid/accessories.jpg">Add to Cart</button>
+             <button class="buy-now">Buy Now</button>
         </div>
     </div>
     <!-- Product 8 -->
@@ -440,8 +662,8 @@ body, html {
             <h3 class="card-title">LARO Sticker Pack</h3>
             <p class="card-description">Unique Design Stickers
                 <br> Purchase Tee for Freebie <br> Random Pick <br> 8 Stickers <br><h4>150php</h4></p>
-            <button>Add to Cart</button>
-            <button>Buy Now</button>
+            <button class="add-to-cart" data-image="../img and vid/sticker.jpg">Add to Cart</button>
+             <button class="buy-now">Buy Now</button>
         </div>
     </div>
       <!-- Product 9 -->
@@ -451,8 +673,8 @@ body, html {
             <h3 class="card-title">LSPORTS Cap</h3>
             <p class="card-description">Available Sizes:
             <br> Adjustable <br> One Colorway <br> Mesh-Cotton Fabric <br><h4>250php</h4></p>
-            <button>Add to Cart</button>
-            <button>Buy Now</button>
+<button class="add-to-cart" data-image="../img and vid/capper.jpg">Add to Cart</button>
+           <button class="buy-now">Buy Now</button>
         </div>
     </div>
      <!-- Product 10 -->
@@ -462,8 +684,8 @@ body, html {
            <h3 class="card-title">PHANTOM Cap</h3>
            <p class="card-description">Available Sizes:
             <br> Adjustable <br> One Colorway <br> Mesh-Cotton Fabric <br><h4>250php</h4></p>
-           <button>Add to Cart</button>
-           <button>Buy Now</button>
+        <button class="add-to-cart" data-image="../img and vid/cap.jpg">Add to Cart</button>
+        <button class="buy-now">Buy Now</button>
       </div>
      </div>
 
@@ -474,8 +696,8 @@ body, html {
         <h3 class="card-title">PURPYETI Head</h3>
         <p class="card-description">Available Sizes:
             <br> Adjustable <br> Mesh-Cotton Fabric <br> One Colorway <br><h4>250php</h4></p>
-        <button>Add to Cart</button>
-        <button>Buy Now</button>
+     <button class="add-to-cart" data-image="../img and vid/yeti.jpg">Add to Cart</button>
+      <button class="buy-now">Buy Now</button>
      </div>
 </div>
          <!-- Product 12 -->
@@ -485,11 +707,18 @@ body, html {
         <h3 class="card-title">Classic Ski MASK</h3>
         <p class="card-description">Available Sizes:
             <br> ONE SIZE <br> Nylon-Cotton Fabric <br> 230gsm <br><h4>400php</h4></p>
-        <button>Add to Cart</button>
-        <button>Buy Now</button>
+        <button class="add-to-cart" data-image="../img and vid/head.jpg">Add to Cart</button>
+         <button class="buy-now">Buy Now</button>
      </div>
 </div>
-</div>
+    </div>
+   
+    
+
+
+
+   
+      
 
 
     
