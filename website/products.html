@@ -277,6 +277,10 @@ body, html {
             width: auto;
 
         }
+        .cardy img {
+          width: 50px;
+          height: 50px;
+        }
 
 
     
@@ -410,6 +414,13 @@ body, html {
         price: '400php',
         category: 'tees'
       },
+       {
+        title: 'SHOOT Tee',
+        img: '../img and vid/shootshirt.jpg',
+        description: 'Available Sizes:<br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm',
+        price: '400php',
+        category: 'tees'
+      },
       {
         title: 'ADRENALINE Tee',
         img: '../img and vid/polo shirt.jpg',
@@ -438,6 +449,13 @@ body, html {
         price: '600php',
         category: 'shorts'
       },
+       {
+        title: 'SPLAT Sweats',
+        img: '../img and vid/sweat-blood.jpg',
+        description: 'Available Sizes:<br> Small, Medium, Large <br> Nylon-Cotton Fabric <br> 230gsm',
+        price: '250php',
+        category: 'shorts'
+      },
       {
         title: 'STRING Bag',
         img: '../img and vid/bag.jpg',
@@ -450,6 +468,13 @@ body, html {
         img: '../img and vid/accessories.jpg',
         description: 'Available Sizes:<br> Matte Black <br> With Hard Case <br> One Colorway',
         price: '200php',
+        category: 'accessories'
+      },
+       {
+        title: 'HANG keychain',
+        img: '../img and vid/hang.jpg',
+        description: 'One Design<br> One Colorway <br> Nylon-Cotton Fabric <br> Plastic Material',
+        price: '100php',
         category: 'accessories'
       },
       {
@@ -486,7 +511,17 @@ body, html {
         description: 'Available Sizes:<br> ONE SIZE <br> Nylon-Cotton Fabric <br> 230gsm',
         price: '400php',
         category: 'headwear'
+      },
+      {
+        title: 'Goodmorning Towel',
+        img: '../img and vid/towel.jpg',
+        description: 'One Size <br> One Color <br> Nylon-Cotton Fabric <br> 230gsm',
+        price: '200php',
+        category: 'headwear'
       }
+     
+      
+     
     ];
 
     function renderProducts(category = 'all') {
@@ -586,6 +621,17 @@ body, html {
     </div>
 
     <div class="card">
+        <img src="../img and vid/shootshirt.jpg" alt="Clothing 5">
+        <div class="card-content">
+            <h3 class="card-title">SHOOT Tee</h3>
+            <p class="card-description">Available Sizes:
+                <br> Small, Medium, Large, XL <br> Oversized Fit <br> 230gsm <br><h4>400php</h4></p>
+             <button class="add-to-cart" data-image="../img and vid/shootshirt.jpg">Add to Cart</button>
+             <button class="buy-now">Buy Now</button>
+        </div>
+    </div>
+
+    <div class="card">
         <img src="../img and vid/polo shirt.jpg" alt="Clothing 6">
         <div class="card-content">
             <h3 class="card-title">ADRENALINE Tee</h3>
@@ -633,6 +679,17 @@ body, html {
            <button class="buy-now">Buy Now</button>
         </div>
     </div>
+     <div class="card">
+        <img src="../img and vid/sweat-blood.jpg" alt="Clothing 12">
+        <div class="card-content">
+            <h3 class="card-title">SPLAT Sweats</h3>
+            <p class="card-description">Available Sizes:
+                <br> Small, Medium, Large <br> Nylon-Cotton Fabric <br> 230gsm <br><h4>250php</h4></p>
+                
+            <button class="add-to-cart" data-image="../img and vid/sweat-blood.jpg">Add to Cart</button>
+             <button class="buy-now">Buy Now</button>
+        </div>
+    </div>
     <!-- Product 6 -->
     <div class="card">
         <img src= "../img and vid/bag.jpg" alt="Clothing 10">
@@ -655,6 +712,16 @@ body, html {
              <button class="buy-now">Buy Now</button>
         </div>
     </div>
+     <div class="card">
+        <img src="../img and vid/hang.jpg" alt="Clothing 12">
+        <div class="card-content">
+            <h3 class="card-title">HANG Keychain</h3>
+            <p class="card-description">One Design
+                <br> Purchase Tee for Freebie <br> One Color <br> Plastic Material <br><h4>100php</h4></p>
+            <button class="add-to-cart" data-image="../img and vid/hang.jpg">Add to Cart</button>
+             <button class="buy-now">Buy Now</button>
+        </div>
+    </div>
     <!-- Product 8 -->
     <div class="card">
         <img src="../img and vid/sticker.jpg" alt="Clothing 12">
@@ -663,6 +730,16 @@ body, html {
             <p class="card-description">Unique Design Stickers
                 <br> Purchase Tee for Freebie <br> Random Pick <br> 8 Stickers <br><h4>150php</h4></p>
             <button class="add-to-cart" data-image="../img and vid/sticker.jpg">Add to Cart</button>
+             <button class="buy-now">Buy Now</button>
+        </div>
+    </div>
+     <div class="card">
+        <img src="../img and vid/towel.jpg" alt="Clothing 12">
+        <div class="card-content">
+            <h3 class="card-title">Goodmorning Towel</h3>
+            <p class="card-description">One Size
+                <br> One Color <br> Nylon-Cotton Fabric <br> Breathable Material<br><h4>200php</h4></p>
+            <button class="add-to-cart" data-image="../img and vid/towel.jpg">Add to Cart</button>
              <button class="buy-now">Buy Now</button>
         </div>
     </div>
