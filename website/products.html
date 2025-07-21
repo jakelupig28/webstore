@@ -93,16 +93,17 @@ body, html {
     }
 
     li.user {
-        left: 90%;
+        left: 83%;
         position: absolute;
         top: 188px;
+      
     }
 
      li.cart {
-       left: 85%;
+       right: -980px;
         position: absolute;
-        top: 188px;
-       
+        top: 36px;
+    
     }
 
     .menu {
@@ -260,7 +261,7 @@ body, html {
         }
         .sort {
             position: absolute;
-            top: 91.2%;
+            top: 95.2%;
             left: 87.5%;
             color: white;
             font-family: "Lucida Console", "Courier New", monospace;
@@ -270,7 +271,7 @@ body, html {
 
          .sorts {
             position: absolute;
-            top: 91%;
+            top: 95%;
             left: 67%;
             color: white;
             font-family: "Lucida Console", "Courier New", monospace;
@@ -281,6 +282,40 @@ body, html {
           width: 50px;
           height: 50px;
         }
+
+    .sidebuttons button {
+    background-color: rgb(17, 12, 12);
+    cursor: pointer;
+    padding: 10px 15px;
+    border: none;
+    font-family: "Lucida Console", "Courier New", monospace;
+    border-radius: 4px;
+}
+
+.cancel {
+    color: white;
+}
+
+.checkout {
+    color: white;
+}
+
+.sidebuttons button:hover {
+    background-color: gray;
+    transition: 0.3s;
+}
+
+.close-arrow {
+  font-size: 28px;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.close-arrow:hover {
+  transform: translateX(-5px) scale(1.2);
+  color: #c2b9b9;
+}
 
 
     
@@ -309,7 +344,12 @@ body, html {
                 </div></a>
                 <ul>
                     <li class="search"><a href="#"><img src="../img and vid/search.png" width="20"></a></li>
-                    <li class="cart"><a href="#"><img src="../img and vid/cart.png" width="20"></a></li>
+                    <li class="cart" style="position: relative;">
+                      <a href="#" onclick="toggleCart()">
+                      <img src="../img and vid/cart.png" width="22">
+                      <span id="cart-count" style="position: absolute; left: 16px; top: -10px; background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px;">0</span>
+                      </a>
+                    </li>
                     <li class="user"><a href="#"><img src="../img and vid/user.png" width="20"></a></li>
                 </ul>
             </div>
@@ -1041,7 +1081,216 @@ body, html {
 
     </div>
    
+
+
+
+<div id="cart-sidebar" style="
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 350px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: -2px 0 10px rgba(0,0,0,0.5);
+  z-index: 9999;
+  padding: 20px;
+  overflow-y: auto;
+  transition: right 0.3s ease;">
+
+  <div class="cart-header">
+  <span id="closeCart" class="close-arrow">&larr;</span>
+  <h3>Your Cart</h3>
+</div>
+
+
+  <h3>Shopping Cart</h3>
+  <div id="cart-items"></div>
+  <hr>
+  <div class="sidebuttons" style="margin-top: 20px; margin-bottom: 40px;">
+    <button class="cancel" onclick="clearCart()" style="margin-right: 10px;">Cancel All</button>
+    <button class="checkout" onclick="checkout()">Checkout</button>
+  </div>
+</div>
+
+
+
+<script>
+
+document.getElementById('closeCart').addEventListener('click', () => {
+  document.getElementById('cart-sidebar').classList.remove('active');
+});
+
+
+
+
+
+  let cart = [];
+
+  function updateCartCount() {
+    document.getElementById('cart-count').innerText = cart.reduce((sum, item) => sum + item.quantity, 0);
+  }
+
+  function toggleCart() {
+    const sidebar = document.getElementById('cart-sidebar');
+    sidebar.style.right = sidebar.style.right === '0px' ? '-400px' : '0px';
+    renderCart();
+  }
+
+ function addToCart(productName, price, image) {
+  const existing = cart.find(item => item.name === productName);
+  if (existing) {
+    existing.quantity++;
+  } else {
+    cart.push({
+      name: productName,
+      price: price,
+      quantity: 1,
+      size: 'Medium',
+      color: 'Black',
+      image: image
+    });
+  }
+  updateCartCount();
+  renderCart();
+  document.getElementById('cart-sidebar').style.right = '0px'; // slide in
+}
+
+
+  function removeItem(index) {
+  const item = cart[index];
+  const confirmRemove = confirm(`Are you sure you want to remove "${item.name}" from your cart?`);
+  
+  if (confirmRemove) {
+    cart.splice(index, 1);
+    updateCartCount();
+    renderCart();
+    saveCart();
+  }
+}
+
+
+  function renderCart() {
+  const container = document.getElementById('cart-items');
+  container.innerHTML = '';
+
+  let subtotal = 0;
+
+  cart.forEach((item, index) => {
+    subtotal += item.price * item.quantity;
+
+   container.innerHTML += `
+  <div style="position: relative; display: flex; gap: 10px; border-bottom: 1px solid #ccc; padding: 10px 0;">
     
+    <!-- Remove X button -->
+    <button onclick="removeItem(${index})" 
+      style="position: absolute; top: 5px; right: -15px; background: none; border: none; font-size: 18px; color: #888; cursor: pointer;">
+      &times;
+    </button>
+    
+    <img src="${item.image}" alt="${item.name}" style="width: 130px; height: 130px; object-fit: cover;">
+    
+    <div style="flex: 1;">
+      <strong>${item.name}</strong><br>
+      <div style="font-size: 14px; margin: 10px;">₱${item.price} x ${item.quantity} = ₱${item.price * item.quantity}</div>
+
+      <!-- Size -->
+      <div style="margin-top: 5px;">
+        <label style="font-size: 14px; font-weight: 600; color: #333;">Size:</label>
+        <select onchange="updateSize(${index}, this.value)" style="padding: 8px 30px 8px 10px; border: 1px solid #ccc; border-radius: 5px; appearance: none; background: white url('data:image/svg+xml;utf8,<svg fill=%22black%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/></svg>') no-repeat right 10px center; background-size: 16px;">
+          <option value="Small"${item.size === 'Small' ? ' selected' : ''}>Small</option>
+          <option value="Medium"${item.size === 'Medium' ? ' selected' : ''}>Medium</option>
+          <option value="Large"${item.size === 'Large' ? ' selected' : ''}>Large</option>
+          <option value="XL"${item.size === 'XL' ? ' selected' : ''}>XL</option>
+        </select>
+      </div>
+
+      <!-- Color -->
+      <div style="margin-top: 5px;">
+        <label style="font-size: 14px; font-weight: 600; color: #333;">Color:</label>
+        <select onchange="updateColor(${index}, this.value)" style="padding: 8px 30px 8px 10px; border: 1px solid #ccc; border-radius: 5px; appearance: none; background: white url('data:image/svg+xml;utf8,<svg fill=%22black%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/></svg>') no-repeat right 10px center; background-size: 16px;">
+          <option value="Black"${item.color === 'Black' ? ' selected' : ''}>Black</option>
+          <option value="White"${item.color === 'White' ? ' selected' : ''}>White</option>
+        </select>
+      </div>
+
+      <!-- Quantity -->
+      <div style="margin: 10px 0; display: flex; align-items: center; gap: 8px;">
+        <label style="font-size: 14px; font-weight: 600; color: #333;">Qty:</label>
+        <button onclick="changeQty(${index}, -1)" style="background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 16px;">−</button>
+        <span style="min-width: 24px; text-align: center;">${item.quantity}</span>
+        <button onclick="changeQty(${index}, 1)" style="background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 16px;">+</button>
+      </div>
+    </div>
+  </div>
+`;
+  });
+
+  // Subtotal display
+  container.innerHTML += `
+    <div style="margin-top: 15px; margin-bottom: 15px; font-weight: bold; font-size: 18px;">
+      Subtotal: ₱${subtotal}
+    </div>
+  `;
+
+  saveCart();
+}
+
+
+
+  function changeQty(index, delta) {
+    cart[index].quantity += delta;
+    if (cart[index].quantity <= 0) cart.splice(index, 1);
+    updateCartCount();
+    renderCart();
+  }
+
+  function updateSize(index, size) {
+    cart[index].size = size;
+  }
+
+  function updateColor(index, color) {
+    cart[index].color = color;
+  }
+
+  function clearCart() {
+    cart = [];
+    updateCartCount();
+    renderCart();
+  }
+
+  function checkout() {
+    alert('Checkout feature coming soon!');
+  }
+
+  // Hook "Add to Cart" buttons
+ document.querySelectorAll('.add-to-cart').forEach(button => {
+  button.addEventListener('click', function () {
+    const card = this.closest('.card');
+    const name = card.querySelector('.card-title').innerText;
+    const price = parseInt(card.querySelector('h4').innerText.replace('php', '').trim());
+    const image = this.getAttribute('data-image');
+    addToCart(name, price, image);
+  });
+});
+
+
+
+
+  window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('closeCart').addEventListener('click', () => {
+    document.getElementById('cart-sidebar').style.right = '-400px';
+  });
+
+  // other event listeners...
+});
+
+
+
+
+
+
+
+</script>
 
 
 
