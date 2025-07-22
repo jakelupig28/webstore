@@ -1285,6 +1285,38 @@ document.getElementById('closeCart').addEventListener('click', () => {
 });
 
 
+function renderProducts(category = 'all') {
+  const container = document.getElementById('products-container');
+  container.innerHTML = '';
+  let filtered = products;
+
+  if (category && category !== 'all') {
+    filtered = products.filter(p => p.category === category);
+  }
+
+  // ✅ Update the product count
+  const productCountElement = document.querySelector('.sort');
+  productCountElement.textContent = `${filtered.length} product${filtered.length !== 1 ? 's' : ''}`;
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<p style="color:white;text-align:center;width:100%">No products found.</p>';
+    return;
+  }
+
+  for (const p of filtered) {
+    container.innerHTML += `
+      <div class="card">
+        <img src="${p.img}" alt="${p.title}">
+        <div class="card-content">
+          <h3 class="card-title">${p.title}</h3>
+          <p class="card-description">${p.description}<br><h4>${p.price}</h4></p>
+          <button>Add to Cart</button>
+          <button>Buy Now</button>
+        </div>
+      </div>
+    `;
+  }
+}
 
 
 
