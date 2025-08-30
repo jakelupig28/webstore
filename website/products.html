@@ -668,22 +668,34 @@ body, html {
       const container = document.getElementById('products-container');
       container.innerHTML = '';
       let filtered = products;
+
       if (category && category !== 'all') {
         filtered = products.filter(p => p.category === category);
       }
+
+      // Update product count
+      const productCountElement = document.querySelector('.sort');
+      if (productCountElement) {
+        productCountElement.textContent = `${filtered.length} product${filtered.length !== 1 ? 's' : ''}`;
+      }
+
       if (filtered.length === 0) {
         container.innerHTML = '<p style="color:white;text-align:center;width:100%">No products found.</p>';
         return;
       }
+
       for (const p of filtered) {
+        // ensure price text contains php so existing parsing works
+        const priceText = p.price && p.price.toString().includes('php') ? p.price : `${p.price}php`;
         container.innerHTML += `
           <div class="card">
-            <img src="${p.img}" alt="${p.title}">
+            <img src="${p.img || ''}" alt="${p.title || ''}">
             <div class="card-content">
-              <h3 class="card-title">${p.title}</h3>
-              <p class="card-description">${p.description}<br><h4>${p.price}</h4></p>
-              <button>Add to Cart</button>
-              <button>Buy Now</button>
+              <h3 class="card-title">${p.title || ''}</h3>
+              <p class="card-description">${p.description || ''}</p>
+              <h4>${priceText}</h4>
+              <button class="add-to-cart" data-image="${p.img || ''}">Add to Cart</button>
+              <button class="buy-now">Buy Now</button>
             </div>
           </div>
         `;
@@ -692,6 +704,41 @@ body, html {
 
     // Initial render
     renderProducts();
+
+    // Attach a single event-delegation listener (guarded) so Add to Cart works for dynamically rendered items
+    // Attach a single event-delegation listener (guarded) so Add to Cart works for dynamically rendered items
+if (!window._productsDelegationAttached) {
+  const productsContainer = document.getElementById('products-container');
+  if (productsContainer) {
+    productsContainer.addEventListener('click', function(e) {
+      const target = e.target;
+
+      // Handle Add to Cart
+      if (target.classList?.contains('add-to-cart')) {
+        const card = target.closest('.card');
+        if (!card) return;
+        const name = card.querySelector('.card-title')?.innerText || 'Item';
+        const price = parseInt(card.querySelector('h4')?.innerText.replace(/[^0-9]/g, ''), 10) || 0;
+        const image = target.getAttribute('data-image') || card.querySelector('img')?.src || '';
+        addToCart(name, price, image);
+      }
+
+      // Handle Buy Now
+      if (target.classList?.contains('buy-now')) {
+        const card = target.closest('.card');
+        if (!card) return;
+        const name = card.querySelector('.card-title')?.innerText || 'Item';
+        const price = parseInt(card.querySelector('h4')?.innerText.replace(/[^0-9]/g, ''), 10) || 0;
+        const image = card.querySelector('img')?.src || '';
+        addToCart(name, price, image);
+        checkout(); // or alert(`Buying now: ${name}`);
+      }
+    });
+
+    window._productsDelegationAttached = true; // 
+  }
+}
+
   </script>
 
 
@@ -1285,50 +1332,6 @@ document.getElementById('closeCart').addEventListener('click', () => {
 });
 
 
-function renderProducts(category = 'all') {
-  const container = document.getElementById('products-container');
-  container.innerHTML = '';
-  let filtered = products;
-
-  if (category && category !== 'all') {
-    filtered = products.filter(p => p.category === category);
-  }
-
-  // ✅ Update the product count
-  const productCountElement = document.querySelector('.sort');
-  productCountElement.textContent = `${filtered.length} product${filtered.length !== 1 ? 's' : ''}`;
-
-  if (filtered.length === 0) {
-    container.innerHTML = '<p style="color:white;text-align:center;width:100%">No products found.</p>';
-    return;
-  }
-
-  for (const p of filtered) {
-    container.innerHTML += `
-      <div class="card">
-        <img src="${p.img}" alt="${p.title}">
-        <div class="card-content">
-          <h3 class="card-title">${p.title}</h3>
-          <p class="card-description">${p.description}<br><h4>${p.price}</h4></p>
-          <button>Add to Cart</button>
-          <button>Buy Now</button>
-        </div>
-      </div>
-    `;
-  }
-}
-
-
-
-
-
-</script>
-
-
-
-   
-      
-
 
     
  
@@ -1340,7 +1343,7 @@ function renderProducts(category = 'all') {
 
 
 
-
+</script>
 
 
 
