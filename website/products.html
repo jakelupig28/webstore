@@ -664,80 +664,88 @@ body, html {
      
     ];
 
-    function renderProducts(category = 'all') {
-      const container = document.getElementById('products-container');
-      container.innerHTML = '';
-      let filtered = products;
 
-      if (category && category !== 'all') {
-        filtered = products.filter(p => p.category === category);
-      }
+  function renderProducts(category = 'all') {
+  const container = document.getElementById('products-container');
+  container.innerHTML = '';
+  let filtered = products;
 
-      // Update product count
-      const productCountElement = document.querySelector('.sort');
-      if (productCountElement) {
-        productCountElement.textContent = `${filtered.length} product${filtered.length !== 1 ? 's' : ''}`;
-      }
+  if (category && category !== 'all') {
+    filtered = products.filter(p => p.category === category);
+  }
 
-      if (filtered.length === 0) {
-        container.innerHTML = '<p style="color:white;text-align:center;width:100%">No products found.</p>';
-        return;
-      }
+  // Update product count
+  const productCountElement = document.querySelector('.sort');
+  if (productCountElement) {
+    productCountElement.textContent = `${filtered.length} product${filtered.length !== 1 ? 's' : ''}`;
+  }
 
-      for (const p of filtered) {
-        // ensure price text contains php so existing parsing works
-        const priceText = p.price && p.price.toString().includes('php') ? p.price : `${p.price}php`;
-        container.innerHTML += `
-          <div class="card">
-            <img src="${p.img || ''}" alt="${p.title || ''}">
-            <div class="card-content">
-              <h3 class="card-title">${p.title || ''}</h3>
-              <p class="card-description">${p.description || ''}</p>
-              <h4>${priceText}</h4>
-              <button class="add-to-cart" data-image="${p.img || ''}">Add to Cart</button>
-              <button class="buy-now">Buy Now</button>
-            </div>
-          </div>
-        `;
-      }
-    }
+  if (filtered.length === 0) {
+    container.innerHTML = '<p style="color:white;text-align:center;width:100%">No products found.</p>';
+    return;
+  }
+
+  for (const p of filtered) {
+  const priceText = p.price && p.price.toString().includes('php') ? p.price : `${p.price}php`;
+  container.innerHTML += `
+    <div class="card">
+      <img src="${p.img || ''}" alt="${p.title || ''}">
+      <div class="card-content">
+        <h3 class="card-title">${p.title || ''}</h3>
+        <p class="card-description">${p.description || ''}</p>
+        <h4>${priceText}</h4>
+        <!-- ✅ Added data-category here -->
+        <button 
+          class="add-to-cart" 
+          data-image="${p.img || ''}" 
+          data-category="${p.category || ''}">
+          Add to Cart
+        </button>
+        <button class="buy-now">Buy Now</button>
+      </div>
+    </div>
+  `;
+}
+}
+
+
 
     // Initial render
     renderProducts();
 
-    // Attach a single event-delegation listener (guarded) so Add to Cart works for dynamically rendered items
-    // Attach a single event-delegation listener (guarded) so Add to Cart works for dynamically rendered items
-if (!window._productsDelegationAttached) {
+   // Attach only once (prevents duplicate bindings)
+if (!window._cartDelegationAttached) {
   const productsContainer = document.getElementById('products-container');
-  if (productsContainer) {
-    productsContainer.addEventListener('click', function(e) {
-      const target = e.target;
+  
+  productsContainer.addEventListener('click', function (e) {
+    const btn = e.target.closest('.add-to-cart');
+    if (btn) {
+      // Find product details from card
+      const card = btn.closest('.card');
+      const title = card.querySelector('.card-title').textContent;
+      const price = card.querySelector('h4').textContent;
+      const img = btn.getAttribute('data-image');
 
-      // Handle Add to Cart
-      if (target.classList?.contains('add-to-cart')) {
-        const card = target.closest('.card');
-        if (!card) return;
-        const name = card.querySelector('.card-title')?.innerText || 'Item';
-        const price = parseInt(card.querySelector('h4')?.innerText.replace(/[^0-9]/g, ''), 10) || 0;
-        const image = target.getAttribute('data-image') || card.querySelector('img')?.src || '';
-        addToCart(name, price, image);
-      }
+      console.log("✅ Added to cart:", { title, price, img });
 
-      // Handle Buy Now
-      if (target.classList?.contains('buy-now')) {
-        const card = target.closest('.card');
-        if (!card) return;
-        const name = card.querySelector('.card-title')?.innerText || 'Item';
-        const price = parseInt(card.querySelector('h4')?.innerText.replace(/[^0-9]/g, ''), 10) || 0;
-        const image = card.querySelector('img')?.src || '';
-        addToCart(name, price, image);
-        checkout(); // or alert(`Buying now: ${name}`);
-      }
+      document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', function () {
+      const card = this.closest('.card');
+      const name = card.querySelector('.card-title').innerText;
+      const price = parseInt(card.querySelector('h4').innerText.replace('php', '').trim());
+      const image = this.getAttribute('data-image');
+      addToCart(name, price, image);
     });
+  });
 
-    window._productsDelegationAttached = true; // 
-  }
+      // 👉 Call your real cart function here:
+      // addToCart({ title, price, img });
+    }
+  });
+
+  window._cartDelegationAttached = true;
 }
+
 
   </script>
 
@@ -1183,7 +1191,7 @@ document.getElementById('closeCart').addEventListener('click', () => {
     renderCart();
   }
 
- function addToCart(productName, price, image) {
+function addToCart(productName, price, image, category = '') {
   const existing = cart.find(item => item.name === productName);
   if (existing) {
     existing.quantity++;
@@ -1192,15 +1200,18 @@ document.getElementById('closeCart').addEventListener('click', () => {
       name: productName,
       price: price,
       quantity: 1,
-      size: 'Medium',
+      size: category === 'accessories' ? null : 'Medium', // no size for accessories
       color: 'Black',
-      image: image
+      image: image,
+      category: category
     });
   }
   updateCartCount();
   renderCart();
-  document.getElementById('cart-sidebar').style.right = '0px'; // slide in
+  document.getElementById('cart-sidebar').style.right = '0px';
 }
+
+
 
 
   function removeItem(index) {
@@ -1223,54 +1234,59 @@ document.getElementById('closeCart').addEventListener('click', () => {
   let subtotal = 0;
 
   cart.forEach((item, index) => {
-    subtotal += item.price * item.quantity;
+  subtotal += item.price * item.quantity;
 
-   container.innerHTML += `
-  <div style="position: relative; display: flex; gap: 10px; border-bottom: 1px solid #ccc; padding: 10px 0;">
-    
-    <!-- Remove X button -->
-    <button onclick="removeItem(${index})" 
-      style="position: absolute; top: 5px; right: -15px; background: none; border: none; font-size: 18px; color: #888; cursor: pointer;">
-      &times;
-    </button>
-    
-    <img src="${item.image}" alt="${item.name}" style="width: 130px; height: 130px; object-fit: cover;">
-    
-    <div style="flex: 1;">
-      <strong>${item.name}</strong><br>
-      <div style="font-size: 14px; margin: 10px;">₱${item.price} x ${item.quantity} = ₱${item.price * item.quantity}</div>
+  
 
-      <!-- Size -->
-      <div style="margin-top: 5px;">
-        <label style="font-size: 14px; font-weight: 600; color: #333;">Size:</label>
-        <select onchange="updateSize(${index}, this.value)" style="padding: 8px 30px 8px 10px; border: 1px solid #ccc; border-radius: 5px; appearance: none; background: white url('data:image/svg+xml;utf8,<svg fill=%22black%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/></svg>') no-repeat right 10px center; background-size: 16px;">
-          <option value="Small"${item.size === 'Small' ? ' selected' : ''}>Small</option>
-          <option value="Medium"${item.size === 'Medium' ? ' selected' : ''}>Medium</option>
-          <option value="Large"${item.size === 'Large' ? ' selected' : ''}>Large</option>
-          <option value="XL"${item.size === 'XL' ? ' selected' : ''}>XL</option>
-        </select>
-      </div>
+  container.innerHTML += `
+    <div style="position: relative; display: flex; gap: 10px; border-bottom: 1px solid #ccc; padding: 10px 0;">
 
-      <!-- Color -->
-      <div style="margin-top: 5px;">
-        <label style="font-size: 14px; font-weight: 600; color: #333;">Color:</label>
-        <select onchange="updateColor(${index}, this.value)" style="padding: 8px 30px 8px 10px; border: 1px solid #ccc; border-radius: 5px; appearance: none; background: white url('data:image/svg+xml;utf8,<svg fill=%22black%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/></svg>') no-repeat right 10px center; background-size: 16px;">
-          <option value="Black"${item.color === 'Black' ? ' selected' : ''}>Black</option>
-          <option value="White"${item.color === 'White' ? ' selected' : ''}>White</option>
-        </select>
-      </div>
+      <!-- Remove X button -->
+      <button onclick="removeItem(${index})" 
+        style="position: absolute; top: 5px; right: -15px; background: none; border: none; font-size: 18px; color: #888; cursor: pointer;">
+        &times;
+      </button>
+      
+      <img src="${item.image}" alt="${item.name}" style="width: 130px; height: 130px; object-fit: cover;">
+      
+      <div style="flex: 1;">
+        <strong>${item.name}</strong><br>
+        <div style="font-size: 14px; margin: 10px;">₱${item.price} x ${item.quantity} = ₱${item.price * item.quantity}</div>
 
-      <!-- Quantity -->
-      <div style="margin: 10px 0; display: flex; align-items: center; gap: 8px;">
-        <label style="font-size: 14px; font-weight: 600; color: #333;">Qty:</label>
-        <button onclick="changeQty(${index}, -1)" style="background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 16px;">−</button>
-        <span style="min-width: 24px; text-align: center;">${item.quantity}</span>
-        <button onclick="changeQty(${index}, 1)" style="background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 16px;">+</button>
+        ${item.category !== 'accessories' ? `
+        <!-- Size -->
+        
+        <div style="margin-top: 5px;">
+          <label style="font-size: 14px; font-weight: 600; color: #333;">Size:</label>
+          <select onchange="updateSize(${index}, this.value)" style="padding: 8px 30px 8px 10px; border: 1px solid #ccc; border-radius: 5px; appearance: none; background: white url('data:image/svg+xml;utf8,<svg fill=%22black%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/></svg>') no-repeat right 10px center; background-size: 16px;">
+            <option value="Small"${item.size === 'Small' ? ' selected' : ''}>Small</option>
+            <option value="Medium"${item.size === 'Medium' ? ' selected' : ''}>Medium</option>
+            <option value="Large"${item.size === 'Large' ? ' selected' : ''}>Large</option>
+            <option value="XL"${item.size === 'XL' ? ' selected' : ''}>XL</option>
+          </select>
+        </div>` : ''}
+
+        <!-- Color -->
+        <div style="margin-top: 5px;">
+          <label style="font-size: 14px; font-weight: 600; color: #333;">Color:</label>
+          <select onchange="updateColor(${index}, this.value)" style="padding: 8px 30px 8px 10px; border: 1px solid #ccc; border-radius: 5px; appearance: none; background: white url('data:image/svg+xml;utf8,<svg fill=%22black%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/></svg>') no-repeat right 10px center; background-size: 16px;">
+            <option value="Black"${item.color === 'Black' ? ' selected' : ''}>Black</option>
+            <option value="White"${item.color === 'White' ? ' selected' : ''}>White</option>
+          </select>
+        </div>
+
+        <!-- Quantity -->
+        <div style="margin: 10px 0; display: flex; align-items: center; gap: 8px;">
+          <label style="font-size: 14px; font-weight: 600; color: #333;">Qty:</label>
+          <button onclick="changeQty(${index}, -1)" style="background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 16px;">−</button>
+          <span style="min-width: 24px; text-align: center;">${item.quantity}</span>
+          <button onclick="changeQty(${index}, 1)" style="background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 16px;">+</button>
+        </div>
       </div>
     </div>
-  </div>
-`;
-  });
+  `;
+});
+
 
   // Subtotal display
   container.innerHTML += `
@@ -1310,15 +1326,32 @@ document.getElementById('closeCart').addEventListener('click', () => {
   }
 
   // Hook "Add to Cart" buttons
- document.querySelectorAll('.add-to-cart').forEach(button => {
-  button.addEventListener('click', function () {
-    const card = this.closest('.card');
-    const name = card.querySelector('.card-title').innerText;
-    const price = parseInt(card.querySelector('h4').innerText.replace('php', '').trim());
-    const image = this.getAttribute('data-image');
-    addToCart(name, price, image);
+// ✅ Event delegation for Add to Cart (works even after filtering)
+// ✅ Event delegation for Add to Cart
+if (!window._cartDelegationAttached) {
+  const productsContainer = document.getElementById('products-container');
+
+  productsContainer.addEventListener('click', function (e) {
+    const btn = e.target.closest('.add-to-cart');
+    if (btn) {
+      const card = btn.closest('.card');
+      const name = card.querySelector('.card-title').innerText;
+      const price = parseInt(card.querySelector('h4').innerText.replace('php', '').trim());
+      const image = btn.getAttribute('data-image');
+       // 👈 NEW
+
+      const category = btn.getAttribute('data-category') || '';
+addToCart(name, price, image, category);
+
+
+      
+    }
   });
-});
+
+  window._cartDelegationAttached = true;
+}
+
+
 
 
 
