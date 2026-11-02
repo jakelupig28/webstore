@@ -1235,8 +1235,7 @@ export const PRODUCTS = [
     "price": 400,
     "currencyCode": "PHP",
     "images": [
-      "/brand/head_nobg.png",
-      "/brand/head2_nobg.png"
+      "/brand/head_nobg.png"
     ],
     "variants": [
       {

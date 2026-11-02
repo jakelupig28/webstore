@@ -15,7 +15,7 @@ const formatPhp = (val) => {
 };
 
 export default function CartPage() {
-  const { cartCalls } = useStore();
+  const { cartCalls, products } = useStore();
   const cart = cartCalls.cart;
   const edges = cart?.lines?.edges || [];
   const totalQuantity = cart?.totalQuantity || 0;
@@ -87,6 +87,59 @@ export default function CartPage() {
                             <p className="price">
                               ₱{formatPhp(node.merchandise.price?.amount)}
                             </p>
+
+                            {/* Size Adjuster in Cart */}
+                            {(() => {
+                              const targetProduct = products?.find(
+                                p => p.handle === node.merchandise.product?.handle || p.id === node.merchandise.product?.id
+                              );
+                              const availableVariants = targetProduct?.variants || [];
+                              if (availableVariants.length <= 1) return null;
+
+                              return (
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '6px',
+                                    margin: '6px 0'
+                                  }}
+                                >
+                                  <span style={{ fontSize: '11px', color: '#888', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                                    Size:
+                                  </span>
+                                  <div style={{ display: 'inline-flex', gap: '4px', background: 'rgba(255,255,255,0.06)', padding: '2px', borderRadius: '4px' }}>
+                                    {availableVariants.map(v => {
+                                      const isCurrent = node.merchandise.id === v.id || node.merchandise.title === v.title;
+                                      return (
+                                        <button
+                                          key={v.id}
+                                          type="button"
+                                          disabled={isUpdating || !v.availableForSale}
+                                          onClick={() => cartCalls.updateCartLineVariant(node.id, v.id)}
+                                          title={!v.availableForSale ? 'Out of stock' : `Select size ${v.title}`}
+                                          style={{
+                                            padding: '2px 7px',
+                                            fontSize: '11px',
+                                            fontWeight: 600,
+                                            borderRadius: '3px',
+                                            border: 'none',
+                                            cursor: v.availableForSale ? 'pointer' : 'not-allowed',
+                                            background: isCurrent ? '#fff' : 'transparent',
+                                            color: isCurrent ? '#000' : '#aaa',
+                                            transition: 'all 0.15s ease',
+                                            opacity: !v.availableForSale ? 0.35 : 1
+                                          }}
+                                        >
+                                          {v.title}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              );
+                            })()}
 
                             {/* Quantity +/- Adjuster */}
                             <div className="cartQty">

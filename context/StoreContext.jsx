@@ -173,6 +173,61 @@ export const StoreProvider = ({ children }) => {
     return updateCartLine(lineId, 0);
   };
 
+  const updateCartLineVariant = async (lineId, newVariantId) => {
+    setLoadingLine(lineId);
+    try {
+      let currentEdges = [...cart.lines.edges];
+      const lineIndex = currentEdges.findIndex(e => e.node.id === lineId);
+      if (lineIndex === -1) return;
+
+      const currentLine = currentEdges[lineIndex].node;
+      const productHandle = currentLine.merchandise.product?.handle;
+      const targetProduct = products.find(
+        p => p.handle === productHandle || p.id === currentLine.merchandise.product?.id
+      );
+      const newVariant = targetProduct?.variants?.find(
+        v => v.id === newVariantId || v.title === newVariantId
+      );
+
+      if (!newVariant) return;
+
+      const existingSameVariantIndex = currentEdges.findIndex(
+        (e, idx) => idx !== lineIndex && e.node.merchandise.id === newVariant.id
+      );
+
+      if (existingSameVariantIndex > -1) {
+        currentEdges[existingSameVariantIndex].node.quantity += currentLine.quantity;
+        currentEdges.splice(lineIndex, 1);
+      } else {
+        currentEdges[lineIndex] = {
+          ...currentEdges[lineIndex],
+          node: {
+            ...currentLine,
+            merchandise: {
+              ...currentLine.merchandise,
+              id: newVariant.id,
+              title: newVariant.title,
+              price: {
+                amount: newVariant.price.toFixed(2),
+                currencyCode: 'PHP'
+              }
+            }
+          }
+        };
+      }
+
+      const { totalAmount, totalQuantity } = calculateTotal(currentEdges);
+      saveCart({
+        ...cart,
+        totalQuantity,
+        cost: { totalAmount },
+        lines: { edges: currentEdges }
+      });
+    } finally {
+      setLoadingLine(null);
+    }
+  };
+
   const checkout = () => {
     if (cart.checkoutUrl) {
       window.open(cart.checkoutUrl, '_blank');
@@ -209,6 +264,7 @@ export const StoreProvider = ({ children }) => {
           setLoadingLine,
           addToCart,
           updateCartLine,
+          updateCartLineVariant,
           removeCartLine,
           checkout
         },

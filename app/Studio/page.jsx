@@ -96,57 +96,58 @@ export default function GalleryStudioPage() {
                     Developer
                   </button>
                 </div>
+
+                {/* Left Side Caption (Active when viewing Brand Film) */}
+                {activeTab === 'film' && (
+                  <div
+                    style={{
+                      marginTop: '24px',
+                      background: 'rgba(0,0,0,0.85)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '8px',
+                      padding: '16px'
+                    }}
+                  >
+                    <h6 style={{ color: '#fff', fontSize: '13px', fontWeight: 600, marginBottom: '6px', letterSpacing: '0.5px' }}>
+                      PAIN STAIN 2025 — Official Campaign Video
+                    </h6>
+                    <p style={{ color: '#aaa', fontSize: '11px', letterSpacing: '0.8px', lineHeight: 1.5, margin: 0 }}>
+                      Directed & produced for LARO SPORTS street culture. WE ONLY COME OUT AT NIGHT.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Right Column: Interactive Content View */}
               <div className="thrdwrldpgtccGallery">
                 <div className="thrdwrldpgtccgCategory">
                   {activeTab === 'film' && (
-                    <div style={{ width: '100%', marginBottom: '20px' }}>
-                      <div
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: '20px'
+                      }}
+                    >
+                      <video
+                        controls
+                        autoPlay
+                        loop
+                        playsInline
+                        src="/brand/video brand2.mp4"
                         style={{
                           width: '100%',
-                          maxWidth: 'min(100%, calc((100vh - 220px) * (16 / 9)))',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          background: '#000',
-                          border: '1px solid #1a1a1a',
+                          maxHeight: 'calc(100vh - 140px)',
+                          aspectRatio: '16/9',
+                          objectFit: 'contain',
                           borderRadius: '8px',
-                          overflow: 'hidden',
+                          display: 'block',
                           boxShadow: '0 8px 32px rgba(0,0,0,0.8)'
                         }}
-                      >
-                        <video
-                          controls
-                          autoPlay
-                          loop
-                          playsInline
-                          src="/brand/video brand2.mp4"
-                          style={{
-                            width: '100%',
-                            aspectRatio: '16/9',
-                            objectFit: 'cover',
-                            display: 'block',
-                            background: 'transparent',
-                            margin: 0,
-                            padding: 0
-                          }}
-                        />
-                        <div
-                          style={{
-                            background: '#000',
-                            padding: '14px 18px',
-                            borderTop: '1px solid rgba(255, 255, 255, 0.08)'
-                          }}
-                        >
-                          <h6 style={{ color: '#fff', fontSize: '15px', fontWeight: 600, marginBottom: '4px', letterSpacing: '0.5px' }}>
-                            PAIN STAIN 2025 — Official Campaign Video
-                          </h6>
-                          <p style={{ color: '#aaa', fontSize: '12px', letterSpacing: '0.8px', margin: 0, lineHeight: 1.4 }}>
-                            Directed & produced for LARO SPORTS street culture. WE ONLY COME OUT AT NIGHT.
-                          </p>
-                        </div>
-                      </div>
+                      />
                     </div>
                   )}
 

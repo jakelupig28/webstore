@@ -259,22 +259,60 @@ export default function ProductDetailPage() {
                   </div>
 
                   {/* Add To Cart CTA Button */}
-                  <div className="mrchpglndpgcciAddToCart">
+                  <div className="mrchpglndpgcciAddToCart" style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', width: '100%' }}>
                     <button
                       type="button"
                       disabled={!isAvailable || isAdding}
                       onClick={handleAddToCart}
+                      style={
+                        addedToast
+                          ? {
+                              background: '#1aa838',
+                              color: '#fff',
+                              fontWeight: 700,
+                              letterSpacing: '1.5px',
+                              transition: 'all 0.3s ease'
+                            }
+                          : undefined
+                      }
                     >
-                      {isAdding
+                      {addedToast
+                        ? '✓ ADDED TO CART'
+                        : isAdding
                         ? 'ADDING...'
                         : !isAvailable
                         ? 'OUT OF STOCK'
                         : 'ADD TO CART'}
                     </button>
                     {addedToast && (
-                      <p style={{ color: '#00ff66', fontSize: '13px', marginTop: '8px', textAlign: 'center' }}>
-                        Added to cart!
-                      </p>
+                      <div
+                        style={{
+                          marginTop: '10px',
+                          padding: '8px 14px',
+                          background: 'rgba(0,0,0,0.85)',
+                          border: '1px solid rgba(255,255,255,0.15)',
+                          borderRadius: '4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        <span style={{ color: '#00ff66', fontSize: '12px', fontWeight: 700 }}>✓</span>
+                        <span style={{ color: '#fff', fontSize: '11px', letterSpacing: '0.8px' }}>Item added to your cart</span>
+                        <Link
+                          href="/Cart"
+                          style={{
+                            color: '#00ff66',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            textDecoration: 'underline',
+                            marginLeft: '4px'
+                          }}
+                        >
+                          View Cart
+                        </Link>
+                      </div>
                     )}
                   </div>
                 </div>
