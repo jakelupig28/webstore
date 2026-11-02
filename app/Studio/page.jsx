@@ -7,36 +7,58 @@ export default function GalleryStudioPage() {
   const [activeTab, setActiveTab] = useState('film');
 
   return (
-    <div className="mainContainer thrdwrldprbmlz">
+    <div className="mainContainer thrdwrldprbmlz" style={{ height: '100vh', maxHeight: '100vh', overflow: 'hidden' }}>
       <Loader />
-      <div className="mainContainerThrdwrldprbmlz">
-        <section className="thrdwrldPage thrdwrld">
-          <div className="thrdwrldpgtContainer">
+      <div className="mainContainerThrdwrldprbmlz" style={{ height: '100vh', maxHeight: '100vh', overflow: 'hidden' }}>
+        <section className="thrdwrldPage thrdwrld" style={{ height: '100vh', maxHeight: '100vh', overflow: 'hidden' }}>
+          <div className="thrdwrldpgtContainer" style={{ height: '100vh', maxHeight: '100vh', overflow: 'hidden' }}>
             {/* Background Image / Ambient View */}
             <div className="thrdwrldpgtcVidBG">
               <img src="/brand/background stash.jpg" alt="LARO SPORTS Gallery Studio" />
             </div>
 
-            <div className="thrdwrldpgtcContent">
+            <div
+              className="thrdwrldpgtcContent"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                height: '100vh',
+                maxHeight: '100vh',
+                padding: '70px 4vw 60px',
+                boxSizing: 'border-box',
+                overflow: 'hidden',
+                gap: '32px'
+              }}
+            >
               {/* Left Column: Brand Lore & Navigation */}
-              <div className="thrdwrldpgtccCollectives">
+              <div
+                className="thrdwrldpgtccCollectives"
+                style={{
+                  width: '290px',
+                  minWidth: '270px',
+                  maxWidth: '310px',
+                  height: 'auto',
+                  paddingTop: 0
+                }}
+              >
                 <div
                   className="thrdwrldpgtcccYoutube"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '12px',
-                    marginBottom: '1.2vw'
+                    marginBottom: '14px'
                   }}
                 >
                   <img
                     src="/brand/3dgiflogo.gif"
                     alt="LARO SPORTS Phantom"
                     style={{
-                      width: '74px',
-                      height: '74px',
-                      minWidth: '74px',
-                      minHeight: '74px',
+                      width: '64px',
+                      height: '64px',
+                      minWidth: '64px',
+                      minHeight: '64px',
                       borderRadius: '50%',
                       objectFit: 'contain',
                       background: 'transparent',
@@ -56,7 +78,7 @@ export default function GalleryStudioPage() {
                         fontSize: '11px',
                         letterSpacing: '1.5px',
                         textTransform: 'uppercase',
-                        marginTop: '4px',
+                        marginTop: '3px',
                         fontWeight: 500
                       }}
                     >
@@ -65,15 +87,29 @@ export default function GalleryStudioPage() {
                   </div>
                 </div>
 
-                <h6>LARO SPORTS™ STUDIO</h6>
-                <p>
+                <h6 style={{ fontSize: '14px', fontWeight: 700, letterSpacing: '0.8px', marginBottom: '8px' }}>
+                  LARO SPORTS™ STUDIO
+                </h6>
+                <p style={{ fontSize: '12px', lineHeight: 1.5, color: '#ccc', marginBottom: '12px', paddingRight: 0 }}>
                   Welcome to LARO SPORTS, where passion meets street-fashion.
                   Founded by teenage friends, LARO SPORTS represents the relentless night hustle.
                   Our Logo, Phantom, symbolises the night owl as we pull the nights out to design clothes
                   that connect on streets.
                 </p>
 
-                <div className="thrdwrldpgtcccNavigation">
+                {/* Campaign Video Caption - Plain Text In Between without Black Container */}
+                {activeTab === 'film' && (
+                  <div style={{ margin: '12px 0 16px 0' }}>
+                    <h6 style={{ color: '#fff', fontSize: '13px', fontWeight: 700, marginBottom: '4px', letterSpacing: '0.5px' }}>
+                      PAIN STAIN 2025 — Official Campaign Video
+                    </h6>
+                    <p style={{ color: '#aaa', fontSize: '11px', letterSpacing: '0.8px', lineHeight: 1.4, margin: 0 }}>
+                      Directed & produced for LARO SPORTS street culture. WE ONLY COME OUT AT NIGHT.
+                    </p>
+                  </div>
+                )}
+
+                <div className="thrdwrldpgtcccNavigation" style={{ marginTop: '8px' }}>
                   <button
                     type="button"
                     onClick={() => setActiveTab('film')}
@@ -96,31 +132,31 @@ export default function GalleryStudioPage() {
                     Developer
                   </button>
                 </div>
-
-                {/* Left Side Caption (Active when viewing Brand Film) */}
-                {activeTab === 'film' && (
-                  <div
-                    style={{
-                      marginTop: '24px',
-                      background: 'rgba(0,0,0,0.85)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '8px',
-                      padding: '16px'
-                    }}
-                  >
-                    <h6 style={{ color: '#fff', fontSize: '13px', fontWeight: 600, marginBottom: '6px', letterSpacing: '0.5px' }}>
-                      PAIN STAIN 2025 — Official Campaign Video
-                    </h6>
-                    <p style={{ color: '#aaa', fontSize: '11px', letterSpacing: '0.8px', lineHeight: 1.5, margin: 0 }}>
-                      Directed & produced for LARO SPORTS street culture. WE ONLY COME OUT AT NIGHT.
-                    </p>
-                  </div>
-                )}
               </div>
 
               {/* Right Column: Interactive Content View */}
-              <div className="thrdwrldpgtccGallery">
-                <div className="thrdwrldpgtccgCategory">
+              <div
+                className="thrdwrldpgtccGallery"
+                style={{
+                  flex: 1,
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                  padding: 0
+                }}
+              >
+                <div
+                  className="thrdwrldpgtccgCategory"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
                   {activeTab === 'film' && (
                     <div
                       style={{
@@ -128,8 +164,7 @@ export default function GalleryStudioPage() {
                         height: '100%',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        marginBottom: '20px'
+                        justifyContent: 'center'
                       }}
                     >
                       <video
@@ -140,12 +175,14 @@ export default function GalleryStudioPage() {
                         src="/brand/video brand2.mp4"
                         style={{
                           width: '100%',
-                          maxHeight: 'calc(100vh - 140px)',
+                          height: 'auto',
+                          maxHeight: 'calc(100vh - 130px)',
+                          maxWidth: 'calc((100vh - 130px) * (16 / 9))',
                           aspectRatio: '16/9',
                           objectFit: 'contain',
                           borderRadius: '8px',
                           display: 'block',
-                          boxShadow: '0 8px 32px rgba(0,0,0,0.8)'
+                          boxShadow: '0 12px 40px rgba(0,0,0,0.85)'
                         }}
                       />
                     </div>
