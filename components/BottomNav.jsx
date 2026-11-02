@@ -22,6 +22,7 @@ export const BottomNav = () => {
   }, []);
 
   const totalQty = cartCalls.cart?.totalQuantity || 0;
+  const isStudio = pathname?.toLowerCase().includes('studio') || pathname?.toLowerCase().includes('thrdwrldprblmz');
 
   if (!isDesktop) return null;
 
@@ -102,40 +103,42 @@ export const BottomNav = () => {
             </button>
           </a>
 
-          {/* Custom Minimalist Volume Control */}
-          <div
-            className="btnvhbVolume customVolumeWrapper"
-            onMouseEnter={() => setShowVolumeSlider(true)}
-            onMouseLeave={() => setShowVolumeSlider(false)}
-          >
-            <button
-              type="button"
-              onClick={() => videoBG.setVolume(videoBG.volume === 0 ? 50 : 0)}
-              title={videoBG.volume === 0 ? 'Unmute' : `Volume: ${videoBG.volume}%`}
-              className="volumeBtn"
+          {/* Custom Minimalist Volume Control (Hidden on Studio page) */}
+          {!isStudio && (
+            <div
+              className="btnvhbVolume customVolumeWrapper"
+              onMouseEnter={() => setShowVolumeSlider(true)}
+              onMouseLeave={() => setShowVolumeSlider(false)}
             >
-              {videoBG.volume === 0 ? <SpeakerMuteIcon /> : <SpeakerIcon />}
-            </button>
+              <button
+                type="button"
+                onClick={() => videoBG.setVolume(videoBG.volume === 0 ? 50 : 0)}
+                title={videoBG.volume === 0 ? 'Unmute' : `Volume: ${videoBG.volume}%`}
+                className="volumeBtn"
+              >
+                {videoBG.volume === 0 ? <SpeakerMuteIcon /> : <SpeakerIcon />}
+              </button>
 
-            {showVolumeSlider && (
-              <div className="customVolumePopup">
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={videoBG.volume}
-                  onChange={e => videoBG.setVolume(Number(e.target.value))}
-                  className="sleekVolumeSlider"
-                  style={{
-                    background: `linear-gradient(to right, #ffffff ${videoBG.volume}%, rgba(255,255,255,0.2) ${videoBG.volume}%)`
-                  }}
-                />
-                <span className="volumePercent">
-                  {videoBG.volume}%
-                </span>
-              </div>
-            )}
-          </div>
+              {showVolumeSlider && (
+                <div className="customVolumePopup">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={videoBG.volume}
+                    onChange={e => videoBG.setVolume(Number(e.target.value))}
+                    className="sleekVolumeSlider"
+                    style={{
+                      background: `linear-gradient(to right, #ffffff ${videoBG.volume}%, rgba(255,255,255,0.2) ${videoBG.volume}%)`
+                    }}
+                  />
+                  <span className="volumePercent">
+                    {videoBG.volume}%
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </nav>

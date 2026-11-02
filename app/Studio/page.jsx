@@ -20,14 +20,35 @@ export default function GalleryStudioPage() {
             <div className="thrdwrldpgtcContent">
               {/* Left Column: Brand Lore & Navigation */}
               <div className="thrdwrldpgtccCollectives">
-                <div className="thrdwrldpgtcccYoutube">
+                <div
+                  className="thrdwrldpgtcccYoutube"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    marginBottom: '1.2vw'
+                  }}
+                >
                   <img
                     src="/brand/3dgiflogo.gif"
                     alt="LARO SPORTS Phantom"
-                    style={{ background: 'transparent', padding: 0, border: 'none' }}
+                    style={{
+                      width: '74px',
+                      height: '74px',
+                      minWidth: '74px',
+                      minHeight: '74px',
+                      borderRadius: '50%',
+                      objectFit: 'contain',
+                      background: 'transparent',
+                      padding: 0,
+                      border: 'none',
+                      margin: 0
+                    }}
                   />
                   <div>
-                    <h6>@LAROSPORTS</h6>
+                    <h6 style={{ fontSize: '18px', fontWeight: 700, margin: 0, letterSpacing: '0.5px' }}>
+                      @LAROSPORTS
+                    </h6>
                     <span
                       style={{
                         display: 'block',
@@ -35,7 +56,8 @@ export default function GalleryStudioPage() {
                         fontSize: '11px',
                         letterSpacing: '1.5px',
                         textTransform: 'uppercase',
-                        marginTop: '4px'
+                        marginTop: '4px',
+                        fontWeight: 500
                       }}
                     >
                       EST. 2023
@@ -84,11 +106,14 @@ export default function GalleryStudioPage() {
                       <div
                         style={{
                           width: '100%',
+                          maxWidth: 'min(100%, calc((100vh - 220px) * (16 / 9)))',
                           display: 'flex',
                           flexDirection: 'column',
-                          background: 'transparent',
-                          border: 'none',
-                          padding: 0
+                          background: '#000',
+                          border: '1px solid #1a1a1a',
+                          borderRadius: '8px',
+                          overflow: 'hidden',
+                          boxShadow: '0 8px 32px rgba(0,0,0,0.8)'
                         }}
                       >
                         <video
@@ -99,19 +124,25 @@ export default function GalleryStudioPage() {
                           src="/brand/video brand2.mp4"
                           style={{
                             width: '100%',
-                            maxHeight: 'calc(100vh - 170px)',
                             aspectRatio: '16/9',
-                            objectFit: 'contain',
-                            borderRadius: '8px',
+                            objectFit: 'cover',
                             display: 'block',
-                            background: '#000'
+                            background: 'transparent',
+                            margin: 0,
+                            padding: 0
                           }}
                         />
-                        <div style={{ padding: '10px 2px' }}>
-                          <h6 style={{ color: '#fff', fontSize: '15px', marginBottom: '4px' }}>
+                        <div
+                          style={{
+                            background: '#000',
+                            padding: '14px 18px',
+                            borderTop: '1px solid rgba(255, 255, 255, 0.08)'
+                          }}
+                        >
+                          <h6 style={{ color: '#fff', fontSize: '15px', fontWeight: 600, marginBottom: '4px', letterSpacing: '0.5px' }}>
                             PAIN STAIN 2025 — Official Campaign Video
                           </h6>
-                          <p style={{ color: '#888', fontSize: '12px' }}>
+                          <p style={{ color: '#aaa', fontSize: '12px', letterSpacing: '0.8px', margin: 0, lineHeight: 1.4 }}>
                             Directed & produced for LARO SPORTS street culture. WE ONLY COME OUT AT NIGHT.
                           </p>
                         </div>
