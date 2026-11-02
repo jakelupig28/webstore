@@ -19,8 +19,9 @@ const nextConfig = {
       { source: '/collections', destination: '/Collections' },
       { source: '/collections/:handle', destination: '/Collections/:handle' },
       { source: '/lookbook', destination: '/Lookbook' },
-      { source: '/studio', destination: '/Thrdwrldprblmz' },
-      { source: '/Studio', destination: '/Thrdwrldprblmz' },
+      { source: '/studio', destination: '/Studio' },
+      { source: '/thrdwrldprblmz', destination: '/Studio' },
+      { source: '/Thrdwrldprblmz', destination: '/Studio' },
       { source: '/cart', destination: '/Cart' }
     ];
   }

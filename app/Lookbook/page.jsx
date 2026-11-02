@@ -8,7 +8,6 @@ import { VideoBackground } from '../../components/VideoBackground';
 import { LOOKBOOK_DATA } from '../../data/lookbook';
 
 const TABS = [
-  { id: 'painstain', label: 'PAIN STAIN 2025' },
   { id: 'gallery1', label: 'GALLERY 01' },
   { id: 'gallery2', label: 'GALLERY 02' },
   { id: 'gallery3', label: 'GALLERY 03' }
@@ -16,7 +15,7 @@ const TABS = [
 
 export default function LookbookPage() {
   const { cartCalls } = useStore();
-  const [activeTab, setActiveTab] = useState('painstain');
+  const [activeTab, setActiveTab] = useState('gallery1');
   const [isMobile, setIsMobile] = useState(false);
   const [lightboxImg, setLightboxImg] = useState(null);
 

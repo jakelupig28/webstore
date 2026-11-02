@@ -59,10 +59,10 @@ export const Navbar = () => {
                   Lookbook
                 </button>
               </Link>
-              <Link href="/Thrdwrldprblmz">
+              <Link href="/Studio">
                 <button
                   onClick={() => navCalls.handlePageClick('Studio')}
-                  className={pathname.toLowerCase().includes('studio') || pathname.toLowerCase().includes('thrdwrldprblmz') ? 'active thrdwrldprblmz' : ''}
+                  className={pathname.toLowerCase().includes('studio') || pathname.toLowerCase().includes('thrdwrldprblmz') ? 'active studio' : ''}
                 >
                   Gallery Studio
                 </button>

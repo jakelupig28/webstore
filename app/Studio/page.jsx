@@ -24,20 +24,16 @@ export default function GalleryStudioPage() {
                   <img
                     src="/brand/3dgiflogo.gif"
                     alt="LARO SPORTS Phantom"
-                    style={{ background: '#000', padding: '4px', borderRadius: '4px' }}
+                    style={{ background: 'transparent', padding: 0, border: 'none' }}
                   />
                   <div>
                     <h6>@LAROSPORTS</h6>
                     <span
                       style={{
-                        display: 'inline-block',
-                        background: '#111',
-                        border: '1px solid #444',
-                        color: '#fff',
-                        fontSize: '10px',
-                        padding: '3px 8px',
-                        borderRadius: '3px',
-                        letterSpacing: '1px',
+                        display: 'block',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '11px',
+                        letterSpacing: '1.5px',
                         textTransform: 'uppercase',
                         marginTop: '4px'
                       }}
@@ -87,11 +83,12 @@ export default function GalleryStudioPage() {
                     <div style={{ width: '100%', marginBottom: '20px' }}>
                       <div
                         style={{
-                          background: '#0a0a0a',
-                          border: '1px solid #222',
-                          borderRadius: '8px',
-                          overflow: 'hidden',
-                          padding: '10px'
+                          width: '100%',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          background: 'transparent',
+                          border: 'none',
+                          padding: 0
                         }}
                       >
                         <video
@@ -102,13 +99,15 @@ export default function GalleryStudioPage() {
                           src="/brand/video brand2.mp4"
                           style={{
                             width: '100%',
+                            maxHeight: 'calc(100vh - 170px)',
                             aspectRatio: '16/9',
-                            borderRadius: '4px',
+                            objectFit: 'contain',
+                            borderRadius: '8px',
                             display: 'block',
                             background: '#000'
                           }}
                         />
-                        <div style={{ padding: '12px 6px' }}>
+                        <div style={{ padding: '10px 2px' }}>
                           <h6 style={{ color: '#fff', fontSize: '15px', marginBottom: '4px' }}>
                             PAIN STAIN 2025 — Official Campaign Video
                           </h6>
