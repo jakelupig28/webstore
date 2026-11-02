@@ -1100,8 +1100,7 @@ export const PRODUCTS = [
     "price": 250,
     "currencyCode": "PHP",
     "images": [
-      "/brand/capper_nobg.png",
-      "/brand/capper2_nobg.png"
+      "/brand/capper_nobg.png"
     ],
     "variants": [
       {
@@ -1128,8 +1127,7 @@ export const PRODUCTS = [
     "price": 250,
     "currencyCode": "PHP",
     "images": [
-      "/brand/cap_nobg.png",
-      "/brand/cap2_nobg.png"
+      "/brand/cap_nobg.png"
     ],
     "variants": [
       {

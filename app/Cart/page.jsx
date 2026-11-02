@@ -32,122 +32,154 @@ export default function CartPage() {
               <img src="/brand/background stash.jpg" alt="Cart Background" />
             </div>
 
-            <div className="crtpglndpgContents">
-              {/* Cart Items Column */}
+            <div
+              className="crtpglndpgContents"
+              style={edges.length === 0 ? {
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '80px 20px',
+                minHeight: 'calc(100vh - 100px)'
+              } : undefined}
+            >
               {edges.length > 0 ? (
-                <div className="crtpglndpgcItems">
-                  {edges.map(({ node }) => {
-                    const imgUrl =
-                      node.merchandise.image?.url ||
-                      node.merchandise.product?.featuredImage?.url ||
-                      '/brand/basiclogo.jpg';
-                    const isUpdating = cartCalls.loadingLine === node.id;
+                <>
+                  {/* Cart Items Column */}
+                  <div className="crtpglndpgcItems">
+                    {edges.map(({ node }) => {
+                      const imgUrl =
+                        node.merchandise.image?.url ||
+                        node.merchandise.product?.featuredImage?.url ||
+                        '/brand/basiclogo.jpg';
+                      const isUpdating = cartCalls.loadingLine === node.id;
 
-                    return (
-                      <div key={node.id} className="cartItem">
-                        {/* Remove item button */}
-                        <button
-                          type="button"
-                          className="removeBtn"
-                          disabled={isUpdating}
-                          onClick={() => cartCalls.removeCartLine(node.id)}
-                          aria-label="Remove item"
-                        >
-                          <CloseIcon className="icons" />
-                        </button>
+                      return (
+                        <div key={node.id} className="cartItem">
+                          {/* Remove item button */}
+                          <button
+                            type="button"
+                            className="removeBtn"
+                            disabled={isUpdating}
+                            onClick={() => cartCalls.removeCartLine(node.id)}
+                            aria-label="Remove item"
+                          >
+                            <CloseIcon className="icons" />
+                          </button>
 
-                        {/* Product Image */}
-                        <div className="cartImage">
-                          {imgUrl && (
-                            <img
-                              src={imgUrl}
-                              alt={node.merchandise.product?.title || 'Product'}
-                            />
-                          )}
-                        </div>
+                          {/* Product Image */}
+                          <div className="cartImage">
+                            {imgUrl && (
+                              <img
+                                src={imgUrl}
+                                alt={node.merchandise.product?.title || 'Product'}
+                              />
+                            )}
+                          </div>
 
-                        {/* Product Information */}
-                        <div className="cartInfo">
-                          <h6 className="title">
-                            {node.merchandise.product?.title}
-                            {node.merchandise.title && node.merchandise.title !== 'Default Title'
-                              ? ` (${node.merchandise.title})`
-                              : ''}
-                          </h6>
-                          <p className="price">
-                            ₱{formatPhp(node.merchandise.price?.amount)}
-                          </p>
+                          {/* Product Information */}
+                          <div className="cartInfo">
+                            <h6 className="title">
+                              {node.merchandise.product?.title}
+                              {node.merchandise.title && node.merchandise.title !== 'Default Title'
+                                ? ` (${node.merchandise.title})`
+                                : ''}
+                            </h6>
+                            <p className="price">
+                              ₱{formatPhp(node.merchandise.price?.amount)}
+                            </p>
 
-                          {/* Quantity +/- Adjuster */}
-                          <div className="cartQty">
-                            <button
-                              type="button"
-                              disabled={isUpdating || node.quantity <= 1}
-                              onClick={() =>
-                                cartCalls.updateCartLine(node.id, node.quantity - 1)
-                              }
-                            >
-                              -
-                            </button>
-                            <p>{node.quantity}</p>
-                            <button
-                              type="button"
-                              disabled={isUpdating}
-                              onClick={() =>
-                                cartCalls.updateCartLine(node.id, node.quantity + 1)
-                              }
-                            >
-                              +
-                            </button>
+                            {/* Quantity +/- Adjuster */}
+                            <div className="cartQty">
+                              <button
+                                type="button"
+                                disabled={isUpdating || node.quantity <= 1}
+                                onClick={() =>
+                                  cartCalls.updateCartLine(node.id, node.quantity - 1)
+                                }
+                              >
+                                -
+                              </button>
+                              <p>{node.quantity}</p>
+                              <button
+                                type="button"
+                                disabled={isUpdating}
+                                onClick={() =>
+                                  cartCalls.updateCartLine(node.id, node.quantity + 1)
+                                }
+                              >
+                                +
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="crtpglndpgcItems" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <div className="crtpglndpgciEmpty" style={{ textAlign: 'center', padding: '40px' }}>
-                    <h5 style={{ color: '#fff', marginBottom: '10px' }}>Your cart is empty</h5>
-                    <p style={{ color: '#888', marginBottom: '20px' }}>Explore PAIN STAIN 2025 collection drops</p>
-                    <Link
-                      href="/Collections"
-                      style={{
-                        display: 'inline-block',
-                        background: '#fff',
-                        color: '#000',
-                        padding: '10px 24px',
-                        borderRadius: '2px',
-                        fontWeight: 600,
-                        textTransform: 'uppercase',
-                        fontSize: '12px'
-                      }}
-                    >
-                      Shop Drops
-                    </Link>
+                      );
+                    })}
                   </div>
+
+                  {/* Order Summary Column */}
+                  <div className="crtpglndpgcSummary">
+                    <h6>ITEMS SUMMARY</h6>
+                    <p>
+                      You have {totalQuantity || '0'} item{totalQuantity === 1 ? '' : 's'} in your Cart
+                    </p>
+
+                    <div className="crtpglndpgcsTotal">
+                      <h5>TOTAL: ₱{formatPhp(totalAmount)}</h5>
+                      <p>Free shipping nationwide. Taxes included.</p>
+                      <button
+                        type="button"
+                        disabled={edges.length === 0}
+                        onClick={cartCalls.checkout}
+                      >
+                        CHECKOUT
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'rgba(0, 0, 0, 0.85)',
+                    backdropFilter: 'blur(16px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '48px 56px',
+                    maxWidth: '480px',
+                    width: '90%',
+                    textAlign: 'center',
+                    boxShadow: '0 16px 40px rgba(0, 0, 0, 0.7)'
+                  }}
+                >
+                  <h4 style={{ color: '#fff', fontSize: '22px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '10px' }}>
+                    YOUR CART IS EMPTY
+                  </h4>
+                  <p style={{ color: '#aaa', fontSize: '13px', letterSpacing: '1px', lineHeight: 1.6, marginBottom: '28px' }}>
+                    Explore the PAIN STAIN 2025 collection drops.
+                  </p>
+                  <Link
+                    href="/Collections"
+                    style={{
+                      display: 'inline-block',
+                      background: '#fff',
+                      color: '#000',
+                      padding: '12px 36px',
+                      borderRadius: '4px',
+                      fontWeight: 700,
+                      letterSpacing: '1.5px',
+                      textTransform: 'uppercase',
+                      fontSize: '12px',
+                      boxShadow: '0 4px 14px rgba(255,255,255,0.2)',
+                      transition: 'transform 0.2s ease'
+                    }}
+                  >
+                    SHOP DROPS
+                  </Link>
                 </div>
               )}
-
-              {/* Order Summary Column */}
-              <div className="crtpglndpgcSummary">
-                <h6>ITEMS SUMMARY</h6>
-                <p>
-                  You have {totalQuantity || '0'} item{totalQuantity === 1 ? '' : 's'} in your Cart
-                </p>
-
-                <div className="crtpglndpgcsTotal">
-                  <h5>TOTAL: ₱{formatPhp(totalAmount)}</h5>
-                  <p>Free shipping nationwide. Taxes included.</p>
-                  <button
-                    type="button"
-                    disabled={edges.length === 0}
-                    onClick={cartCalls.checkout}
-                  >
-                    CHECKOUT
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </section>
