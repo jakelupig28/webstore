@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useStore } from '../../context/StoreContext';
+import { VideoBackground } from '../../components/VideoBackground';
+import { Loader } from '../../components/Loader';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -48,46 +50,80 @@ export default function RegisterPage() {
   return (
     <div
       style={{
-        minHeight: 'calc(100vh - 150px)',
+        position: 'relative',
+        width: '100%',
+        height: '100vh',
+        overflow: 'hidden',
+        background: '#000000',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '24px',
-        position: 'relative',
-        zIndex: 10
+        padding: '78px 20px 84px',
+        boxSizing: 'border-box'
       }}
     >
+      <Loader />
+
+      {/* Full-Screen Ambient Video Background */}
       <div
         style={{
-          width: '100%',
-          maxWidth: '460px',
-          background: 'rgba(10, 10, 10, 0.88)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(255, 255, 255, 0.16)',
-          borderRadius: '10px',
-          padding: '32px',
-          color: '#ffffff',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.75)'
+          position: 'fixed',
+          inset: 0,
+          zIndex: 0,
+          overflow: 'hidden',
+          pointerEvents: 'none'
         }}
       >
-        <div style={{ textAlign: 'center', marginBottom: '22px' }}>
+        <VideoBackground
+          src="/brand/video brand2.mp4"
+          poster="/brand/background stash.jpg"
+          style={{ opacity: 0.48 }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background:
+              'radial-gradient(circle at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.85) 100%)'
+          }}
+        />
+      </div>
+
+      {/* Centered Register Card */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 10,
+          width: '100%',
+          maxWidth: '460px',
+          background: 'rgba(10, 10, 12, 0.82)',
+          backdropFilter: 'blur(22px)',
+          WebkitBackdropFilter: 'blur(22px)',
+          border: '1px solid rgba(255, 255, 255, 0.16)',
+          borderRadius: '12px',
+          padding: '26px 28px',
+          color: '#ffffff',
+          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.85)'
+        }}
+      >
+        <div style={{ textAlign: 'center', marginBottom: '18px' }}>
           <span
             style={{
-              fontSize: '11px',
+              fontSize: '10px',
               letterSpacing: '2.5px',
               textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.55)',
+              color: 'rgba(255,255,255,0.5)',
               display: 'block',
-              marginBottom: '6px'
+              marginBottom: '4px'
             }}
           >
             JOIN LARO SPORTS™
           </span>
           <h2
             style={{
-              fontSize: '25px',
+              fontSize: '22px',
               fontWeight: 800,
-              letterSpacing: '1.5px',
+              letterSpacing: '2px',
               textTransform: 'uppercase',
               margin: 0
             }}
@@ -100,12 +136,12 @@ export default function RegisterPage() {
           <div
             style={{
               background: 'rgba(239, 68, 68, 0.16)',
-              border: '1px solid rgba(239, 68, 68, 0.5)',
+              border: '1px solid rgba(239, 68, 68, 0.45)',
               color: '#fca5a5',
-              padding: '10px 14px',
+              padding: '9px 12px',
               borderRadius: '6px',
               fontSize: '12px',
-              marginBottom: '16px',
+              marginBottom: '14px',
               textAlign: 'center'
             }}
           >
@@ -113,73 +149,73 @@ export default function RegisterPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '11px',
-                fontWeight: 700,
-                letterSpacing: '1.2px',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.75)',
-                marginBottom: '6px'
-              }}
-            >
-              FULL NAME
-            </label>
-            <input
-              type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Juan Dela Cruz"
-              style={{
-                width: '100%',
-                padding: '11px 14px',
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '6px',
-                color: '#ffffff',
-                fontSize: '13px',
-                outline: 'none',
-                boxSizing: 'border-box'
-              }}
-            />
-          </div>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  letterSpacing: '1.2px',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255,255,255,0.72)',
+                  marginBottom: '5px'
+                }}
+              >
+                FULL NAME
+              </label>
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Juan Dela Cruz"
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  borderRadius: '6px',
+                  color: '#ffffff',
+                  fontSize: '12px',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
 
-          <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '11px',
-                fontWeight: 700,
-                letterSpacing: '1.2px',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.75)',
-                marginBottom: '6px'
-              }}
-            >
-              EMAIL ADDRESS
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              style={{
-                width: '100%',
-                padding: '11px 14px',
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '6px',
-                color: '#ffffff',
-                fontSize: '13px',
-                outline: 'none',
-                boxSizing: 'border-box'
-              }}
-            />
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  letterSpacing: '1.2px',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255,255,255,0.72)',
+                  marginBottom: '5px'
+                }}
+              >
+                EMAIL ADDRESS
+              </label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  borderRadius: '6px',
+                  color: '#ffffff',
+                  fontSize: '12px',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
           </div>
 
           {/* Account Role Selection: Customer vs Admin */}
@@ -187,15 +223,15 @@ export default function RegisterPage() {
             <label
               style={{
                 display: 'block',
-                fontSize: '11px',
+                fontSize: '10px',
                 fontWeight: 700,
                 letterSpacing: '1.2px',
                 textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.75)',
-                marginBottom: '6px'
+                color: 'rgba(255,255,255,0.72)',
+                marginBottom: '5px'
               }}
             >
-              SELECT ROLE
+              ACCOUNT ROLE
             </label>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button
@@ -203,12 +239,12 @@ export default function RegisterPage() {
                 onClick={() => setRole('customer')}
                 style={{
                   flex: 1,
-                  padding: '10px 12px',
+                  padding: '9px 12px',
                   borderRadius: '6px',
                   border: role === 'customer' ? '1px solid #ffffff' : '1px solid rgba(255,255,255,0.2)',
                   background: role === 'customer' ? '#ffffff' : 'rgba(255,255,255,0.05)',
                   color: role === 'customer' ? '#000000' : '#ffffff',
-                  fontSize: '12px',
+                  fontSize: '11px',
                   fontWeight: 700,
                   letterSpacing: '1px',
                   textTransform: 'uppercase',
@@ -222,12 +258,12 @@ export default function RegisterPage() {
                 onClick={() => setRole('admin')}
                 style={{
                   flex: 1,
-                  padding: '10px 12px',
+                  padding: '9px 12px',
                   borderRadius: '6px',
                   border: role === 'admin' ? '1px solid #ffffff' : '1px solid rgba(255,255,255,0.2)',
                   background: role === 'admin' ? '#ffffff' : 'rgba(255,255,255,0.05)',
                   color: role === 'admin' ? '#000000' : '#ffffff',
-                  fontSize: '12px',
+                  fontSize: '11px',
                   fontWeight: 700,
                   letterSpacing: '1px',
                   textTransform: 'uppercase',
@@ -239,17 +275,17 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <div style={{ flex: 1 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div>
               <label
                 style={{
                   display: 'block',
-                  fontSize: '11px',
+                  fontSize: '10px',
                   fontWeight: 700,
                   letterSpacing: '1.2px',
                   textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.75)',
-                  marginBottom: '6px'
+                  color: 'rgba(255,255,255,0.72)',
+                  marginBottom: '5px'
                 }}
               >
                 PASSWORD
@@ -262,28 +298,27 @@ export default function RegisterPage() {
                 placeholder="Min. 6 chars"
                 style={{
                   width: '100%',
-                  padding: '11px 14px',
+                  padding: '10px 12px',
                   background: 'rgba(255,255,255,0.06)',
                   border: '1px solid rgba(255,255,255,0.2)',
                   borderRadius: '6px',
                   color: '#ffffff',
-                  fontSize: '13px',
-                  outline: 'none',
+                  fontSize: '12px',
                   boxSizing: 'border-box'
                 }}
               />
             </div>
 
-            <div style={{ flex: 1 }}>
+            <div>
               <label
                 style={{
                   display: 'block',
-                  fontSize: '11px',
+                  fontSize: '10px',
                   fontWeight: 700,
                   letterSpacing: '1.2px',
                   textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.75)',
-                  marginBottom: '6px'
+                  color: 'rgba(255,255,255,0.72)',
+                  marginBottom: '5px'
                 }}
               >
                 CONFIRM PASSWORD
@@ -296,13 +331,12 @@ export default function RegisterPage() {
                 placeholder="Repeat password"
                 style={{
                   width: '100%',
-                  padding: '11px 14px',
+                  padding: '10px 12px',
                   background: 'rgba(255,255,255,0.06)',
                   border: '1px solid rgba(255,255,255,0.2)',
                   borderRadius: '6px',
                   color: '#ffffff',
-                  fontSize: '13px',
-                  outline: 'none',
+                  fontSize: '12px',
                   boxSizing: 'border-box'
                 }}
               />
@@ -313,9 +347,9 @@ export default function RegisterPage() {
             type="submit"
             disabled={loading}
             style={{
-              marginTop: '8px',
+              marginTop: '6px',
               width: '100%',
-              padding: '13px',
+              padding: '12px',
               background: '#ffffff',
               color: '#000000',
               border: 'none',
@@ -334,7 +368,7 @@ export default function RegisterPage() {
 
         <p
           style={{
-            marginTop: '18px',
+            marginTop: '14px',
             marginBottom: 0,
             textAlign: 'center',
             fontSize: '12px',
@@ -357,4 +391,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-

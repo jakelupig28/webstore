@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useStore } from '../../context/StoreContext';
+import { VideoBackground } from '../../components/VideoBackground';
+import { Loader } from '../../components/Loader';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -45,46 +47,80 @@ export default function LoginPage() {
   return (
     <div
       style={{
-        minHeight: 'calc(100vh - 150px)',
+        position: 'relative',
+        width: '100%',
+        height: '100vh',
+        overflow: 'hidden',
+        background: '#000000',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '24px',
-        position: 'relative',
-        zIndex: 10
+        padding: '78px 20px 84px',
+        boxSizing: 'border-box'
       }}
     >
+      <Loader />
+
+      {/* Full-Screen Ambient Video Background */}
       <div
         style={{
-          width: '100%',
-          maxWidth: '440px',
-          background: 'rgba(10, 10, 10, 0.88)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(255, 255, 255, 0.16)',
-          borderRadius: '10px',
-          padding: '36px 32px',
-          color: '#ffffff',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.75)'
+          position: 'fixed',
+          inset: 0,
+          zIndex: 0,
+          overflow: 'hidden',
+          pointerEvents: 'none'
         }}
       >
-        <div style={{ textAlign: 'center', marginBottom: '26px' }}>
+        <VideoBackground
+          src="/brand/video brand2.mp4"
+          poster="/brand/background stash.jpg"
+          style={{ opacity: 0.48 }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background:
+              'radial-gradient(circle at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.85) 100%)'
+          }}
+        />
+      </div>
+
+      {/* Centered Login Card */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 10,
+          width: '100%',
+          maxWidth: '420px',
+          background: 'rgba(10, 10, 12, 0.82)',
+          backdropFilter: 'blur(22px)',
+          WebkitBackdropFilter: 'blur(22px)',
+          border: '1px solid rgba(255, 255, 255, 0.16)',
+          borderRadius: '12px',
+          padding: '28px 30px',
+          color: '#ffffff',
+          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.85)'
+        }}
+      >
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <span
             style={{
-              fontSize: '11px',
+              fontSize: '10px',
               letterSpacing: '2.5px',
               textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.55)',
+              color: 'rgba(255,255,255,0.5)',
               display: 'block',
-              marginBottom: '6px'
+              marginBottom: '4px'
             }}
           >
-            LARO SPORTS™ ACCOUNT
+            WE ONLY COME OUT AT NIGHT
           </span>
           <h2
             style={{
-              fontSize: '26px',
+              fontSize: '23px',
               fontWeight: 800,
-              letterSpacing: '1.5px',
+              letterSpacing: '2px',
               textTransform: 'uppercase',
               margin: 0
             }}
@@ -97,12 +133,12 @@ export default function LoginPage() {
           <div
             style={{
               background: 'rgba(239, 68, 68, 0.16)',
-              border: '1px solid rgba(239, 68, 68, 0.5)',
+              border: '1px solid rgba(239, 68, 68, 0.45)',
               color: '#fca5a5',
-              padding: '10px 14px',
+              padding: '9px 12px',
               borderRadius: '6px',
               fontSize: '12px',
-              marginBottom: '18px',
+              marginBottom: '14px',
               textAlign: 'center'
             }}
           >
@@ -110,16 +146,16 @@ export default function LoginPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div>
             <label
               style={{
                 display: 'block',
-                fontSize: '11px',
+                fontSize: '10px',
                 fontWeight: 700,
-                letterSpacing: '1.2px',
+                letterSpacing: '1.4px',
                 textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.75)',
+                color: 'rgba(255,255,255,0.72)',
                 marginBottom: '6px'
               }}
             >
@@ -133,13 +169,12 @@ export default function LoginPage() {
               placeholder="you@example.com"
               style={{
                 width: '100%',
-                padding: '12px 14px',
+                padding: '11px 14px',
                 background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.2)',
                 borderRadius: '6px',
                 color: '#ffffff',
                 fontSize: '13px',
-                outline: 'none',
                 boxSizing: 'border-box'
               }}
             />
@@ -149,11 +184,11 @@ export default function LoginPage() {
             <label
               style={{
                 display: 'block',
-                fontSize: '11px',
+                fontSize: '10px',
                 fontWeight: 700,
-                letterSpacing: '1.2px',
+                letterSpacing: '1.4px',
                 textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.75)',
+                color: 'rgba(255,255,255,0.72)',
                 marginBottom: '6px'
               }}
             >
@@ -167,13 +202,12 @@ export default function LoginPage() {
               placeholder="••••••••"
               style={{
                 width: '100%',
-                padding: '12px 14px',
+                padding: '11px 14px',
                 background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.2)',
                 borderRadius: '6px',
                 color: '#ffffff',
                 fontSize: '13px',
-                outline: 'none',
                 boxSizing: 'border-box'
               }}
             />
@@ -183,9 +217,9 @@ export default function LoginPage() {
             type="submit"
             disabled={loading}
             style={{
-              marginTop: '6px',
+              marginTop: '4px',
               width: '100%',
-              padding: '13px',
+              padding: '12px',
               background: '#ffffff',
               color: '#000000',
               border: 'none',
@@ -205,32 +239,32 @@ export default function LoginPage() {
         {/* Quick Role Fill for Testing Customer vs Admin */}
         <div
           style={{
-            marginTop: '20px',
-            paddingTop: '16px',
+            marginTop: '16px',
+            paddingTop: '14px',
             borderTop: '1px solid rgba(255,255,255,0.12)'
           }}
         >
           <span
             style={{
               display: 'block',
-              fontSize: '10px',
-              letterSpacing: '1.2px',
+              fontSize: '9px',
+              letterSpacing: '1.4px',
               textTransform: 'uppercase',
               color: 'rgba(255,255,255,0.45)',
               textAlign: 'center',
-              marginBottom: '10px'
+              marginBottom: '8px'
             }}
           >
             QUICK DEMO CREDENTIALS (MYSQL SEEDED)
           </span>
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '8px' }}>
             <button
               type="button"
               onClick={() => fillDemo('customer')}
               style={{
                 flex: 1,
                 padding: '8px 10px',
-                background: 'rgba(255,255,255,0.07)',
+                background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.2)',
                 borderRadius: '5px',
                 color: '#ffffff',
@@ -247,7 +281,7 @@ export default function LoginPage() {
               style={{
                 flex: 1,
                 padding: '8px 10px',
-                background: 'rgba(255,255,255,0.07)',
+                background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.2)',
                 borderRadius: '5px',
                 color: '#ffffff',
@@ -263,7 +297,7 @@ export default function LoginPage() {
 
         <p
           style={{
-            marginTop: '20px',
+            marginTop: '16px',
             marginBottom: 0,
             textAlign: 'center',
             fontSize: '12px',
@@ -286,4 +320,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

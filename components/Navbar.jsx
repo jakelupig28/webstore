@@ -24,7 +24,7 @@ export const Navbar = () => {
   const user = authCalls?.user;
 
   return (
-    <nav style={{ paddingTop: isMobile ? '12px' : '18px' }}>
+    <nav style={{ paddingTop: isMobile ? '12px' : '16px' }}>
       <div className="mainNavContainer">
         {/* Mobile slide-in shadow overlay */}
         {isMobile && navCalls.viewMobileNav && (
@@ -173,7 +173,7 @@ export const Navbar = () => {
             alignItems: 'center',
             justifyContent: 'center',
             position: 'relative',
-            marginTop: isMobile ? '8px' : '15px'
+            marginTop: isMobile ? '6px' : '10px'
           }}
         >
           <div
@@ -189,11 +189,12 @@ export const Navbar = () => {
               <h5
                 style={{
                   color: '#ffffff',
-                  fontSize: isMobile ? '20px' : '26px',
+                  fontSize: isMobile ? '20px' : '25px',
                   letterSpacing: '2.5px',
                   fontWeight: 800,
                   textTransform: 'uppercase',
-                  margin: 0
+                  margin: 0,
+                  textShadow: '0 2px 12px rgba(0,0,0,0.85)'
                 }}
               >
                 LARO SPORTS™
@@ -205,12 +206,12 @@ export const Navbar = () => {
             <div
               style={{
                 position: 'absolute',
-                right: '36px',
+                right: '24px',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '12px',
+                gap: '10px',
                 zIndex: 50
               }}
             >
@@ -219,10 +220,15 @@ export const Navbar = () => {
                   <span
                     style={{
                       fontSize: '11px',
-                      color: 'rgba(255,255,255,0.65)',
+                      color: 'rgba(255,255,255,0.8)',
                       letterSpacing: '1px',
                       textTransform: 'uppercase',
-                      fontWeight: 600
+                      fontWeight: 600,
+                      background: 'rgba(0,0,0,0.65)',
+                      backdropFilter: 'blur(8px)',
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      border: '1px solid rgba(255,255,255,0.14)'
                     }}
                   >
                     {user.role === 'admin' ? '★ ADMIN:' : ''} {user.name}
@@ -231,11 +237,12 @@ export const Navbar = () => {
                     <Link
                       href="/Admin"
                       style={{
-                        padding: '6px 13px',
+                        padding: '6px 14px',
                         borderRadius: '4px',
-                        background: pathname?.toLowerCase().includes('admin') ? '#ffffff' : 'rgba(255,255,255,0.1)',
+                        background: pathname?.toLowerCase().includes('admin') ? '#ffffff' : 'rgba(10,10,10,0.75)',
+                        backdropFilter: 'blur(8px)',
                         color: pathname?.toLowerCase().includes('admin') ? '#000000' : '#ffffff',
-                        border: '1px solid rgba(255,255,255,0.25)',
+                        border: '1px solid rgba(255,255,255,0.3)',
                         fontSize: '11px',
                         fontWeight: 700,
                         letterSpacing: '1.2px',
@@ -249,11 +256,12 @@ export const Navbar = () => {
                     <Link
                       href="/Orders"
                       style={{
-                        padding: '6px 13px',
+                        padding: '6px 14px',
                         borderRadius: '4px',
-                        background: pathname?.toLowerCase().includes('orders') ? '#ffffff' : 'rgba(255,255,255,0.1)',
+                        background: pathname?.toLowerCase().includes('orders') ? '#ffffff' : 'rgba(10,10,10,0.75)',
+                        backdropFilter: 'blur(8px)',
                         color: pathname?.toLowerCase().includes('orders') ? '#000000' : '#ffffff',
-                        border: '1px solid rgba(255,255,255,0.25)',
+                        border: '1px solid rgba(255,255,255,0.3)',
                         fontSize: '11px',
                         fontWeight: 700,
                         letterSpacing: '1.2px',
@@ -270,9 +278,10 @@ export const Navbar = () => {
                     style={{
                       padding: '6px 12px',
                       borderRadius: '4px',
-                      background: 'transparent',
-                      color: 'rgba(255,255,255,0.75)',
-                      border: '1px solid rgba(255,255,255,0.2)',
+                      background: 'rgba(10,10,10,0.75)',
+                      backdropFilter: 'blur(8px)',
+                      color: 'rgba(255,255,255,0.85)',
+                      border: '1px solid rgba(255,255,255,0.22)',
                       fontSize: '11px',
                       fontWeight: 600,
                       letterSpacing: '1px',
@@ -288,11 +297,12 @@ export const Navbar = () => {
                   <Link
                     href="/Login"
                     style={{
-                      padding: '6px 14px',
+                      padding: '6px 15px',
                       borderRadius: '4px',
-                      background: pathname?.toLowerCase().includes('login') ? '#ffffff' : 'transparent',
+                      background: pathname?.toLowerCase().includes('login') ? '#ffffff' : 'rgba(10,10,10,0.72)',
+                      backdropFilter: 'blur(8px)',
                       color: pathname?.toLowerCase().includes('login') ? '#000000' : '#ffffff',
-                      border: '1px solid rgba(255,255,255,0.28)',
+                      border: '1px solid rgba(255,255,255,0.32)',
                       fontSize: '11px',
                       fontWeight: 700,
                       letterSpacing: '1.2px',
@@ -305,9 +315,9 @@ export const Navbar = () => {
                   <Link
                     href="/Register"
                     style={{
-                      padding: '6px 14px',
+                      padding: '6px 15px',
                       borderRadius: '4px',
-                      background: '#ffffff',
+                      background: pathname?.toLowerCase().includes('register') ? '#ffffff' : 'rgba(255,255,255,0.92)',
                       color: '#000000',
                       border: '1px solid #ffffff',
                       fontSize: '11px',
