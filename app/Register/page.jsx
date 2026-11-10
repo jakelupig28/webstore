@@ -87,7 +87,8 @@ export default function RegisterPage() {
 
   const inputStyle = {
     width: '100%',
-    padding: '11px 14px',
+    height: '42px',
+    padding: '10px 14px',
     background: 'rgba(255,255,255,0.06)',
     border: '1px solid rgba(255,255,255,0.2)',
     borderRadius: '6px',
@@ -107,7 +108,7 @@ export default function RegisterPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '74px 2.5vw 82px',
+        padding: '68px 2.5vw 76px',
         boxSizing: 'border-box'
       }}
     >
@@ -138,7 +139,7 @@ export default function RegisterPage() {
         />
       </div>
 
-      {/* Wide Edge-to-Edge Customer Registration Card */}
+      {/* Wide Edge-to-Edge Customer Registration Card with Center Partition */}
       <div
         style={{
           position: 'relative',
@@ -150,11 +151,12 @@ export default function RegisterPage() {
           WebkitBackdropFilter: 'blur(22px)',
           border: '1px solid rgba(255, 255, 255, 0.16)',
           borderRadius: '12px',
-          padding: '28px 36px',
+          padding: '26px 34px',
           color: '#ffffff',
           boxShadow: '0 24px 60px rgba(0, 0, 0, 0.85)'
         }}
       >
+        {/* Card Header */}
         <div
           style={{
             display: 'flex',
@@ -164,7 +166,7 @@ export default function RegisterPage() {
             gap: '10px',
             marginBottom: '20px',
             paddingBottom: '14px',
-            borderBottom: '1px solid rgba(255,255,255,0.12)'
+            borderBottom: '1px solid rgba(255,255,255,0.14)'
           }}
         >
           <div>
@@ -182,7 +184,7 @@ export default function RegisterPage() {
             </span>
             <h2
               style={{
-                fontSize: '24px',
+                fontSize: '23px',
                 fontWeight: 800,
                 letterSpacing: '2px',
                 textTransform: 'uppercase',
@@ -226,15 +228,31 @@ export default function RegisterPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {/* Row 1: Full Name, Email, Birthdate, Age, Gender */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1.5fr 1.5fr 1.1fr 0.7fr 1.1fr',
-              gap: '14px'
-            }}
-          >
+        {/* Two-Column Form Divided by a Center Partition */}
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1px 1fr',
+            gap: '32px',
+            alignItems: 'stretch'
+          }}
+        >
+          {/* LEFT SIDE OF PARTITION: Personal Profile & Address */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div
+              style={{
+                fontSize: '11px',
+                fontWeight: 800,
+                letterSpacing: '1.8px',
+                color: 'rgba(255,255,255,0.9)',
+                textTransform: 'uppercase',
+                marginBottom: '2px'
+              }}
+            >
+              1. PERSONAL INFORMATION & ADDRESS
+            </div>
+
             <div>
               <label style={labelStyle}>FULL NAME *</label>
               <input
@@ -247,77 +265,64 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div>
-              <label style={labelStyle}>EMAIL ADDRESS *</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                style={inputStyle}
-              />
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1.25fr 0.75fr 1.1fr',
+                gap: '12px'
+              }}
+            >
+              <div>
+                <label style={labelStyle}>BIRTHDATE *</label>
+                <input
+                  type="date"
+                  required
+                  value={birthdate}
+                  onChange={handleBirthdateChange}
+                  style={{
+                    ...inputStyle,
+                    colorScheme: 'dark'
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>AGE *</label>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  max="130"
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                  placeholder="Auto / Manual"
+                  style={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>GENDER *</label>
+                <select
+                  required
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  style={{
+                    ...inputStyle,
+                    background: '#121215',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="" disabled>
+                    Select Gender
+                  </option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Non-Binary">Non-Binary</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+              </div>
             </div>
 
-            <div>
-              <label style={labelStyle}>BIRTHDATE *</label>
-              <input
-                type="date"
-                required
-                value={birthdate}
-                onChange={handleBirthdateChange}
-                style={{
-                  ...inputStyle,
-                  colorScheme: 'dark'
-                }}
-              />
-            </div>
-
-            <div>
-              <label style={labelStyle}>AGE *</label>
-              <input
-                type="number"
-                required
-                min="1"
-                max="130"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                placeholder="Auto / Manual"
-                style={inputStyle}
-              />
-            </div>
-
-            <div>
-              <label style={labelStyle}>GENDER *</label>
-              <select
-                required
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                style={{
-                  ...inputStyle,
-                  background: '#121215',
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="" disabled>
-                  Select Gender
-                </option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Non-Binary">Non-Binary</option>
-                <option value="Prefer not to say">Prefer not to say</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Row 2: Complete Address, Password, Confirm Password */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '2.2fr 1fr 1fr',
-              gap: '14px'
-            }}
-          >
             <div>
               <label style={labelStyle}>COMPLETE ADDRESS *</label>
               <input
@@ -329,66 +334,104 @@ export default function RegisterPage() {
                 style={inputStyle}
               />
             </div>
-
-            <div>
-              <label style={labelStyle}>PASSWORD *</label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min. 6 characters"
-                style={inputStyle}
-              />
-            </div>
-
-            <div>
-              <label style={labelStyle}>CONFIRM PASSWORD *</label>
-              <input
-                type="password"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Repeat password"
-                style={inputStyle}
-              />
-            </div>
           </div>
 
-          {/* Submit Row */}
+          {/* CENTER VERTICAL PARTITION */}
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '16px',
-              marginTop: '4px'
+              width: '1px',
+              background:
+                'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.28) 50%, rgba(255,255,255,0.05) 100%)',
+              alignSelf: 'stretch'
             }}
-          >
-            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>
-              Age is automatically calculated when selecting your birthdate, or you can type it manually.
-            </span>
+          />
 
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                minWidth: '280px',
-                padding: '13px 28px',
-                background: '#ffffff',
-                color: '#000000',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '12px',
-                fontWeight: 800,
-                letterSpacing: '2px',
-                textTransform: 'uppercase',
-                cursor: loading ? 'wait' : 'pointer',
-                opacity: loading ? 0.7 : 1
-              }}
-            >
-              {loading ? 'CREATING ACCOUNT...' : 'COMPLETE REGISTRATION'}
-            </button>
+          {/* RIGHT SIDE OF PARTITION: Account Credentials & Submit */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div
+                style={{
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  letterSpacing: '1.8px',
+                  color: 'rgba(255,255,255,0.9)',
+                  textTransform: 'uppercase',
+                  marginBottom: '2px'
+                }}
+              >
+                2. ACCOUNT CREDENTIALS
+              </div>
+
+              <div>
+                <label style={labelStyle}>EMAIL ADDRESS *</label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  style={inputStyle}
+                />
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '12px'
+                }}
+              >
+                <div>
+                  <label style={labelStyle}>PASSWORD *</label>
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Min. 6 characters"
+                    style={inputStyle}
+                  />
+                </div>
+
+                <div>
+                  <label style={labelStyle}>CONFIRM PASSWORD *</label>
+                  <input
+                    type="password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Repeat password"
+                    style={inputStyle}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>
+                Age is auto-calculated from your birthdate, or you can enter it manually.
+              </span>
+              <button
+                type="submit"
+                disabled={loading}
+                style={{
+                  width: '100%',
+                  height: '42px',
+                  background: '#ffffff',
+                  color: '#000000',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  letterSpacing: '2px',
+                  textTransform: 'uppercase',
+                  cursor: loading ? 'wait' : 'pointer',
+                  opacity: loading ? 0.7 : 1
+                }}
+              >
+                {loading ? 'CREATING ACCOUNT...' : 'COMPLETE REGISTRATION'}
+              </button>
+            </div>
           </div>
         </form>
       </div>

@@ -105,15 +105,39 @@ export default function CheckoutPage() {
     }
   };
 
+  const labelStyle = {
+    display: 'block',
+    fontSize: '9px',
+    fontWeight: 700,
+    letterSpacing: '1px',
+    color: 'rgba(255,255,255,0.68)',
+    marginBottom: '3px'
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '8px 11px',
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.18)',
+    borderRadius: '6px',
+    color: '#ffffff',
+    fontSize: '12px',
+    boxSizing: 'border-box'
+  };
+
   return (
     <div
       style={{
         position: 'relative',
         width: '100%',
-        minHeight: '100vh',
+        height: '100vh',
+        overflow: 'hidden',
         background: '#000000',
         color: '#ffffff',
-        padding: '78px 36px 96px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '54px 36px 62px',
         boxSizing: 'border-box'
       }}
     >
@@ -144,19 +168,19 @@ export default function CheckoutPage() {
         />
       </div>
 
-      {/* Main Content Container */}
+      {/* Main Content Container (Fits 100vh No Scroll) */}
       <div
         style={{
           position: 'relative',
           zIndex: 10,
-          maxWidth: '1180px',
+          width: '100%',
+          maxWidth: '1220px',
           margin: '0 auto'
         }}
       >
         {completedOrder ? (
           <div
             style={{
-              minHeight: 'calc(100vh - 180px)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -165,13 +189,13 @@ export default function CheckoutPage() {
             <div
               style={{
                 width: '100%',
-                maxWidth: '580px',
+                maxWidth: '540px',
                 background: 'rgba(10, 10, 12, 0.86)',
                 backdropFilter: 'blur(22px)',
                 WebkitBackdropFilter: 'blur(22px)',
                 border: '1px solid rgba(255, 255, 255, 0.18)',
                 borderRadius: '12px',
-                padding: '34px 32px',
+                padding: '28px 30px',
                 color: '#ffffff',
                 textAlign: 'center',
                 boxShadow: '0 24px 60px rgba(0,0,0,0.85)'
@@ -179,17 +203,17 @@ export default function CheckoutPage() {
             >
               <div
                 style={{
-                  width: '52px',
-                  height: '52px',
+                  width: '46px',
+                  height: '46px',
                   borderRadius: '50%',
                   background: '#ffffff',
                   color: '#000000',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '22px',
+                  fontSize: '20px',
                   fontWeight: 900,
-                  margin: '0 auto 14px'
+                  margin: '0 auto 12px'
                 }}
               >
                 ✓
@@ -205,12 +229,12 @@ export default function CheckoutPage() {
                   marginBottom: '4px'
                 }}
               >
-                ORDER CONFIRMED • SAVED TO DATABASE
+                ORDER CONFIRMED
               </span>
 
               <h2
                 style={{
-                  fontSize: '24px',
+                  fontSize: '22px',
                   fontWeight: 800,
                   letterSpacing: '1.5px',
                   margin: '0 0 8px'
@@ -225,9 +249,9 @@ export default function CheckoutPage() {
                   background: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(255,255,255,0.2)',
                   borderRadius: '6px',
-                  padding: '6px 14px',
+                  padding: '5px 14px',
                   fontSize: '12px',
-                  marginBottom: '18px'
+                  marginBottom: '14px'
                 }}
               >
                 Order Reference: <strong style={{ letterSpacing: '1px' }}>{completedOrder.orderNumber}</strong>
@@ -238,11 +262,11 @@ export default function CheckoutPage() {
                   background: 'rgba(255,255,255,0.04)',
                   border: '1px solid rgba(255,255,255,0.12)',
                   borderRadius: '8px',
-                  padding: '14px 16px',
+                  padding: '12px 16px',
                   textAlign: 'left',
-                  marginBottom: '20px',
+                  marginBottom: '18px',
                   fontSize: '12px',
-                  lineHeight: 1.75
+                  lineHeight: 1.7
                 }}
               >
                 <div>
@@ -267,7 +291,7 @@ export default function CheckoutPage() {
                 <Link
                   href="/Orders"
                   style={{
-                    padding: '12px 22px',
+                    padding: '11px 20px',
                     background: '#ffffff',
                     color: '#000000',
                     borderRadius: '6px',
@@ -283,7 +307,7 @@ export default function CheckoutPage() {
                 <Link
                   href="/Collections"
                   style={{
-                    padding: '12px 22px',
+                    padding: '11px 20px',
                     background: 'transparent',
                     color: '#ffffff',
                     border: '1px solid rgba(255,255,255,0.3)',
@@ -302,32 +326,33 @@ export default function CheckoutPage() {
           </div>
         ) : (
           <>
-            {/* Top Header */}
+            {/* Compact Top Header */}
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                marginBottom: '16px'
+                marginBottom: '10px'
               }}
             >
               <div>
                 <span
                   style={{
-                    fontSize: '10px',
+                    fontSize: '9px',
                     letterSpacing: '2.2px',
                     textTransform: 'uppercase',
-                    color: 'rgba(255,255,255,0.55)'
+                    color: 'rgba(255,255,255,0.55)',
+                    display: 'block'
                   }}
                 >
                   PAIN STAIN 2025 • NATIONWIDE DISPATCH
                 </span>
                 <h2
                   style={{
-                    fontSize: '24px',
+                    fontSize: '21px',
                     fontWeight: 800,
                     letterSpacing: '1.5px',
-                    margin: '2px 0 0'
+                    margin: '1px 0 0'
                   }}
                 >
                   SECURE CHECKOUT
@@ -345,7 +370,7 @@ export default function CheckoutPage() {
                   letterSpacing: '1.2px',
                   textDecoration: 'none',
                   border: '1px solid rgba(255,255,255,0.24)',
-                  padding: '8px 16px',
+                  padding: '7px 15px',
                   borderRadius: '6px'
                 }}
               >
@@ -360,23 +385,23 @@ export default function CheckoutPage() {
                   backdropFilter: 'blur(20px)',
                   border: '1px solid rgba(255,255,255,0.16)',
                   borderRadius: '12px',
-                  padding: '52px 24px',
+                  padding: '44px 24px',
                   textAlign: 'center',
-                  maxWidth: '500px',
-                  margin: '40px auto'
+                  maxWidth: '480px',
+                  margin: '20px auto'
                 }}
               >
-                <h3 style={{ margin: '0 0 10px', fontSize: '20px', letterSpacing: '1.5px' }}>
+                <h3 style={{ margin: '0 0 8px', fontSize: '19px', letterSpacing: '1.5px' }}>
                   YOUR CART IS EMPTY
                 </h3>
-                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', marginBottom: '24px' }}>
+                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', marginBottom: '20px' }}>
                   Add streetwear pieces from the PAIN STAIN 2025 drop before checking out.
                 </p>
                 <Link
                   href="/Collections"
                   style={{
                     display: 'inline-block',
-                    padding: '12px 28px',
+                    padding: '11px 26px',
                     background: '#ffffff',
                     color: '#000000',
                     borderRadius: '6px',
@@ -394,8 +419,8 @@ export default function CheckoutPage() {
                 onSubmit={handlePlaceOrder}
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '1.35fr 1fr',
-                  gap: '22px',
+                  gridTemplateColumns: '1.38fr 1fr',
+                  gap: '18px',
                   alignItems: 'start'
                 }}
               >
@@ -406,8 +431,8 @@ export default function CheckoutPage() {
                     backdropFilter: 'blur(22px)',
                     WebkitBackdropFilter: 'blur(22px)',
                     border: '1px solid rgba(255, 255, 255, 0.16)',
-                    borderRadius: '12px',
-                    padding: '22px 24px',
+                    borderRadius: '11px',
+                    padding: '16px 20px',
                     boxShadow: '0 20px 50px rgba(0,0,0,0.75)'
                   }}
                 >
@@ -417,10 +442,10 @@ export default function CheckoutPage() {
                         background: 'rgba(239, 68, 68, 0.16)',
                         border: '1px solid rgba(239, 68, 68, 0.5)',
                         color: '#fca5a5',
-                        padding: '10px 14px',
+                        padding: '7px 12px',
                         borderRadius: '6px',
-                        fontSize: '12px',
-                        marginBottom: '14px'
+                        fontSize: '11px',
+                        marginBottom: '10px'
                       }}
                     >
                       {error}
@@ -428,20 +453,20 @@ export default function CheckoutPage() {
                   )}
 
                   {/* Section 1: Contact Information */}
-                  <div style={{ marginBottom: '16px' }}>
+                  <div style={{ marginBottom: '11px' }}>
                     <div
                       style={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        marginBottom: '10px'
+                        marginBottom: '7px'
                       }}
                     >
                       <span
                         style={{
-                          fontSize: '11px',
+                          fontSize: '10px',
                           fontWeight: 800,
-                          letterSpacing: '1.6px',
+                          letterSpacing: '1.5px',
                           textTransform: 'uppercase'
                         }}
                       >
@@ -451,7 +476,7 @@ export default function CheckoutPage() {
                         <Link
                           href="/Login"
                           style={{
-                            fontSize: '11px',
+                            fontSize: '10px',
                             color: 'rgba(255,255,255,0.7)',
                             textDecoration: 'underline'
                           }}
@@ -461,100 +486,40 @@ export default function CheckoutPage() {
                       )}
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.2fr 1fr', gap: '10px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.2fr 1fr', gap: '8px' }}>
                       <div>
-                        <label
-                          style={{
-                            display: 'block',
-                            fontSize: '10px',
-                            fontWeight: 700,
-                            letterSpacing: '1px',
-                            color: 'rgba(255,255,255,0.68)',
-                            marginBottom: '4px'
-                          }}
-                        >
-                          FULL NAME *
-                        </label>
+                        <label style={labelStyle}>FULL NAME *</label>
                         <input
                           type="text"
                           required
                           value={customerName}
                           onChange={(e) => setCustomerName(e.target.value)}
                           placeholder="Juan Dela Cruz"
-                          style={{
-                            width: '100%',
-                            padding: '10px 12px',
-                            background: 'rgba(255,255,255,0.06)',
-                            border: '1px solid rgba(255,255,255,0.18)',
-                            borderRadius: '6px',
-                            color: '#ffffff',
-                            fontSize: '12px',
-                            boxSizing: 'border-box'
-                          }}
+                          style={inputStyle}
                         />
                       </div>
 
                       <div>
-                        <label
-                          style={{
-                            display: 'block',
-                            fontSize: '10px',
-                            fontWeight: 700,
-                            letterSpacing: '1px',
-                            color: 'rgba(255,255,255,0.68)',
-                            marginBottom: '4px'
-                          }}
-                        >
-                          EMAIL ADDRESS *
-                        </label>
+                        <label style={labelStyle}>EMAIL ADDRESS *</label>
                         <input
                           type="email"
                           required
                           value={customerEmail}
                           onChange={(e) => setCustomerEmail(e.target.value)}
                           placeholder="you@example.com"
-                          style={{
-                            width: '100%',
-                            padding: '10px 12px',
-                            background: 'rgba(255,255,255,0.06)',
-                            border: '1px solid rgba(255,255,255,0.18)',
-                            borderRadius: '6px',
-                            color: '#ffffff',
-                            fontSize: '12px',
-                            boxSizing: 'border-box'
-                          }}
+                          style={inputStyle}
                         />
                       </div>
 
                       <div>
-                        <label
-                          style={{
-                            display: 'block',
-                            fontSize: '10px',
-                            fontWeight: 700,
-                            letterSpacing: '1px',
-                            color: 'rgba(255,255,255,0.68)',
-                            marginBottom: '4px'
-                          }}
-                        >
-                          PHONE NUMBER *
-                        </label>
+                        <label style={labelStyle}>PHONE NUMBER *</label>
                         <input
                           type="tel"
                           required
                           value={customerPhone}
                           onChange={(e) => setCustomerPhone(e.target.value)}
                           placeholder="0917 123 4567"
-                          style={{
-                            width: '100%',
-                            padding: '10px 12px',
-                            background: 'rgba(255,255,255,0.06)',
-                            border: '1px solid rgba(255,255,255,0.18)',
-                            borderRadius: '6px',
-                            color: '#ffffff',
-                            fontSize: '12px',
-                            boxSizing: 'border-box'
-                          }}
+                          style={inputStyle}
                         />
                       </div>
                     </div>
@@ -563,150 +528,70 @@ export default function CheckoutPage() {
                   {/* Section 2: Shipping Address */}
                   <div
                     style={{
-                      marginBottom: '16px',
-                      paddingTop: '14px',
+                      marginBottom: '11px',
+                      paddingTop: '10px',
                       borderTop: '1px solid rgba(255,255,255,0.1)'
                     }}
                   >
                     <span
                       style={{
                         display: 'block',
-                        fontSize: '11px',
+                        fontSize: '10px',
                         fontWeight: 800,
-                        letterSpacing: '1.6px',
+                        letterSpacing: '1.5px',
                         textTransform: 'uppercase',
-                        marginBottom: '10px'
+                        marginBottom: '7px'
                       }}
                     >
                       2. SHIPPING ADDRESS
                     </span>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       <div>
-                        <label
-                          style={{
-                            display: 'block',
-                            fontSize: '10px',
-                            fontWeight: 700,
-                            letterSpacing: '1px',
-                            color: 'rgba(255,255,255,0.68)',
-                            marginBottom: '4px'
-                          }}
-                        >
-                          STREET ADDRESS / HOUSE NO. / BARANGAY *
-                        </label>
+                        <label style={labelStyle}>STREET ADDRESS / HOUSE NO. / BARANGAY *</label>
                         <input
                           type="text"
                           required
                           value={shippingAddress}
                           onChange={(e) => setShippingAddress(e.target.value)}
                           placeholder="Unit / House No., Street Name, Barangay"
-                          style={{
-                            width: '100%',
-                            padding: '10px 12px',
-                            background: 'rgba(255,255,255,0.06)',
-                            border: '1px solid rgba(255,255,255,0.18)',
-                            borderRadius: '6px',
-                            color: '#ffffff',
-                            fontSize: '12px',
-                            boxSizing: 'border-box'
-                          }}
+                          style={inputStyle}
                         />
                       </div>
 
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 110px', gap: '10px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 105px', gap: '8px' }}>
                         <div>
-                          <label
-                            style={{
-                              display: 'block',
-                              fontSize: '10px',
-                              fontWeight: 700,
-                              letterSpacing: '1px',
-                              color: 'rgba(255,255,255,0.68)',
-                              marginBottom: '4px'
-                            }}
-                          >
-                            CITY / MUNICIPALITY *
-                          </label>
+                          <label style={labelStyle}>CITY / MUNICIPALITY *</label>
                           <input
                             type="text"
                             required
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                             placeholder="Manila"
-                            style={{
-                              width: '100%',
-                              padding: '10px 12px',
-                              background: 'rgba(255,255,255,0.06)',
-                              border: '1px solid rgba(255,255,255,0.18)',
-                              borderRadius: '6px',
-                              color: '#ffffff',
-                              fontSize: '12px',
-                              boxSizing: 'border-box'
-                            }}
+                            style={inputStyle}
                           />
                         </div>
 
                         <div>
-                          <label
-                            style={{
-                              display: 'block',
-                              fontSize: '10px',
-                              fontWeight: 700,
-                              letterSpacing: '1px',
-                              color: 'rgba(255,255,255,0.68)',
-                              marginBottom: '4px'
-                            }}
-                          >
-                            PROVINCE / REGION
-                          </label>
+                          <label style={labelStyle}>PROVINCE / REGION</label>
                           <input
                             type="text"
                             value={province}
                             onChange={(e) => setProvince(e.target.value)}
                             placeholder="Metro Manila"
-                            style={{
-                              width: '100%',
-                              padding: '10px 12px',
-                              background: 'rgba(255,255,255,0.06)',
-                              border: '1px solid rgba(255,255,255,0.18)',
-                              borderRadius: '6px',
-                              color: '#ffffff',
-                              fontSize: '12px',
-                              boxSizing: 'border-box'
-                            }}
+                            style={inputStyle}
                           />
                         </div>
 
                         <div>
-                          <label
-                            style={{
-                              display: 'block',
-                              fontSize: '10px',
-                              fontWeight: 700,
-                              letterSpacing: '1px',
-                              color: 'rgba(255,255,255,0.68)',
-                              marginBottom: '4px'
-                            }}
-                          >
-                            POSTAL *
-                          </label>
+                          <label style={labelStyle}>POSTAL *</label>
                           <input
                             type="text"
                             required
                             value={postalCode}
                             onChange={(e) => setPostalCode(e.target.value)}
                             placeholder="1000"
-                            style={{
-                              width: '100%',
-                              padding: '10px 12px',
-                              background: 'rgba(255,255,255,0.06)',
-                              border: '1px solid rgba(255,255,255,0.18)',
-                              borderRadius: '6px',
-                              color: '#ffffff',
-                              fontSize: '12px',
-                              boxSizing: 'border-box'
-                            }}
+                            style={inputStyle}
                           />
                         </div>
                       </div>
@@ -716,18 +601,18 @@ export default function CheckoutPage() {
                   {/* Section 3: Payment Method */}
                   <div
                     style={{
-                      paddingTop: '14px',
+                      paddingTop: '10px',
                       borderTop: '1px solid rgba(255,255,255,0.1)'
                     }}
                   >
                     <span
                       style={{
                         display: 'block',
-                        fontSize: '11px',
+                        fontSize: '10px',
                         fontWeight: 800,
-                        letterSpacing: '1.6px',
+                        letterSpacing: '1.5px',
                         textTransform: 'uppercase',
-                        marginBottom: '10px'
+                        marginBottom: '7px'
                       }}
                     >
                       3. PAYMENT METHOD & NOTES
@@ -737,8 +622,8 @@ export default function CheckoutPage() {
                       style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(3, 1fr)',
-                        gap: '10px',
-                        marginBottom: '10px'
+                        gap: '8px',
+                        marginBottom: '8px'
                       }}
                     >
                       {[
@@ -753,8 +638,8 @@ export default function CheckoutPage() {
                             type="button"
                             onClick={() => setPaymentMethod(pm.id)}
                             style={{
-                              padding: '10px 12px',
-                              borderRadius: '7px',
+                              padding: '8px 10px',
+                              borderRadius: '6px',
                               border: active
                                 ? '1px solid #ffffff'
                                 : '1px solid rgba(255,255,255,0.18)',
@@ -767,9 +652,9 @@ export default function CheckoutPage() {
                             <div style={{ fontSize: '11px', fontWeight: 800 }}>{pm.title}</div>
                             <div
                               style={{
-                                fontSize: '10px',
+                                fontSize: '9px',
                                 opacity: active ? 0.7 : 0.55,
-                                marginTop: '2px'
+                                marginTop: '1px'
                               }}
                             >
                               {pm.sub}
@@ -784,16 +669,7 @@ export default function CheckoutPage() {
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="Optional delivery notes or landmarks for rider..."
-                      style={{
-                        width: '100%',
-                        padding: '10px 12px',
-                        background: 'rgba(255,255,255,0.06)',
-                        border: '1px solid rgba(255,255,255,0.18)',
-                        borderRadius: '6px',
-                        color: '#ffffff',
-                        fontSize: '12px',
-                        boxSizing: 'border-box'
-                      }}
+                      style={inputStyle}
                     />
                   </div>
                 </div>
@@ -805,8 +681,8 @@ export default function CheckoutPage() {
                     backdropFilter: 'blur(22px)',
                     WebkitBackdropFilter: 'blur(22px)',
                     border: '1px solid rgba(255, 255, 255, 0.16)',
-                    borderRadius: '12px',
-                    padding: '22px 24px',
+                    borderRadius: '11px',
+                    padding: '16px 20px',
                     boxShadow: '0 20px 50px rgba(0,0,0,0.75)'
                   }}
                 >
@@ -815,14 +691,14 @@ export default function CheckoutPage() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      marginBottom: '14px'
+                      marginBottom: '10px'
                     }}
                   >
                     <span
                       style={{
-                        fontSize: '11px',
+                        fontSize: '10px',
                         fontWeight: 800,
-                        letterSpacing: '1.6px',
+                        letterSpacing: '1.5px',
                         textTransform: 'uppercase'
                       }}
                     >
@@ -830,10 +706,10 @@ export default function CheckoutPage() {
                     </span>
                     <span
                       style={{
-                        fontSize: '11px',
+                        fontSize: '10px',
                         color: 'rgba(255,255,255,0.6)',
                         background: 'rgba(255,255,255,0.08)',
-                        padding: '3px 9px',
+                        padding: '2px 8px',
                         borderRadius: '99px'
                       }}
                     >
@@ -846,11 +722,11 @@ export default function CheckoutPage() {
                     style={{
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '10px',
-                      maxHeight: '240px',
+                      gap: '8px',
+                      maxHeight: '195px',
                       overflowY: 'auto',
                       paddingRight: '4px',
-                      marginBottom: '16px'
+                      marginBottom: '12px'
                     }}
                   >
                     {cartEdges.map(({ node }) => {
@@ -870,11 +746,11 @@ export default function CheckoutPage() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            gap: '10px',
-                            padding: '10px',
+                            gap: '8px',
+                            padding: '8px 10px',
                             background: 'rgba(255,255,255,0.04)',
                             border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: '8px'
+                            borderRadius: '7px'
                           }}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -882,8 +758,8 @@ export default function CheckoutPage() {
                               src={node.merchandise.image?.url || ''}
                               alt={node.merchandise.product?.title || ''}
                               style={{
-                                width: '48px',
-                                height: '48px',
+                                width: '42px',
+                                height: '42px',
                                 objectFit: 'contain',
                                 background: 'rgba(0,0,0,0.4)',
                                 borderRadius: '6px',
@@ -899,7 +775,7 @@ export default function CheckoutPage() {
                                   display: 'flex',
                                   alignItems: 'center',
                                   gap: '4px',
-                                  marginTop: '4px'
+                                  marginTop: '3px'
                                 }}
                               >
                                 {variants.length > 1 ? (
@@ -916,8 +792,8 @@ export default function CheckoutPage() {
                                           cartCalls.updateCartLineVariant(node.id, v.id)
                                         }
                                         style={{
-                                          padding: '2px 6px',
-                                          fontSize: '10px',
+                                          padding: '2px 5px',
+                                          fontSize: '9px',
                                           fontWeight: 700,
                                           borderRadius: '3px',
                                           border: 'none',
@@ -940,7 +816,7 @@ export default function CheckoutPage() {
                                 )}
                                 <span
                                   style={{
-                                    fontSize: '11px',
+                                    fontSize: '10px',
                                     color: 'rgba(255,255,255,0.65)',
                                     marginLeft: '4px'
                                   }}
@@ -960,7 +836,7 @@ export default function CheckoutPage() {
                                 display: 'inline-flex',
                                 alignItems: 'center',
                                 gap: '4px',
-                                marginTop: '4px'
+                                marginTop: '3px'
                               }}
                             >
                               <button
@@ -969,13 +845,13 @@ export default function CheckoutPage() {
                                   cartCalls.updateCartLine(node.id, node.quantity - 1)
                                 }
                                 style={{
-                                  width: '20px',
-                                  height: '20px',
+                                  width: '18px',
+                                  height: '18px',
                                   borderRadius: '4px',
                                   border: '1px solid rgba(255,255,255,0.2)',
                                   background: 'transparent',
                                   color: '#fff',
-                                  fontSize: '11px',
+                                  fontSize: '10px',
                                   cursor: 'pointer'
                                 }}
                               >
@@ -987,13 +863,13 @@ export default function CheckoutPage() {
                                   cartCalls.updateCartLine(node.id, node.quantity + 1)
                                 }
                                 style={{
-                                  width: '20px',
-                                  height: '20px',
+                                  width: '18px',
+                                  height: '18px',
                                   borderRadius: '4px',
                                   border: '1px solid rgba(255,255,255,0.2)',
                                   background: 'transparent',
                                   color: '#fff',
-                                  fontSize: '11px',
+                                  fontSize: '10px',
                                   cursor: 'pointer'
                                 }}
                               >
@@ -1011,11 +887,11 @@ export default function CheckoutPage() {
                     style={{
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '7px',
-                      fontSize: '12px',
+                      gap: '5px',
+                      fontSize: '11px',
                       borderTop: '1px solid rgba(255,255,255,0.14)',
-                      paddingTop: '12px',
-                      marginBottom: '16px'
+                      paddingTop: '10px',
+                      marginBottom: '12px'
                     }}
                   >
                     <div
@@ -1042,10 +918,10 @@ export default function CheckoutPage() {
                       style={{
                         display: 'flex',
                         justifyContent: 'space-between',
-                        fontSize: '18px',
+                        fontSize: '16px',
                         fontWeight: 800,
-                        marginTop: '4px',
-                        paddingTop: '8px',
+                        marginTop: '3px',
+                        paddingTop: '6px',
                         borderTop: '1px solid rgba(255,255,255,0.12)'
                       }}
                     >
@@ -1059,12 +935,12 @@ export default function CheckoutPage() {
                     disabled={submitting}
                     style={{
                       width: '100%',
-                      padding: '14px',
+                      padding: '12px',
                       background: '#ffffff',
                       color: '#000000',
                       border: 'none',
                       borderRadius: '6px',
-                      fontSize: '12px',
+                      fontSize: '11px',
                       fontWeight: 800,
                       letterSpacing: '2px',
                       textTransform: 'uppercase',
