@@ -1,19 +1,23 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { PRODUCTS } from '../data/products';
 
 const StoreContext = createContext(null);
 
 const LOCAL_CART_KEY = 'thrd_local_cart_v1';
+const LOCAL_USER_KEY = 'laro_auth_user_v1';
 
 export const StoreProvider = ({ children }) => {
+  const router = useRouter();
   const [products] = useState(PRODUCTS);
   const [webLoader, setWebLoader] = useState(false);
   const [activePage, setActivePage] = useState('Home');
   const [viewMobileNav, setViewMobileNav] = useState(false);
   const [volume, setVolume] = useState(0); // Starts muted as per web standards
   const [loadingLine, setLoadingLine] = useState(null);
+  const [user, setUser] = useState(null);
   const [cart, setCart] = useState({
     id: 'local-cart',
     totalQuantity: 0,
@@ -29,7 +33,7 @@ export const StoreProvider = ({ children }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Hydrate local cart from localStorage
+  // Hydrate local cart and user session
   useEffect(() => {
     try {
       const saved = localStorage.getItem(LOCAL_CART_KEY);
@@ -42,7 +46,78 @@ export const StoreProvider = ({ children }) => {
     } catch (e) {
       console.error('Failed to load cart', e);
     }
+
+    try {
+      const savedUser = localStorage.getItem(LOCAL_USER_KEY);
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
+    } catch (e) {
+      console.error('Failed to load user', e);
+    }
+
+    refreshUser();
   }, []);
+
+  const refreshUser = async () => {
+    try {
+      const res = await fetch('/api/auth/me', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.user) {
+          setUser(data.user);
+          localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(data.user));
+        }
+      }
+    } catch {
+      // Keep cached user if offline
+    }
+  };
+
+  const login = async (email, password) => {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Login failed');
+    }
+    setUser(data.user);
+    try {
+      localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(data.user));
+    } catch {}
+    return data.user;
+  };
+
+  const register = async ({ name, email, password, role = 'customer' }) => {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password, role })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Registration failed');
+    }
+    setUser(data.user);
+    try {
+      localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(data.user));
+    } catch {}
+    return data.user;
+  };
+
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch {}
+    setUser(null);
+    try {
+      localStorage.removeItem(LOCAL_USER_KEY);
+    } catch {}
+    router.push('/Login');
+  };
 
   // Save cart changes
   const saveCart = (newCart) => {
@@ -52,6 +127,16 @@ export const StoreProvider = ({ children }) => {
     } catch (e) {
       console.error('Failed to save cart', e);
     }
+  };
+
+  const clearCart = () => {
+    const emptyCart = {
+      id: 'local-cart',
+      totalQuantity: 0,
+      cost: { totalAmount: { amount: '0.00', currencyCode: 'PHP' } },
+      lines: { edges: [] }
+    };
+    saveCart(emptyCart);
   };
 
   const calculateTotal = (edges) => {
@@ -229,11 +314,7 @@ export const StoreProvider = ({ children }) => {
   };
 
   const checkout = () => {
-    if (cart.checkoutUrl) {
-      window.open(cart.checkoutUrl, '_blank');
-    } else {
-      alert(`Proceeding to checkout for ₱${cart.cost.totalAmount.amount}. Orders ship nationwide via standard courier.`);
-    }
+    router.push('/Checkout');
   };
 
   const handlePageClick = (page) => {
@@ -251,6 +332,14 @@ export const StoreProvider = ({ children }) => {
         products,
         webLoader,
         setWebLoader,
+        authCalls: {
+          user,
+          setUser,
+          login,
+          register,
+          logout,
+          refreshUser
+        },
         navCalls: {
           activePage,
           isActive,
@@ -266,6 +355,7 @@ export const StoreProvider = ({ children }) => {
           updateCartLine,
           updateCartLineVariant,
           removeCartLine,
+          clearCart,
           checkout
         },
         videoBG: {

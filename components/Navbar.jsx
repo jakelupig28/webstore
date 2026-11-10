@@ -7,7 +7,7 @@ import { useStore } from '../context/StoreContext';
 import { FacebookIcon, InstagramIcon, TikTokIcon, MenuIcon } from './Icons';
 
 export const Navbar = () => {
-  const { navCalls } = useStore();
+  const { navCalls, authCalls } = useStore();
   const pathname = usePathname();
   const [windowWidth, setWindowWidth] = useState(1200);
 
@@ -21,6 +21,7 @@ export const Navbar = () => {
   }, []);
 
   const isMobile = windowWidth <= 500;
+  const user = authCalls?.user;
 
   return (
     <nav style={{ paddingTop: isMobile ? '12px' : '18px' }}>
@@ -75,6 +76,55 @@ export const Navbar = () => {
                   Cart
                 </button>
               </Link>
+              {user ? (
+                <>
+                  {user.role === 'admin' && (
+                    <Link href="/Admin">
+                      <button
+                        onClick={() => navCalls.handlePageClick('Admin')}
+                        className={pathname.toLowerCase().includes('admin') ? 'active admin' : ''}
+                      >
+                        Admin Panel
+                      </button>
+                    </Link>
+                  )}
+                  <Link href="/Orders">
+                    <button
+                      onClick={() => navCalls.handlePageClick('Orders')}
+                      className={pathname.toLowerCase().includes('orders') ? 'active orders' : ''}
+                    >
+                      My Orders
+                    </button>
+                  </Link>
+                  <button
+                    onClick={() => {
+                      navCalls.setViewMobileNav(false);
+                      authCalls.logout();
+                    }}
+                  >
+                    Logout ({user.name})
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/Login">
+                    <button
+                      onClick={() => navCalls.handlePageClick('Login')}
+                      className={pathname.toLowerCase().includes('login') ? 'active login' : ''}
+                    >
+                      Login
+                    </button>
+                  </Link>
+                  <Link href="/Register">
+                    <button
+                      onClick={() => navCalls.handlePageClick('Register')}
+                      className={pathname.toLowerCase().includes('register') ? 'active register' : ''}
+                    >
+                      Register
+                    </button>
+                  </Link>
+                </>
+              )}
             </div>
 
             <div className="mnnvcntnermSocials">
@@ -150,6 +200,129 @@ export const Navbar = () => {
               </h5>
             </Link>
           </div>
+
+          {!isMobile && (
+            <div
+              style={{
+                position: 'absolute',
+                right: '36px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                zIndex: 50
+              }}
+            >
+              {user ? (
+                <>
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      color: 'rgba(255,255,255,0.65)',
+                      letterSpacing: '1px',
+                      textTransform: 'uppercase',
+                      fontWeight: 600
+                    }}
+                  >
+                    {user.role === 'admin' ? '★ ADMIN:' : ''} {user.name}
+                  </span>
+                  {user.role === 'admin' ? (
+                    <Link
+                      href="/Admin"
+                      style={{
+                        padding: '6px 13px',
+                        borderRadius: '4px',
+                        background: pathname?.toLowerCase().includes('admin') ? '#ffffff' : 'rgba(255,255,255,0.1)',
+                        color: pathname?.toLowerCase().includes('admin') ? '#000000' : '#ffffff',
+                        border: '1px solid rgba(255,255,255,0.25)',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        letterSpacing: '1.2px',
+                        textTransform: 'uppercase',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      Admin Panel
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/Orders"
+                      style={{
+                        padding: '6px 13px',
+                        borderRadius: '4px',
+                        background: pathname?.toLowerCase().includes('orders') ? '#ffffff' : 'rgba(255,255,255,0.1)',
+                        color: pathname?.toLowerCase().includes('orders') ? '#000000' : '#ffffff',
+                        border: '1px solid rgba(255,255,255,0.25)',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        letterSpacing: '1.2px',
+                        textTransform: 'uppercase',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      My Orders
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => authCalls.logout()}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      background: 'transparent',
+                      color: 'rgba(255,255,255,0.75)',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      letterSpacing: '1px',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/Login"
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: '4px',
+                      background: pathname?.toLowerCase().includes('login') ? '#ffffff' : 'transparent',
+                      color: pathname?.toLowerCase().includes('login') ? '#000000' : '#ffffff',
+                      border: '1px solid rgba(255,255,255,0.28)',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      letterSpacing: '1.2px',
+                      textTransform: 'uppercase',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/Register"
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: '4px',
+                      background: '#ffffff',
+                      color: '#000000',
+                      border: '1px solid #ffffff',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      letterSpacing: '1.2px',
+                      textTransform: 'uppercase',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
+            </div>
+          )}
 
           {isMobile && (
             <div

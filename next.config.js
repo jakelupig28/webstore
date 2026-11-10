@@ -22,7 +22,12 @@ const nextConfig = {
       { source: '/studio', destination: '/Studio' },
       { source: '/thrdwrldprblmz', destination: '/Studio' },
       { source: '/Thrdwrldprblmz', destination: '/Studio' },
-      { source: '/cart', destination: '/Cart' }
+      { source: '/cart', destination: '/Cart' },
+      { source: '/checkout', destination: '/Checkout' },
+      { source: '/login', destination: '/Login' },
+      { source: '/register', destination: '/Register' },
+      { source: '/admin', destination: '/Admin' },
+      { source: '/orders', destination: '/Orders' }
     ];
   }
 };
