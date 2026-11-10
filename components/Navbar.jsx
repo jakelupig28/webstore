@@ -189,12 +189,14 @@ export const Navbar = () => {
               <h5
                 style={{
                   color: '#ffffff',
-                  fontSize: isMobile ? '20px' : '25px',
-                  letterSpacing: '2.5px',
-                  fontWeight: 800,
+                  fontFamily: "'Poppins', 'Arial Black', sans-serif",
+                  fontSize: isMobile ? '22px' : '28px',
+                  letterSpacing: '3px',
+                  fontWeight: 900,
+                  WebkitTextStroke: '0.8px #ffffff',
                   textTransform: 'uppercase',
                   margin: 0,
-                  textShadow: '0 2px 12px rgba(0,0,0,0.85)'
+                  textShadow: '0 2px 14px rgba(0,0,0,0.85)'
                 }}
               >
                 LARO SPORTS™
@@ -231,7 +233,7 @@ export const Navbar = () => {
                       border: '1px solid rgba(255,255,255,0.14)'
                     }}
                   >
-                    {user.role === 'admin' ? '★ ADMIN:' : ''} {user.name}
+                    {user.role === 'admin' ? 'ADMIN:' : ''} {user.name}
                   </span>
                   {user.role === 'admin' ? (
                     <Link

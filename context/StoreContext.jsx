@@ -11,7 +11,15 @@ const LOCAL_USER_KEY = 'laro_auth_user_v1';
 
 export const StoreProvider = ({ children }) => {
   const router = useRouter();
-  const [products] = useState(PRODUCTS);
+  const [products, setProducts] = useState(
+    PRODUCTS.map((p) => ({
+      ...p,
+      variants: (p.variants || []).map((v) => ({
+        ...v,
+        stock: typeof v.stock === 'number' ? v.stock : v.availableForSale ? 15 : 0
+      }))
+    }))
+  );
   const [webLoader, setWebLoader] = useState(false);
   const [activePage, setActivePage] = useState('Home');
   const [viewMobileNav, setViewMobileNav] = useState(false);
@@ -33,7 +41,21 @@ export const StoreProvider = ({ children }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Hydrate local cart and user session
+  const refreshProducts = async () => {
+    try {
+      const res = await fetch('/api/products', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.products) && data.products.length > 0) {
+          setProducts(data.products);
+        }
+      }
+    } catch {
+      // Keep default catalog if offline
+    }
+  };
+
+  // Hydrate local cart, user session, and dynamic inventory
   useEffect(() => {
     try {
       const saved = localStorage.getItem(LOCAL_CART_KEY);
@@ -57,6 +79,7 @@ export const StoreProvider = ({ children }) => {
     }
 
     refreshUser();
+    refreshProducts();
   }, []);
 
   const refreshUser = async () => {
@@ -91,11 +114,29 @@ export const StoreProvider = ({ children }) => {
     return data.user;
   };
 
-  const register = async ({ name, email, password, role = 'customer' }) => {
+  const register = async ({
+    name,
+    email,
+    password,
+    birthdate = '',
+    age = '',
+    gender = '',
+    address = '',
+    role = 'customer'
+  }) => {
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password, role })
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+        birthdate,
+        age,
+        gender,
+        address,
+        role
+      })
     });
     const data = await res.json();
     if (!res.ok) {
@@ -157,11 +198,13 @@ export const StoreProvider = ({ children }) => {
     setLoadingLine(variantId);
     try {
       let targetProduct = customProduct;
-      let targetVariant = targetProduct?.variants?.find(v => v.id === variantId);
+      let targetVariant = targetProduct?.variants?.find((v) => v.id === variantId);
 
       if (!targetProduct || !targetVariant) {
         for (const p of products) {
-          const v = p.variants?.find(variant => variant.id === variantId || variant.title === variantId);
+          const v = p.variants?.find(
+            (variant) => variant.id === variantId || variant.title === variantId
+          );
           if (v) {
             targetProduct = p;
             targetVariant = v;
@@ -172,12 +215,17 @@ export const StoreProvider = ({ children }) => {
 
       if (!targetProduct) {
         targetProduct = products[0];
-        targetVariant = targetProduct?.variants?.[0] || { id: 'default', title: 'Default', price: 999, availableForSale: true };
+        targetVariant = targetProduct?.variants?.[0] || {
+          id: 'default',
+          title: 'Default',
+          price: 999,
+          availableForSale: true
+        };
       }
 
       const currentEdges = [...cart.lines.edges];
       const existingIndex = currentEdges.findIndex(
-        e => e.node.merchandise.id === (targetVariant ? targetVariant.id : variantId)
+        (e) => e.node.merchandise.id === (targetVariant ? targetVariant.id : variantId)
       );
 
       if (existingIndex > -1) {
@@ -229,9 +277,9 @@ export const StoreProvider = ({ children }) => {
     try {
       let currentEdges = [...cart.lines.edges];
       if (quantity <= 0) {
-        currentEdges = currentEdges.filter(e => e.node.id !== lineId);
+        currentEdges = currentEdges.filter((e) => e.node.id !== lineId);
       } else {
-        currentEdges = currentEdges.map(e => {
+        currentEdges = currentEdges.map((e) => {
           if (e.node.id === lineId) {
             return {
               ...e,
@@ -262,16 +310,16 @@ export const StoreProvider = ({ children }) => {
     setLoadingLine(lineId);
     try {
       let currentEdges = [...cart.lines.edges];
-      const lineIndex = currentEdges.findIndex(e => e.node.id === lineId);
+      const lineIndex = currentEdges.findIndex((e) => e.node.id === lineId);
       if (lineIndex === -1) return;
 
       const currentLine = currentEdges[lineIndex].node;
       const productHandle = currentLine.merchandise.product?.handle;
       const targetProduct = products.find(
-        p => p.handle === productHandle || p.id === currentLine.merchandise.product?.id
+        (p) => p.handle === productHandle || p.id === currentLine.merchandise.product?.id
       );
       const newVariant = targetProduct?.variants?.find(
-        v => v.id === newVariantId || v.title === newVariantId
+        (v) => v.id === newVariantId || v.title === newVariantId
       );
 
       if (!newVariant) return;
@@ -330,6 +378,8 @@ export const StoreProvider = ({ children }) => {
     <StoreContext.Provider
       value={{
         products,
+        setProducts,
+        refreshProducts,
         webLoader,
         setWebLoader,
         authCalls: {

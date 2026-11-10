@@ -38,6 +38,7 @@ export default function CheckoutPage() {
     if (user) {
       if (!customerName && user.name) setCustomerName(user.name);
       if (!customerEmail && user.email) setCustomerEmail(user.email);
+      if (!shippingAddress && user.address) setShippingAddress(user.address);
     }
   }, [user]);
 

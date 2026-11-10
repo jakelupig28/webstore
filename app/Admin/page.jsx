@@ -15,22 +15,39 @@ const formatPhp = (val) => {
 };
 
 export default function AdminDashboardPage() {
-  const { authCalls, products } = useStore();
+  const { authCalls, products, setProducts, refreshProducts } = useStore();
   const user = authCalls?.user;
 
   const [activeTab, setActiveTab] = useState('orders');
   const [orders, setOrders] = useState([]);
   const [users, setUsers] = useState([]);
-  const [dbStatus, setDbStatus] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Filters & Search
+  // Order Filters & Search with Date Filter Icon Popover
   const [orderSearch, setOrderSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
-  const [productCategoryFilter, setProductCategoryFilter] = useState('All');
-  const [userSearch, setUserSearch] = useState('');
+  const [showDateFilterMenu, setShowDateFilterMenu] = useState(false);
+  const [dateFilterType, setDateFilterType] = useState('all'); // 'all' | 'days' | 'weeks' | 'month' | 'years' | 'specific'
+  const [specificDate, setSpecificDate] = useState('');
 
-  // Quick Add User state inside Admin
+  // Store Inventory & Stock Management States
+  const [productCategoryFilter, setProductCategoryFilter] = useState('All');
+  const [stockFilter, setStockFilter] = useState('all'); // 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
+  const [productSearch, setProductSearch] = useState('');
+  const [editingPriceMap, setEditingPriceMap] = useState({});
+  const [savingProductId, setSavingProductId] = useState(null);
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [newProdTitle, setNewProdTitle] = useState('');
+  const [newProdCategory, setNewProdCategory] = useState('T-Shirts');
+  const [newProdPrice, setNewProdPrice] = useState('400');
+  const [newProdImage, setNewProdImage] = useState('/brand/shirt_nobg.png');
+  const [newProdDesc, setNewProdDesc] = useState(
+    'Product Details: Fabric: Premium Cotton 230-240 GSM. Oversized Boxy Fit. Pain Stain Collection 2025.'
+  );
+  const [newProdStock, setNewProdStock] = useState({ S: 15, M: 15, L: 15, XL: 15 });
+
+  // User Filters & Create User State
+  const [userSearch, setUserSearch] = useState('');
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserPassword, setNewUserPassword] = useState('');
@@ -42,14 +59,14 @@ export default function AdminDashboardPage() {
     try {
       const [ordersRes, usersRes] = await Promise.all([
         fetch('/api/orders?role=admin', { cache: 'no-store' }),
-        fetch('/api/admin/users', { cache: 'no-store' })
+        fetch('/api/admin/users', { cache: 'no-store' }),
+        refreshProducts()
       ]);
       const ordersData = await ordersRes.json();
       const usersData = await usersRes.json();
 
       if (Array.isArray(ordersData.orders)) setOrders(ordersData.orders);
       if (Array.isArray(usersData.users)) setUsers(usersData.users);
-      if (ordersData.dbStatus) setDbStatus(ordersData.dbStatus);
     } catch (err) {
       console.error('Admin load error:', err);
     } finally {
@@ -61,6 +78,7 @@ export default function AdminDashboardPage() {
     loadAdminData();
   }, []);
 
+  // Order Status Update
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       const res = await fetch(`/api/orders/${orderId}`, {
@@ -89,46 +107,134 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleCreateDemoOrder = async () => {
+  // Stock & Inventory Management Handlers
+  const handleUpdateVariantStock = async (prod, variantId, newStockValue) => {
+    const clampedStock = Math.max(0, Number(newStockValue) || 0);
+    setSavingProductId(prod.id);
     try {
-      const sampleProduct = products?.[0] || {
-        id: 'sample-1',
-        title: 'White Tee',
-        price: 750,
-        images: ['/brand/whiteee_nobg.png']
-      };
-      const res = await fetch('/api/orders', {
+      const updatedVariants = (prod.variants || []).map((v) => {
+        if (v.id === variantId || v.title === variantId) {
+          return {
+            ...v,
+            stock: clampedStock,
+            availableForSale: clampedStock > 0
+          };
+        }
+        return v;
+      });
+
+      const res = await fetch('/api/products', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: prod.id,
+          variants: updatedVariants
+        })
+      });
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.products)) {
+        setProducts(data.products);
+      }
+    } catch (err) {
+      console.error('Stock update error:', err);
+    } finally {
+      setSavingProductId(null);
+    }
+  };
+
+  const handleBulkRestockProduct = async (prod, deltaOrSet, isSetZero = false) => {
+    setSavingProductId(prod.id);
+    try {
+      const updatedVariants = (prod.variants || []).map((v) => {
+        const currentStock = typeof v.stock === 'number' ? v.stock : v.availableForSale ? 15 : 0;
+        const nextStock = isSetZero ? 0 : Math.max(0, currentStock + deltaOrSet);
+        return {
+          ...v,
+          stock: nextStock,
+          availableForSale: nextStock > 0
+        };
+      });
+
+      const res = await fetch('/api/products', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: prod.id,
+          variants: updatedVariants
+        })
+      });
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.products)) {
+        setProducts(data.products);
+      }
+    } catch (err) {
+      console.error('Bulk restock error:', err);
+    } finally {
+      setSavingProductId(null);
+    }
+  };
+
+  const handleSaveProductPrice = async (prod) => {
+    const newPrice = editingPriceMap[prod.id];
+    if (newPrice === undefined || isNaN(Number(newPrice))) return;
+    setSavingProductId(prod.id);
+    try {
+      const res = await fetch('/api/products', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: prod.id,
+          price: Number(newPrice)
+        })
+      });
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.products)) {
+        setProducts(data.products);
+      }
+    } catch (err) {
+      console.error('Price update error:', err);
+    } finally {
+      setSavingProductId(null);
+    }
+  };
+
+  const handleAddNewProduct = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId: user?.id || null,
-          customerName: 'Marco Santos',
-          customerEmail: 'customer@larosports.com',
-          customerPhone: '0917 882 9104',
-          shippingAddress: '142 Katipunan Ave., Loyola Heights',
-          city: 'Quezon City',
-          province: 'Metro Manila',
-          postalCode: '1108',
-          paymentMethod: 'COD',
-          notes: 'Gate 2 delivery',
-          totalAmount: sampleProduct.price || 750,
-          items: [
-            {
-              productId: sampleProduct.id,
-              productTitle: sampleProduct.title,
-              variantTitle: 'L',
-              quantity: 1,
-              price: sampleProduct.price || 750,
-              imageUrl: sampleProduct.images?.[0] || ''
-            }
-          ]
+          title: newProdTitle,
+          category: newProdCategory,
+          price: Number(newProdPrice) || 400,
+          imageUrl: newProdImage,
+          description: newProdDesc,
+          stockPerSize: newProdStock
         })
       });
-      if (res.ok) {
-        await loadAdminData();
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.products)) {
+        setProducts(data.products);
+        setShowAddProductModal(false);
+        setNewProdTitle('');
       }
     } catch (err) {
-      console.error('Demo order error:', err);
+      console.error('Failed to add product:', err);
+    }
+  };
+
+  const handleDeleteCustomProduct = async (productId) => {
+    try {
+      const res = await fetch(`/api/products?productId=${encodeURIComponent(productId)}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.products)) {
+        setProducts(data.products);
+      }
+    } catch (err) {
+      console.error('Delete product error:', err);
     }
   };
 
@@ -214,32 +320,119 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Calculations
-  const validOrders = orders.filter((o) => o.status !== 'Cancelled');
-  const totalRevenue = validOrders.reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
-  const avgOrderValue = validOrders.length > 0 ? totalRevenue / validOrders.length : 0;
-  const pendingCount = orders.filter((o) => o.status === 'Pending' || o.status === 'Processing').length;
-  const deliveredCount = orders.filter((o) => o.status === 'Delivered').length;
-  const adminCount = users.filter((u) => u.role === 'admin').length;
-  const customerCount = users.filter((u) => u.role === 'customer').length;
+  // Date filter helper for Orders (Days, Weeks, Month, Years, Specific Date)
+  const matchesDateFilter = (createdAt) => {
+    if (dateFilterType === 'all') return true;
+    const orderDate = new Date(createdAt);
+    if (isNaN(orderDate.getTime())) return true;
+    const now = new Date();
 
+    if (dateFilterType === 'days') {
+      // Today (same calendar day or within 24h)
+      return (
+        orderDate.getFullYear() === now.getFullYear() &&
+        orderDate.getMonth() === now.getMonth() &&
+        orderDate.getDate() === now.getDate()
+      );
+    }
+    if (dateFilterType === 'weeks') {
+      // Last 7 days
+      const diffMs = now.getTime() - orderDate.getTime();
+      return diffMs >= 0 && diffMs <= 7 * 24 * 60 * 60 * 1000;
+    }
+    if (dateFilterType === 'month') {
+      // Current month & year
+      return (
+        orderDate.getFullYear() === now.getFullYear() &&
+        orderDate.getMonth() === now.getMonth()
+      );
+    }
+    if (dateFilterType === 'years') {
+      // Current year
+      return orderDate.getFullYear() === now.getFullYear();
+    }
+    if (dateFilterType === 'specific') {
+      if (!specificDate) return true;
+      const yyyy = orderDate.getFullYear();
+      const mm = String(orderDate.getMonth() + 1).padStart(2, '0');
+      const dd = String(orderDate.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}` === specificDate;
+    }
+    return true;
+  };
+
+  const dateFilterLabel = () => {
+    switch (dateFilterType) {
+      case 'days':
+        return 'Days (Today)';
+      case 'weeks':
+        return 'Weeks (7D)';
+      case 'month':
+        return 'Month';
+      case 'years':
+        return 'Year';
+      case 'specific':
+        return specificDate ? specificDate : 'Specific Date';
+      default:
+        return 'All Dates';
+    }
+  };
+
+  // Filtered Orders
   const filteredOrders = orders.filter((o) => {
     const matchesStatus = statusFilter === 'All' || o.status === statusFilter;
+    if (!matchesStatus) return false;
+    if (!matchesDateFilter(o.created_at)) return false;
+
     const q = orderSearch.trim().toLowerCase();
-    if (!q) return matchesStatus;
+    if (!q) return true;
     return (
-      matchesStatus &&
-      (String(o.order_number || '').toLowerCase().includes(q) ||
-        String(o.customer_name || '').toLowerCase().includes(q) ||
-        String(o.customer_email || '').toLowerCase().includes(q) ||
-        String(o.city || '').toLowerCase().includes(q))
+      String(o.order_number || '').toLowerCase().includes(q) ||
+      String(o.customer_name || '').toLowerCase().includes(q) ||
+      String(o.customer_email || '').toLowerCase().includes(q) ||
+      String(o.city || '').toLowerCase().includes(q)
     );
   });
 
+  // Filtered Products & Stock Calculations
+  const getProductTotalStock = (prod) => {
+    return (prod.variants || []).reduce(
+      (sum, v) => sum + (typeof v.stock === 'number' ? v.stock : v.availableForSale ? 15 : 0),
+      0
+    );
+  };
+
+  const totalCatalogStock = (products || []).reduce(
+    (sum, p) => sum + getProductTotalStock(p),
+    0
+  );
+  const outOfStockProductsCount = (products || []).filter(
+    (p) => getProductTotalStock(p) === 0
+  ).length;
+
   const filteredProducts = (products || []).filter((p) => {
-    if (productCategoryFilter === 'All') return true;
-    return p.category === productCategoryFilter;
+    if (productCategoryFilter !== 'All' && p.category !== productCategoryFilter) return false;
+    const totalStock = getProductTotalStock(p);
+    if (stockFilter === 'in_stock' && totalStock <= 0) return false;
+    if (stockFilter === 'low_stock' && (totalStock === 0 || totalStock > 10)) return false;
+    if (stockFilter === 'out_of_stock' && totalStock > 0) return false;
+
+    const q = productSearch.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      String(p.title || '').toLowerCase().includes(q) ||
+      String(p.category || '').toLowerCase().includes(q)
+    );
   });
+
+  // KPI Calculations
+  const validOrders = orders.filter((o) => o.status !== 'Cancelled');
+  const totalRevenue = validOrders.reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
+  const avgOrderValue = validOrders.length > 0 ? totalRevenue / validOrders.length : 0;
+  const pendingCount = orders.filter(
+    (o) => o.status === 'Pending' || o.status === 'Processing'
+  ).length;
+  const deliveredCount = orders.filter((o) => o.status === 'Delivered').length;
 
   const filteredUsers = users.filter((u) => {
     const q = userSearch.trim().toLowerCase();
@@ -247,7 +440,8 @@ export default function AdminDashboardPage() {
     return (
       String(u.name || '').toLowerCase().includes(q) ||
       String(u.email || '').toLowerCase().includes(q) ||
-      String(u.role || '').toLowerCase().includes(q)
+      String(u.role || '').toLowerCase().includes(q) ||
+      String(u.address || '').toLowerCase().includes(q)
     );
   });
 
@@ -295,7 +489,7 @@ export default function AdminDashboardPage() {
         style={{
           position: 'relative',
           zIndex: 10,
-          maxWidth: '1260px',
+          maxWidth: '1320px',
           margin: '0 auto'
         }}
       >
@@ -337,7 +531,7 @@ export default function AdminDashboardPage() {
                 ADMIN ACCESS REQUIRED
               </h3>
               <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)', marginBottom: '22px' }}>
-                Sign in with an Administrator account (`admin@larosports.com` / `admin123`) to access the LARO SPORTS™ Command Center.
+                Sign in with an Administrator account to manage LARO SPORTS™ store inventory, stock, and customer orders.
               </p>
               <Link
                 href="/Login"
@@ -367,7 +561,7 @@ export default function AdminDashboardPage() {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 gap: '14px',
-                background: 'rgba(10, 10, 12, 0.82)',
+                background: 'rgba(10, 10, 12, 0.84)',
                 backdropFilter: 'blur(20px)',
                 border: '1px solid rgba(255,255,255,0.16)',
                 borderRadius: '12px',
@@ -376,52 +570,36 @@ export default function AdminDashboardPage() {
               }}
             >
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-                  <span
-                    style={{
-                      fontSize: '10px',
-                      letterSpacing: '2.2px',
-                      textTransform: 'uppercase',
-                      color: 'rgba(255,255,255,0.55)',
-                      fontWeight: 700
-                    }}
-                  >
-                    LARO SPORTS™ COMMAND CENTER
-                  </span>
-                  {dbStatus && (
-                    <span
-                      style={{
-                        fontSize: '10px',
-                        padding: '3px 9px',
-                        borderRadius: '99px',
-                        background: dbStatus.connected
-                          ? 'rgba(74, 222, 128, 0.15)'
-                          : 'rgba(250, 204, 21, 0.15)',
-                        border: dbStatus.connected
-                          ? '1px solid rgba(74, 222, 128, 0.45)'
-                          : '1px solid rgba(250, 204, 21, 0.45)',
-                        color: dbStatus.connected ? '#4ade80' : '#facc15',
-                        fontWeight: 700
-                      }}
-                    >
-                      ● {dbStatus.connected ? 'XAMPP MySQL Connected (laro_sports_db)' : 'Local DB Active (Port 3306 Ready)'}
-                    </span>
-                  )}
-                </div>
+                <span
+                  style={{
+                    fontSize: '10px',
+                    letterSpacing: '2.2px',
+                    textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,0.55)',
+                    fontWeight: 700,
+                    display: 'block',
+                    marginBottom: '4px'
+                  }}
+                >
+                  LARO SPORTS™ STORE MANAGEMENT
+                </span>
                 <h2 style={{ fontSize: '24px', fontWeight: 800, letterSpacing: '1.5px', margin: 0 }}>
-                  ADMINISTRATION & OPERATIONS
+                  STORE ADMIN PANEL
                 </h2>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <button
                   type="button"
-                  onClick={handleCreateDemoOrder}
+                  onClick={() => {
+                    setActiveTab('products');
+                    setShowAddProductModal(true);
+                  }}
                   style={{
-                    padding: '9px 14px',
+                    padding: '9px 15px',
                     background: 'rgba(255,255,255,0.08)',
                     color: '#ffffff',
-                    border: '1px solid rgba(255,255,255,0.24)',
+                    border: '1px solid rgba(255,255,255,0.25)',
                     borderRadius: '6px',
                     fontSize: '11px',
                     fontWeight: 700,
@@ -429,7 +607,7 @@ export default function AdminDashboardPage() {
                     cursor: 'pointer'
                   }}
                 >
-                  + SIMULATE ORDER
+                  + ADD NEW PRODUCT
                 </button>
                 <button
                   type="button"
@@ -446,12 +624,12 @@ export default function AdminDashboardPage() {
                     cursor: 'pointer'
                   }}
                 >
-                  ↻ SYNC DATABASE
+                  REFRESH STORE
                 </button>
               </div>
             </div>
 
-            {/* 4 Executive KPI Cards */}
+            {/* 4 Executive Store KPI Cards */}
             <div
               style={{
                 display: 'grid',
@@ -496,7 +674,7 @@ export default function AdminDashboardPage() {
                   {orders.length}
                 </div>
                 <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>
-                  {deliveredCount} Delivered • {orders.length - deliveredCount} Open
+                  {deliveredCount} Delivered • {pendingCount} Pending
                 </div>
               </div>
 
@@ -510,13 +688,13 @@ export default function AdminDashboardPage() {
                 }}
               >
                 <div style={{ fontSize: '10px', letterSpacing: '1.6px', color: 'rgba(255,255,255,0.5)' }}>
-                  PENDING FULFILLMENT
+                  TOTAL SHOP STOCK
                 </div>
-                <div style={{ fontSize: '26px', fontWeight: 800, margin: '6px 0 4px', color: pendingCount > 0 ? '#facc15' : '#ffffff' }}>
-                  {pendingCount}
+                <div style={{ fontSize: '26px', fontWeight: 800, margin: '6px 0 4px' }}>
+                  {totalCatalogStock.toLocaleString()} units
                 </div>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>
-                  Pending & Processing Queue
+                <div style={{ fontSize: '11px', color: outOfStockProductsCount > 0 ? '#facc15' : '#4ade80' }}>
+                  {products?.length || 0} Products ({outOfStockProductsCount} Out of Stock)
                 </div>
               </div>
 
@@ -530,13 +708,13 @@ export default function AdminDashboardPage() {
                 }}
               >
                 <div style={{ fontSize: '10px', letterSpacing: '1.6px', color: 'rgba(255,255,255,0.5)' }}>
-                  ACCOUNTS & ROLES
+                  REGISTERED ACCOUNTS
                 </div>
                 <div style={{ fontSize: '26px', fontWeight: 800, margin: '6px 0 4px' }}>
                   {users.length}
                 </div>
                 <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>
-                  {adminCount} Admin{adminCount === 1 ? '' : 's'} • {customerCount} Customer{customerCount === 1 ? '' : 's'}
+                  Customer & Admin Directory
                 </div>
               </div>
             </div>
@@ -552,9 +730,8 @@ export default function AdminDashboardPage() {
             >
               {[
                 { id: 'orders', label: `ORDERS MANAGEMENT (${orders.length})` },
-                { id: 'products', label: `PRODUCT CATALOG (${products?.length || 0})` },
-                { id: 'users', label: `USERS & ROLES (${users.length})` },
-                { id: 'database', label: 'XAMPP MYSQL STATUS' }
+                { id: 'products', label: `SHOP INVENTORY & STOCK (${products?.length || 0})` },
+                { id: 'users', label: `USERS & ROLES (${users.length})` }
               ].map((tab) => {
                 const active = activeTab === tab.id;
                 return (
@@ -563,7 +740,7 @@ export default function AdminDashboardPage() {
                     type="button"
                     onClick={() => setActiveTab(tab.id)}
                     style={{
-                      padding: '10px 18px',
+                      padding: '10px 20px',
                       borderRadius: '7px',
                       border: active
                         ? '1px solid #ffffff'
@@ -594,7 +771,7 @@ export default function AdminDashboardPage() {
                   padding: '20px 24px'
                 }}
               >
-                {/* Filter & Search Bar */}
+                {/* Status Pills & Search Bar with Built-in Date Filter Icon */}
                 <div
                   style={{
                     display: 'flex',
@@ -634,21 +811,173 @@ export default function AdminDashboardPage() {
                     )}
                   </div>
 
-                  <input
-                    type="text"
-                    value={orderSearch}
-                    onChange={(e) => setOrderSearch(e.target.value)}
-                    placeholder="Search Order #, Customer, Email, or City..."
-                    style={{
-                      width: '280px',
-                      padding: '8px 12px',
-                      background: 'rgba(255,255,255,0.06)',
-                      border: '1px solid rgba(255,255,255,0.2)',
-                      borderRadius: '6px',
-                      color: '#ffffff',
-                      fontSize: '12px'
-                    }}
-                  />
+                  {/* Search Input with Filter Icon Inside */}
+                  <div style={{ position: 'relative', width: '360px', maxWidth: '100%' }}>
+                    <input
+                      type="text"
+                      value={orderSearch}
+                      onChange={(e) => setOrderSearch(e.target.value)}
+                      placeholder="Search Order #, Customer, Email, or City..."
+                      style={{
+                        width: '100%',
+                        padding: '9px 115px 9px 14px',
+                        background: 'rgba(255,255,255,0.06)',
+                        border: '1px solid rgba(255,255,255,0.22)',
+                        borderRadius: '7px',
+                        color: '#ffffff',
+                        fontSize: '12px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+
+                    {/* Filter Icon Button Inside the Right Side of the Search Bar */}
+                    <button
+                      type="button"
+                      onClick={() => setShowDateFilterMenu((prev) => !prev)}
+                      title="Filter by Days, Weeks, Month, Years, or Specific Date"
+                      style={{
+                        position: 'absolute',
+                        right: '5px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        padding: '5px 9px',
+                        borderRadius: '5px',
+                        border:
+                          dateFilterType !== 'all'
+                            ? '1px solid #ffffff'
+                            : '1px solid rgba(255,255,255,0.18)',
+                        background:
+                          dateFilterType !== 'all' ? '#ffffff' : 'rgba(255,255,255,0.1)',
+                        color: dateFilterType !== 'all' ? '#000000' : '#ffffff',
+                        fontSize: '10px',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                      </svg>
+                      <span>{dateFilterLabel()}</span>
+                    </button>
+
+                    {/* Date Filter Popover Dropdown */}
+                    {showDateFilterMenu && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          right: 0,
+                          top: 'calc(100% + 8px)',
+                          width: '270px',
+                          background: 'rgba(14, 14, 18, 0.98)',
+                          backdropFilter: 'blur(20px)',
+                          border: '1px solid rgba(255,255,255,0.24)',
+                          borderRadius: '8px',
+                          padding: '12px',
+                          boxShadow: '0 18px 40px rgba(0,0,0,0.9)',
+                          zIndex: 100
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: '10px',
+                            fontWeight: 800,
+                            letterSpacing: '1.4px',
+                            color: 'rgba(255,255,255,0.55)',
+                            textTransform: 'uppercase',
+                            marginBottom: '8px'
+                          }}
+                        >
+                          FILTER BY TIMEFRAME
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                          {[
+                            { id: 'all', label: 'All Time' },
+                            { id: 'days', label: 'Days (Today)' },
+                            { id: 'weeks', label: 'Weeks (Last 7 Days)' },
+                            { id: 'month', label: 'Month (This Month)' },
+                            { id: 'years', label: 'Years (This Year)' },
+                            { id: 'specific', label: 'Specific Date' }
+                          ].map((opt) => {
+                            const active = dateFilterType === opt.id;
+                            return (
+                              <button
+                                key={opt.id}
+                                type="button"
+                                onClick={() => {
+                                  setDateFilterType(opt.id);
+                                  if (opt.id !== 'specific') {
+                                    setShowDateFilterMenu(false);
+                                  }
+                                }}
+                                style={{
+                                  width: '100%',
+                                  textAlign: 'left',
+                                  padding: '7px 10px',
+                                  borderRadius: '5px',
+                                  border: 'none',
+                                  background: active ? '#ffffff' : 'rgba(255,255,255,0.05)',
+                                  color: active ? '#000000' : '#ffffff',
+                                  fontSize: '11px',
+                                  fontWeight: active ? 800 : 600,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                {opt.label}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {dateFilterType === 'specific' && (
+                          <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.12)' }}>
+                            <label
+                              style={{
+                                display: 'block',
+                                fontSize: '10px',
+                                fontWeight: 700,
+                                color: 'rgba(255,255,255,0.7)',
+                                marginBottom: '5px'
+                              }}
+                            >
+                              SELECT DATE:
+                            </label>
+                            <input
+                              type="date"
+                              value={specificDate}
+                              onChange={(e) => {
+                                setSpecificDate(e.target.value);
+                                setShowDateFilterMenu(false);
+                              }}
+                              style={{
+                                width: '100%',
+                                padding: '7px 10px',
+                                background: 'rgba(255,255,255,0.08)',
+                                border: '1px solid rgba(255,255,255,0.25)',
+                                borderRadius: '5px',
+                                color: '#ffffff',
+                                fontSize: '12px',
+                                colorScheme: 'dark',
+                                boxSizing: 'border-box'
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {loading ? (
@@ -667,26 +996,9 @@ export default function AdminDashboardPage() {
                     <div style={{ fontSize: '15px', fontWeight: 700, marginBottom: '6px' }}>
                       No matching orders found
                     </div>
-                    <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.55)', marginBottom: '16px' }}>
-                      Click &ldquo;+ Simulate Order&rdquo; above or place an order from the Checkout page.
+                    <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.55)', margin: 0 }}>
+                      Orders placed via Checkout will appear here automatically.
                     </p>
-                    <button
-                      type="button"
-                      onClick={handleCreateDemoOrder}
-                      style={{
-                        padding: '9px 18px',
-                        background: '#ffffff',
-                        color: '#000000',
-                        border: 'none',
-                        borderRadius: '5px',
-                        fontSize: '11px',
-                        fontWeight: 800,
-                        letterSpacing: '1px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      + GENERATE SAMPLE ORDER
-                    </button>
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -866,7 +1178,7 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            {/* TAB 2: PRODUCT CATALOG & INVENTORY */}
+            {/* TAB 2: SHOP INVENTORY & STOCK MANAGEMENT */}
             {activeTab === 'products' && (
               <div
                 style={{
@@ -877,13 +1189,204 @@ export default function AdminDashboardPage() {
                   padding: '20px 24px'
                 }}
               >
+                {/* Add New Product Drawer / Modal */}
+                {showAddProductModal && (
+                  <div
+                    style={{
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.22)',
+                      borderRadius: '10px',
+                      padding: '20px',
+                      marginBottom: '20px'
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '14px'
+                      }}
+                    >
+                      <h4 style={{ margin: 0, fontSize: '14px', letterSpacing: '1.5px' }}>
+                        ADD NEW PRODUCT TO SHOP
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => setShowAddProductModal(false)}
+                        style={{
+                          background: 'transparent',
+                          color: 'rgba(255,255,255,0.7)',
+                          border: '1px solid rgba(255,255,255,0.2)',
+                          borderRadius: '4px',
+                          padding: '4px 10px',
+                          fontSize: '11px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Close ✕
+                      </button>
+                    </div>
+
+                    <form
+                      onSubmit={handleAddNewProduct}
+                      style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+                    >
+                      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 0.8fr 1.5fr', gap: '12px' }}>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, marginBottom: '4px' }}>
+                            PRODUCT TITLE *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={newProdTitle}
+                            onChange={(e) => setNewProdTitle(e.target.value)}
+                            placeholder="e.g. NIGHT OWL Heavy Tee"
+                            style={{
+                              width: '100%',
+                              padding: '9px 12px',
+                              background: 'rgba(255,255,255,0.06)',
+                              border: '1px solid rgba(255,255,255,0.2)',
+                              borderRadius: '6px',
+                              color: '#ffffff',
+                              fontSize: '12px',
+                              boxSizing: 'border-box'
+                            }}
+                          />
+                        </div>
+
+                        <div>
+                          <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, marginBottom: '4px' }}>
+                            CATEGORY
+                          </label>
+                          <select
+                            value={newProdCategory}
+                            onChange={(e) => setNewProdCategory(e.target.value)}
+                            style={{
+                              width: '100%',
+                              padding: '9px 12px',
+                              background: '#121215',
+                              border: '1px solid rgba(255,255,255,0.2)',
+                              borderRadius: '6px',
+                              color: '#ffffff',
+                              fontSize: '12px',
+                              boxSizing: 'border-box'
+                            }}
+                          >
+                            {['T-Shirts', 'Jerseys', 'Bottoms', 'Headwear', 'Accessories'].map((c) => (
+                              <option key={c} value={c}>
+                                {c}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, marginBottom: '4px' }}>
+                            PRICE (PHP) *
+                          </label>
+                          <input
+                            type="number"
+                            required
+                            value={newProdPrice}
+                            onChange={(e) => setNewProdPrice(e.target.value)}
+                            style={{
+                              width: '100%',
+                              padding: '9px 12px',
+                              background: 'rgba(255,255,255,0.06)',
+                              border: '1px solid rgba(255,255,255,0.2)',
+                              borderRadius: '6px',
+                              color: '#ffffff',
+                              fontSize: '12px',
+                              boxSizing: 'border-box'
+                            }}
+                          />
+                        </div>
+
+                        <div>
+                          <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, marginBottom: '4px' }}>
+                            PRODUCT IMAGE URL
+                          </label>
+                          <input
+                            type="text"
+                            value={newProdImage}
+                            onChange={(e) => setNewProdImage(e.target.value)}
+                            placeholder="/brand/shirt_nobg.png"
+                            style={{
+                              width: '100%',
+                              padding: '9px 12px',
+                              background: 'rgba(255,255,255,0.06)',
+                              border: '1px solid rgba(255,255,255,0.2)',
+                              borderRadius: '6px',
+                              color: '#ffffff',
+                              fontSize: '12px',
+                              boxSizing: 'border-box'
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr) 1.5fr', gap: '12px', alignItems: 'end' }}>
+                        {['S', 'M', 'L', 'XL'].map((sz) => (
+                          <div key={sz}>
+                            <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, marginBottom: '4px' }}>
+                              SIZE {sz} STOCK
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={newProdStock[sz]}
+                              onChange={(e) =>
+                                setNewProdStock((prev) => ({
+                                  ...prev,
+                                  [sz]: Math.max(0, Number(e.target.value) || 0)
+                                }))
+                              }
+                              style={{
+                                width: '100%',
+                                padding: '9px 12px',
+                                background: 'rgba(255,255,255,0.06)',
+                                border: '1px solid rgba(255,255,255,0.2)',
+                                borderRadius: '6px',
+                                color: '#ffffff',
+                                fontSize: '12px',
+                                boxSizing: 'border-box'
+                              }}
+                            />
+                          </div>
+                        ))}
+
+                        <button
+                          type="submit"
+                          style={{
+                            padding: '10px 18px',
+                            background: '#ffffff',
+                            color: '#000000',
+                            border: 'none',
+                            borderRadius: '6px',
+                            fontSize: '11px',
+                            fontWeight: 800,
+                            letterSpacing: '1.5px',
+                            textTransform: 'uppercase',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          PUBLISH PRODUCT TO SHOP
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                )}
+
+                {/* Inventory Filters & Search */}
                 <div
                   style={{
                     display: 'flex',
                     flexWrap: 'wrap',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    gap: '10px',
+                    gap: '12px',
                     marginBottom: '16px'
                   }}
                 >
@@ -916,76 +1419,387 @@ export default function AdminDashboardPage() {
                     )}
                   </div>
 
-                  <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
-                    Showing {filteredProducts.length} products
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <select
+                      value={stockFilter}
+                      onChange={(e) => setStockFilter(e.target.value)}
+                      style={{
+                        padding: '8px 12px',
+                        background: '#121215',
+                        color: '#ffffff',
+                        border: '1px solid rgba(255,255,255,0.22)',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="all">All Stock Levels</option>
+                      <option value="in_stock">In Stock Only</option>
+                      <option value="low_stock">Low Stock (≤ 10)</option>
+                      <option value="out_of_stock">Out of Stock (0)</option>
+                    </select>
+
+                    <input
+                      type="text"
+                      value={productSearch}
+                      onChange={(e) => setProductSearch(e.target.value)}
+                      placeholder="Search product name..."
+                      style={{
+                        width: '210px',
+                        padding: '8px 12px',
+                        background: 'rgba(255,255,255,0.06)',
+                        border: '1px solid rgba(255,255,255,0.22)',
+                        borderRadius: '6px',
+                        color: '#ffffff',
+                        fontSize: '12px'
+                      }}
+                    />
+                  </div>
                 </div>
 
+                {/* Products Inventory Grid */}
                 <div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))',
                     gap: '14px'
                   }}
                 >
-                  {filteredProducts.map((prod) => (
-                    <div
-                      key={prod.id}
-                      style={{
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.12)',
-                        borderRadius: '8px',
-                        padding: '14px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px'
-                      }}
-                    >
-                      <img
-                        src={prod.images?.[0] || ''}
-                        alt={prod.title}
+                  {filteredProducts.map((prod) => {
+                    const totalStock = getProductTotalStock(prod);
+                    const isSaving = savingProductId === prod.id;
+                    const priceInputVal =
+                      editingPriceMap[prod.id] !== undefined
+                        ? editingPriceMap[prod.id]
+                        : prod.price;
+
+                    return (
+                      <div
+                        key={prod.id}
                         style={{
-                          width: '64px',
-                          height: '64px',
-                          objectFit: 'contain',
-                          background: 'rgba(0,0,0,0.45)',
-                          borderRadius: '6px',
-                          padding: '4px'
+                          background: 'rgba(255,255,255,0.03)',
+                          border: '1px solid rgba(255,255,255,0.14)',
+                          borderRadius: '10px',
+                          padding: '16px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '12px'
                         }}
-                      />
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>
-                          {prod.category}
+                      >
+                        {/* Top Row: Thumbnail, Info & Price Editor */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <img
+                            src={prod.images?.[0] || ''}
+                            alt={prod.title}
+                            style={{
+                              width: '66px',
+                              height: '66px',
+                              objectFit: 'contain',
+                              background: 'rgba(0,0,0,0.5)',
+                              borderRadius: '8px',
+                              padding: '5px'
+                            }}
+                          />
+                          <div style={{ flex: 1 }}>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                              }}
+                            >
+                              <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>
+                                {prod.category}
+                              </span>
+                              <span
+                                style={{
+                                  fontSize: '10px',
+                                  fontWeight: 800,
+                                  padding: '2px 8px',
+                                  borderRadius: '4px',
+                                  background:
+                                    totalStock > 0
+                                      ? 'rgba(74, 222, 128, 0.14)'
+                                      : 'rgba(248, 113, 113, 0.14)',
+                                  color: totalStock > 0 ? '#4ade80' : '#f87171'
+                                }}
+                              >
+                                {totalStock > 0 ? `${totalStock} IN STOCK` : 'OUT OF STOCK'}
+                              </span>
+                            </div>
+
+                            <div style={{ fontSize: '15px', fontWeight: 800, marginTop: '2px' }}>
+                              {prod.title}
+                            </div>
+
+                            {/* Inline Price Adjuster */}
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                marginTop: '6px'
+                              }}
+                            >
+                              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.65)' }}>
+                                Price ₱:
+                              </span>
+                              <input
+                                type="number"
+                                value={priceInputVal}
+                                onChange={(e) =>
+                                  setEditingPriceMap((prev) => ({
+                                    ...prev,
+                                    [prod.id]: e.target.value
+                                  }))
+                                }
+                                style={{
+                                  width: '78px',
+                                  padding: '4px 8px',
+                                  background: 'rgba(255,255,255,0.07)',
+                                  border: '1px solid rgba(255,255,255,0.2)',
+                                  borderRadius: '4px',
+                                  color: '#ffffff',
+                                  fontSize: '11px',
+                                  fontWeight: 700
+                                }}
+                              />
+                              {editingPriceMap[prod.id] !== undefined &&
+                                Number(editingPriceMap[prod.id]) !== Number(prod.price) && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSaveProductPrice(prod)}
+                                    style={{
+                                      padding: '4px 8px',
+                                      background: '#ffffff',
+                                      color: '#000000',
+                                      border: 'none',
+                                      borderRadius: '4px',
+                                      fontSize: '10px',
+                                      fontWeight: 800,
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    Save ₱
+                                  </button>
+                                )}
+                            </div>
+                          </div>
                         </div>
-                        <div style={{ fontSize: '13px', fontWeight: 700 }}>{prod.title}</div>
-                        <div style={{ fontSize: '12px', fontWeight: 700, marginTop: '2px' }}>
-                          ₱{formatPhp(prod.price)}
+
+                        {/* Middle Row: Per-Size Stock Controls */}
+                        <div
+                          style={{
+                            background: 'rgba(0,0,0,0.35)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRadius: '8px',
+                            padding: '10px 12px'
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: '10px',
+                              fontWeight: 700,
+                              letterSpacing: '1px',
+                              color: 'rgba(255,255,255,0.55)',
+                              marginBottom: '8px',
+                              display: 'flex',
+                              justifyContent: 'space-between'
+                            }}
+                          >
+                            <span>STOCK BY SIZE / VARIANT</span>
+                            {isSaving && <span style={{ color: '#4ade80' }}>Saving...</span>}
+                          </div>
+
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: `repeat(${Math.min(
+                                4,
+                                prod.variants?.length || 1
+                              )}, 1fr)`,
+                              gap: '8px'
+                            }}
+                          >
+                            {(prod.variants || []).map((v) => {
+                              const st =
+                                typeof v.stock === 'number'
+                                  ? v.stock
+                                  : v.availableForSale
+                                  ? 15
+                                  : 0;
+                              return (
+                                <div
+                                  key={v.id}
+                                  style={{
+                                    background: 'rgba(255,255,255,0.04)',
+                                    border:
+                                      st > 0
+                                        ? '1px solid rgba(255,255,255,0.16)'
+                                        : '1px solid rgba(248,113,113,0.35)',
+                                    borderRadius: '6px',
+                                    padding: '6px',
+                                    textAlign: 'center'
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      fontSize: '10px',
+                                      fontWeight: 800,
+                                      marginBottom: '4px',
+                                      color: st > 0 ? '#ffffff' : '#f87171'
+                                    }}
+                                  >
+                                    {v.title}
+                                  </div>
+                                  <div
+                                    style={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      gap: '3px'
+                                    }}
+                                  >
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        handleUpdateVariantStock(prod, v.id, st - 1)
+                                      }
+                                      style={{
+                                        width: '20px',
+                                        height: '20px',
+                                        borderRadius: '4px',
+                                        border: '1px solid rgba(255,255,255,0.2)',
+                                        background: 'transparent',
+                                        color: '#ffffff',
+                                        fontSize: '11px',
+                                        cursor: 'pointer'
+                                      }}
+                                    >
+                                      -
+                                    </button>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={st}
+                                      onChange={(e) =>
+                                        handleUpdateVariantStock(prod, v.id, e.target.value)
+                                      }
+                                      style={{
+                                        width: '38px',
+                                        textAlign: 'center',
+                                        padding: '2px',
+                                        background: 'rgba(0,0,0,0.5)',
+                                        border: '1px solid rgba(255,255,255,0.15)',
+                                        borderRadius: '4px',
+                                        color: '#ffffff',
+                                        fontSize: '11px',
+                                        fontWeight: 700
+                                      }}
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        handleUpdateVariantStock(prod, v.id, st + 1)
+                                      }
+                                      style={{
+                                        width: '20px',
+                                        height: '20px',
+                                        borderRadius: '4px',
+                                        border: '1px solid rgba(255,255,255,0.2)',
+                                        background: 'transparent',
+                                        color: '#ffffff',
+                                        fontSize: '11px',
+                                        cursor: 'pointer'
+                                      }}
+                                    >
+                                      +
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
+
+                        {/* Bottom Quick Stock Actions */}
                         <div
                           style={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            marginTop: '6px'
+                            gap: '8px'
                           }}
                         >
-                          <span style={{ fontSize: '10px', color: '#4ade80' }}>
-                            ● {prod.variants?.length || 1} Variants Active
-                          </span>
-                          <Link
-                            href={`/Collections/${prod.handle}`}
-                            style={{
-                              fontSize: '10px',
-                              color: '#ffffff',
-                              textDecoration: 'underline'
-                            }}
-                          >
-                            View →
-                          </Link>
+                          <div style={{ display: 'flex', gap: '6px' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleBulkRestockProduct(prod, 10, false)}
+                              style={{
+                                padding: '5px 10px',
+                                background: 'rgba(74, 222, 128, 0.14)',
+                                color: '#4ade80',
+                                border: '1px solid rgba(74, 222, 128, 0.35)',
+                                borderRadius: '5px',
+                                fontSize: '10px',
+                                fontWeight: 800,
+                                cursor: 'pointer'
+                              }}
+                            >
+                              +10 Stock All
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleBulkRestockProduct(prod, 0, true)}
+                              style={{
+                                padding: '5px 10px',
+                                background: 'rgba(248, 113, 113, 0.12)',
+                                color: '#fca5a5',
+                                border: '1px solid rgba(248, 113, 113, 0.3)',
+                                borderRadius: '5px',
+                                fontSize: '10px',
+                                fontWeight: 700,
+                                cursor: 'pointer'
+                              }}
+                            >
+                              Set Sold Out
+                            </button>
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            {prod.isCustom && (
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteCustomProduct(prod.id)}
+                                style={{
+                                  padding: '5px 8px',
+                                  background: 'transparent',
+                                  color: '#f87171',
+                                  border: '1px solid rgba(248,113,113,0.3)',
+                                  borderRadius: '4px',
+                                  fontSize: '10px',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                Remove
+                              </button>
+                            )}
+                            <Link
+                              href={`/Collections/${prod.handle}`}
+                              style={{
+                                fontSize: '11px',
+                                color: 'rgba(255,255,255,0.8)',
+                                textDecoration: 'underline'
+                              }}
+                            >
+                              Store Page →
+                            </Link>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -995,7 +1809,7 @@ export default function AdminDashboardPage() {
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '1fr 340px',
+                  gridTemplateColumns: '1fr 330px',
                   gap: '18px',
                   alignItems: 'start'
                 }}
@@ -1007,7 +1821,8 @@ export default function AdminDashboardPage() {
                     backdropFilter: 'blur(22px)',
                     border: '1px solid rgba(255,255,255,0.16)',
                     borderRadius: '12px',
-                    padding: '20px 24px'
+                    padding: '20px 24px',
+                    overflowX: 'auto'
                   }}
                 >
                   <div
@@ -1025,7 +1840,7 @@ export default function AdminDashboardPage() {
                       type="text"
                       value={userSearch}
                       onChange={(e) => setUserSearch(e.target.value)}
-                      placeholder="Filter by name, email, or role..."
+                      placeholder="Filter by name, email, or address..."
                       style={{
                         width: '240px',
                         padding: '8px 12px',
@@ -1050,22 +1865,28 @@ export default function AdminDashboardPage() {
                           color: 'rgba(255,255,255,0.6)'
                         }}
                       >
-                        <th style={{ padding: '12px 14px' }}>ID</th>
-                        <th style={{ padding: '12px 14px' }}>Full Name</th>
-                        <th style={{ padding: '12px 14px' }}>Email</th>
-                        <th style={{ padding: '12px 14px' }}>Role</th>
-                        <th style={{ padding: '12px 14px' }}>Role Action</th>
+                        <th style={{ padding: '12px 12px' }}>Full Name</th>
+                        <th style={{ padding: '12px 12px' }}>Email</th>
+                        <th style={{ padding: '12px 12px' }}>Birthdate / Age / Gender</th>
+                        <th style={{ padding: '12px 12px' }}>Complete Address</th>
+                        <th style={{ padding: '12px 12px' }}>Role</th>
+                        <th style={{ padding: '12px 12px' }}>Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredUsers.map((u) => (
                         <tr key={u.id} style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-                          <td style={{ padding: '12px 14px' }}>#{u.id}</td>
-                          <td style={{ padding: '12px 14px', fontWeight: 700 }}>{u.name}</td>
-                          <td style={{ padding: '12px 14px', color: 'rgba(255,255,255,0.75)' }}>
+                          <td style={{ padding: '12px 12px', fontWeight: 700 }}>{u.name}</td>
+                          <td style={{ padding: '12px 12px', color: 'rgba(255,255,255,0.75)' }}>
                             {u.email}
                           </td>
-                          <td style={{ padding: '12px 14px' }}>
+                          <td style={{ padding: '12px 12px', color: 'rgba(255,255,255,0.7)', fontSize: '11px' }}>
+                            {u.birthdate || '—'} {u.age ? `(${u.age} yrs)` : ''} {u.gender ? `• ${u.gender}` : ''}
+                          </td>
+                          <td style={{ padding: '12px 12px', color: 'rgba(255,255,255,0.7)', fontSize: '11px' }}>
+                            {u.address || '—'}
+                          </td>
+                          <td style={{ padding: '12px 12px' }}>
                             <span
                               style={{
                                 padding: '4px 10px',
@@ -1079,10 +1900,10 @@ export default function AdminDashboardPage() {
                                 textTransform: 'uppercase'
                               }}
                             >
-                              {u.role === 'admin' ? '★ ADMIN' : 'CUSTOMER'}
+                              {u.role === 'admin' ? 'ADMIN' : 'CUSTOMER'}
                             </span>
                           </td>
-                          <td style={{ padding: '12px 14px' }}>
+                          <td style={{ padding: '12px 12px' }}>
                             <button
                               type="button"
                               onClick={() => handleRoleToggle(u)}
@@ -1235,113 +2056,6 @@ export default function AdminDashboardPage() {
                       + ADD ACCOUNT
                     </button>
                   </form>
-                </div>
-              </div>
-            )}
-
-            {/* TAB 4: XAMPP MYSQL DATABASE STATUS */}
-            {activeTab === 'database' && (
-              <div
-                style={{
-                  background: 'rgba(10, 10, 12, 0.84)',
-                  backdropFilter: 'blur(22px)',
-                  border: '1px solid rgba(255,255,255,0.16)',
-                  borderRadius: '12px',
-                  padding: '24px'
-                }}
-              >
-                <h4 style={{ margin: '0 0 14px', fontSize: '14px', letterSpacing: '1.5px' }}>
-                  XAMPP MYSQL CONFIGURATION & DIAGNOSTICS
-                </h4>
-
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                    gap: '12px',
-                    marginBottom: '20px'
-                  }}
-                >
-                  <div
-                    style={{
-                      padding: '14px',
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(255,255,255,0.12)',
-                      borderRadius: '8px'
-                    }}
-                  >
-                    <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>HOST & PORT</div>
-                    <div style={{ fontSize: '15px', fontWeight: 700, marginTop: '4px' }}>
-                      {dbStatus?.host || '127.0.0.1'}:{dbStatus?.port || 3306}
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      padding: '14px',
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(255,255,255,0.12)',
-                      borderRadius: '8px'
-                    }}
-                  >
-                    <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>
-                      DATABASE SCHEMA
-                    </div>
-                    <div style={{ fontSize: '15px', fontWeight: 700, marginTop: '4px' }}>
-                      {dbStatus?.database || 'laro_sports_db'}
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      padding: '14px',
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(255,255,255,0.12)',
-                      borderRadius: '8px'
-                    }}
-                  >
-                    <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>
-                      ACTIVE ENGINE
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '13px',
-                        fontWeight: 700,
-                        marginTop: '4px',
-                        color: dbStatus?.connected ? '#4ade80' : '#facc15'
-                      }}
-                    >
-                      {dbStatus?.engine || 'Checking...'}
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    fontSize: '12px',
-                    lineHeight: 1.8,
-                    color: 'rgba(255,255,255,0.75)',
-                    background: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '8px',
-                    padding: '16px'
-                  }}
-                >
-                  <div>
-                    <strong>1. XAMPP Control Panel:</strong> Start <strong>Apache</strong> and{' '}
-                    <strong>MySQL</strong> (Port <code>3306</code>).
-                  </div>
-                  <div>
-                    <strong>2. Auto-Migration:</strong> Once MySQL is running, click{' '}
-                    <strong>↻ SYNC DATABASE</strong> above — the app automatically creates{' '}
-                    <code>laro_sports_db</code> and the <code>users</code>, <code>orders</code>, and{' '}
-                    <code>order_items</code> tables.
-                  </div>
-                  <div>
-                    <strong>3. Manual SQL Import (Optional):</strong> Open{' '}
-                    <code>http://localhost/phpmyadmin</code> and import <code>database.sql</code> from
-                    the project root.
-                  </div>
                 </div>
               </div>
             )}

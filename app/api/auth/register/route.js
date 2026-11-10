@@ -5,7 +5,7 @@ import { hashPassword, createSessionToken } from '../../../../lib/auth';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { name, email, password, role } = body || {};
+    const { name, email, password, role, birthdate, age, gender, address } = body || {};
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -36,7 +36,11 @@ export async function POST(request) {
       name,
       email,
       passwordHash,
-      role: validRole
+      role: validRole,
+      birthdate: birthdate || '',
+      age: age !== undefined && age !== '' ? Number(age) : null,
+      gender: gender || '',
+      address: address || ''
     });
 
     const token = createSessionToken(user);
@@ -45,7 +49,11 @@ export async function POST(request) {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        birthdate: user.birthdate,
+        age: user.age,
+        gender: user.gender,
+        address: user.address
       },
       token
     });
@@ -61,9 +69,8 @@ export async function POST(request) {
   } catch (err) {
     console.error('Register error:', err);
     return NextResponse.json(
-      { error: 'Failed to register user. Please check your XAMPP MySQL connection.' },
+      { error: 'Failed to register user.' },
       { status: 500 }
     );
   }
 }
-

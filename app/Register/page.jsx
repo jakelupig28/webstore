@@ -10,13 +10,36 @@ import { Loader } from '../../components/Loader';
 export default function RegisterPage() {
   const router = useRouter();
   const { authCalls } = useStore();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState('customer');
+  const [birthdate, setBirthdate] = useState('');
+  const [age, setAge] = useState('');
+  const [gender, setGender] = useState('');
+  const [address, setAddress] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const handleBirthdateChange = (e) => {
+    const val = e.target.value;
+    setBirthdate(val);
+    if (val) {
+      const dob = new Date(val);
+      if (!isNaN(dob.getTime())) {
+        const today = new Date();
+        let calculatedAge = today.getFullYear() - dob.getFullYear();
+        const monthDiff = today.getMonth() - dob.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+          calculatedAge--;
+        }
+        if (calculatedAge >= 0 && calculatedAge <= 130) {
+          setAge(String(calculatedAge));
+        }
+      }
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,17 +57,43 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const newUser = await authCalls.register({ name, email, password, role });
-      if (newUser.role === 'admin') {
-        router.push('/Admin');
-      } else {
-        router.push('/Collections');
-      }
+      await authCalls.register({
+        name,
+        email,
+        password,
+        birthdate,
+        age,
+        gender,
+        address,
+        role: 'customer'
+      });
+      router.push('/Collections');
     } catch (err) {
       setError(err.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
+  };
+
+  const labelStyle = {
+    display: 'block',
+    fontSize: '10px',
+    fontWeight: 700,
+    letterSpacing: '1.3px',
+    textTransform: 'uppercase',
+    color: 'rgba(255,255,255,0.75)',
+    marginBottom: '6px'
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '11px 14px',
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.2)',
+    borderRadius: '6px',
+    color: '#ffffff',
+    fontSize: '13px',
+    boxSizing: 'border-box'
   };
 
   return (
@@ -58,7 +107,7 @@ export default function RegisterPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '78px 20px 84px',
+        padding: '74px 2.5vw 82px',
         boxSizing: 'border-box'
       }}
     >
@@ -89,47 +138,75 @@ export default function RegisterPage() {
         />
       </div>
 
-      {/* Centered Register Card */}
+      {/* Wide Edge-to-Edge Customer Registration Card */}
       <div
         style={{
           position: 'relative',
           zIndex: 10,
-          width: '100%',
-          maxWidth: '460px',
-          background: 'rgba(10, 10, 12, 0.82)',
+          width: '95vw',
+          maxWidth: '1360px',
+          background: 'rgba(10, 10, 12, 0.84)',
           backdropFilter: 'blur(22px)',
           WebkitBackdropFilter: 'blur(22px)',
           border: '1px solid rgba(255, 255, 255, 0.16)',
           borderRadius: '12px',
-          padding: '26px 28px',
+          padding: '28px 36px',
           color: '#ffffff',
           boxShadow: '0 24px 60px rgba(0, 0, 0, 0.85)'
         }}
       >
-        <div style={{ textAlign: 'center', marginBottom: '18px' }}>
-          <span
-            style={{
-              fontSize: '10px',
-              letterSpacing: '2.5px',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.5)',
-              display: 'block',
-              marginBottom: '4px'
-            }}
-          >
-            JOIN LARO SPORTS™
-          </span>
-          <h2
-            style={{
-              fontSize: '22px',
-              fontWeight: 800,
-              letterSpacing: '2px',
-              textTransform: 'uppercase',
-              margin: 0
-            }}
-          >
-            CREATE ACCOUNT
-          </h2>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '10px',
+            marginBottom: '20px',
+            paddingBottom: '14px',
+            borderBottom: '1px solid rgba(255,255,255,0.12)'
+          }}
+        >
+          <div>
+            <span
+              style={{
+                fontSize: '10px',
+                letterSpacing: '2.5px',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.5)',
+                display: 'block',
+                marginBottom: '3px'
+              }}
+            >
+              JOIN LARO SPORTS™ • CUSTOMER MEMBERSHIP
+            </span>
+            <h2
+              style={{
+                fontSize: '24px',
+                fontWeight: 800,
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+                margin: 0
+              }}
+            >
+              CREATE CUSTOMER ACCOUNT
+            </h2>
+          </div>
+
+          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}>
+            Already registered?{' '}
+            <Link
+              href="/Login"
+              style={{
+                color: '#ffffff',
+                fontWeight: 700,
+                textDecoration: 'underline',
+                marginLeft: '4px'
+              }}
+            >
+              Sign In →
+            </Link>
+          </div>
         </div>
 
         {error && (
@@ -138,10 +215,10 @@ export default function RegisterPage() {
               background: 'rgba(239, 68, 68, 0.16)',
               border: '1px solid rgba(239, 68, 68, 0.45)',
               color: '#fca5a5',
-              padding: '9px 12px',
+              padding: '9px 14px',
               borderRadius: '6px',
               fontSize: '12px',
-              marginBottom: '14px',
+              marginBottom: '16px',
               textAlign: 'center'
             }}
           >
@@ -149,244 +226,171 @@ export default function RegisterPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {/* Row 1: Full Name, Email, Birthdate, Age, Gender */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1.5fr 1.5fr 1.1fr 0.7fr 1.1fr',
+              gap: '14px'
+            }}
+          >
             <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '10px',
-                  fontWeight: 700,
-                  letterSpacing: '1.2px',
-                  textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.72)',
-                  marginBottom: '5px'
-                }}
-              >
-                FULL NAME
-              </label>
+              <label style={labelStyle}>FULL NAME *</label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Juan Dela Cruz"
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '6px',
-                  color: '#ffffff',
-                  fontSize: '12px',
-                  boxSizing: 'border-box'
-                }}
+                style={inputStyle}
               />
             </div>
 
             <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '10px',
-                  fontWeight: 700,
-                  letterSpacing: '1.2px',
-                  textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.72)',
-                  marginBottom: '5px'
-                }}
-              >
-                EMAIL ADDRESS
-              </label>
+              <label style={labelStyle}>EMAIL ADDRESS *</label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
+                style={inputStyle}
+              />
+            </div>
+
+            <div>
+              <label style={labelStyle}>BIRTHDATE *</label>
+              <input
+                type="date"
+                required
+                value={birthdate}
+                onChange={handleBirthdateChange}
                 style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '6px',
-                  color: '#ffffff',
-                  fontSize: '12px',
-                  boxSizing: 'border-box'
+                  ...inputStyle,
+                  colorScheme: 'dark'
                 }}
               />
             </div>
-          </div>
 
-          {/* Account Role Selection: Customer vs Admin */}
-          <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '10px',
-                fontWeight: 700,
-                letterSpacing: '1.2px',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.72)',
-                marginBottom: '5px'
-              }}
-            >
-              ACCOUNT ROLE
-            </label>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                type="button"
-                onClick={() => setRole('customer')}
+            <div>
+              <label style={labelStyle}>AGE *</label>
+              <input
+                type="number"
+                required
+                min="1"
+                max="130"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+                placeholder="Auto / Manual"
+                style={inputStyle}
+              />
+            </div>
+
+            <div>
+              <label style={labelStyle}>GENDER *</label>
+              <select
+                required
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
                 style={{
-                  flex: 1,
-                  padding: '9px 12px',
-                  borderRadius: '6px',
-                  border: role === 'customer' ? '1px solid #ffffff' : '1px solid rgba(255,255,255,0.2)',
-                  background: role === 'customer' ? '#ffffff' : 'rgba(255,255,255,0.05)',
-                  color: role === 'customer' ? '#000000' : '#ffffff',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
+                  ...inputStyle,
+                  background: '#121215',
                   cursor: 'pointer'
                 }}
               >
-                Customer
-              </button>
-              <button
-                type="button"
-                onClick={() => setRole('admin')}
-                style={{
-                  flex: 1,
-                  padding: '9px 12px',
-                  borderRadius: '6px',
-                  border: role === 'admin' ? '1px solid #ffffff' : '1px solid rgba(255,255,255,0.2)',
-                  background: role === 'admin' ? '#ffffff' : 'rgba(255,255,255,0.05)',
-                  color: role === 'admin' ? '#000000' : '#ffffff',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer'
-                }}
-              >
-                Admin
-              </button>
+                <option value="" disabled>
+                  Select Gender
+                </option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Non-Binary">Non-Binary</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          {/* Row 2: Complete Address, Password, Confirm Password */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '2.2fr 1fr 1fr',
+              gap: '14px'
+            }}
+          >
             <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '10px',
-                  fontWeight: 700,
-                  letterSpacing: '1.2px',
-                  textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.72)',
-                  marginBottom: '5px'
-                }}
-              >
-                PASSWORD
-              </label>
+              <label style={labelStyle}>COMPLETE ADDRESS *</label>
+              <input
+                type="text"
+                required
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="House/Unit No., Street, Barangay, City/Municipality, Province, Postal Code"
+                style={inputStyle}
+              />
+            </div>
+
+            <div>
+              <label style={labelStyle}>PASSWORD *</label>
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min. 6 chars"
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '6px',
-                  color: '#ffffff',
-                  fontSize: '12px',
-                  boxSizing: 'border-box'
-                }}
+                placeholder="Min. 6 characters"
+                style={inputStyle}
               />
             </div>
 
             <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '10px',
-                  fontWeight: 700,
-                  letterSpacing: '1.2px',
-                  textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.72)',
-                  marginBottom: '5px'
-                }}
-              >
-                CONFIRM PASSWORD
-              </label>
+              <label style={labelStyle}>CONFIRM PASSWORD *</label>
               <input
                 type="password"
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Repeat password"
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '6px',
-                  color: '#ffffff',
-                  fontSize: '12px',
-                  boxSizing: 'border-box'
-                }}
+                style={inputStyle}
               />
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
+          {/* Submit Row */}
+          <div
             style={{
-              marginTop: '6px',
-              width: '100%',
-              padding: '12px',
-              background: '#ffffff',
-              color: '#000000',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontWeight: 800,
-              letterSpacing: '2px',
-              textTransform: 'uppercase',
-              cursor: loading ? 'wait' : 'pointer',
-              opacity: loading ? 0.7 : 1
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '16px',
+              marginTop: '4px'
             }}
           >
-            {loading ? 'CREATING ACCOUNT...' : 'REGISTER ACCOUNT'}
-          </button>
-        </form>
+            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>
+              Age is automatically calculated when selecting your birthdate, or you can type it manually.
+            </span>
 
-        <p
-          style={{
-            marginTop: '14px',
-            marginBottom: 0,
-            textAlign: 'center',
-            fontSize: '12px',
-            color: 'rgba(255,255,255,0.65)'
-          }}
-        >
-          Already have an account?{' '}
-          <Link
-            href="/Login"
-            style={{
-              color: '#ffffff',
-              fontWeight: 700,
-              textDecoration: 'underline'
-            }}
-          >
-            Sign In
-          </Link>
-        </p>
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                minWidth: '280px',
+                padding: '13px 28px',
+                background: '#ffffff',
+                color: '#000000',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: 800,
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+                cursor: loading ? 'wait' : 'pointer',
+                opacity: loading ? 0.7 : 1
+              }}
+            >
+              {loading ? 'CREATING ACCOUNT...' : 'COMPLETE REGISTRATION'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
