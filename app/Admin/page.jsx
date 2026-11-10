@@ -5,6 +5,11 @@ import Link from 'next/link';
 import { useStore } from '../../context/StoreContext';
 import { VideoBackground } from '../../components/VideoBackground';
 import { Loader } from '../../components/Loader';
+import {
+  exportSalesReportXLSX,
+  exportSalesReportPDF,
+  exportSalesReportDOCX
+} from '../../lib/salesExporter';
 
 const formatPhp = (val) => {
   const num = typeof val === 'number' ? val : parseFloat(val) || 0;
@@ -29,6 +34,10 @@ export default function AdminDashboardPage() {
   const [showDateFilterMenu, setShowDateFilterMenu] = useState(false);
   const [dateFilterType, setDateFilterType] = useState('all'); // 'all' | 'days' | 'weeks' | 'month' | 'years' | 'specific'
   const [specificDate, setSpecificDate] = useState('');
+
+  // Sales Report Export States
+  const [exportingType, setExportingType] = useState(null); // 'xlsx' | 'pdf' | 'docx'
+  const [exportScope, setExportScope] = useState('filtered'); // 'filtered' | 'all'
 
   // Store Inventory & Stock Management States
   const [productCategoryFilter, setProductCategoryFilter] = useState('All');
@@ -238,6 +247,73 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // Sales Report Export Handler (XLSX, PDF, DOCX)
+  const handleExport = async (format) => {
+    setExportingType(format);
+    try {
+      const ordersToExport = exportScope === 'filtered' ? filteredOrders : orders;
+      if (!ordersToExport || ordersToExport.length === 0) {
+        alert('No orders available to export for the selected filter.');
+        return;
+      }
+      const metrics = {
+        totalSales: totalRevenue,
+        aov: avgOrderValue,
+        completedCount: deliveredCount
+      };
+      if (format === 'xlsx') {
+        exportSalesReportXLSX(ordersToExport, metrics);
+      } else if (format === 'pdf') {
+        exportSalesReportPDF(ordersToExport, metrics);
+      } else if (format === 'docx') {
+        await exportSalesReportDOCX(ordersToExport, metrics);
+      }
+    } catch (err) {
+      console.error('Export error:', err);
+      alert('Failed to generate export file. Please try again.');
+    } finally {
+      setExportingType(null);
+    }
+  };
+
+  const handleBulkRestockAll = async (delta) => {
+    if (!confirm(`Add +${delta} stock across all sizes for ALL ${products.length} products?`)) return;
+    try {
+      for (const prod of products) {
+        await handleBulkRestockProduct(prod, delta, false);
+      }
+    } catch (err) {
+      console.error('Bulk restock all error:', err);
+    }
+  };
+
+  const handleResetAllStock = async (stockPerSize = 15) => {
+    if (!confirm(`Reset all sizes to ${stockPerSize} units for all products in catalog?`)) return;
+    try {
+      for (const prod of products) {
+        setSavingProductId(prod.id);
+        const updatedVariants = (prod.variants || []).map((v) => ({
+          ...v,
+          stock: stockPerSize,
+          availableForSale: stockPerSize > 0
+        }));
+        await fetch('/api/products', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId: prod.id,
+            variants: updatedVariants
+          })
+        });
+      }
+      await refreshProducts();
+    } catch (err) {
+      console.error('Reset all stock error:', err);
+    } finally {
+      setSavingProductId(null);
+    }
+  };
+
   const handleRoleToggle = async (targetUser) => {
     const nextRole = targetUser.role === 'admin' ? 'customer' : 'admin';
     try {
@@ -406,8 +482,19 @@ export default function AdminDashboardPage() {
     (sum, p) => sum + getProductTotalStock(p),
     0
   );
+  const totalCatalogValue = (products || []).reduce(
+    (sum, p) => sum + (Number(p.price) || 0) * getProductTotalStock(p),
+    0
+  );
   const outOfStockProductsCount = (products || []).filter(
     (p) => getProductTotalStock(p) === 0
+  ).length;
+  const lowStockProductsCount = (products || []).filter((p) => {
+    const st = getProductTotalStock(p);
+    return st > 0 && st <= 10;
+  }).length;
+  const inStockProductsCount = (products || []).filter(
+    (p) => getProductTotalStock(p) > 10
   ).length;
 
   const filteredProducts = (products || []).filter((p) => {
@@ -771,6 +858,137 @@ export default function AdminDashboardPage() {
                   padding: '20px 24px'
                 }}
               >
+                {/* EXPORT SALES REPORT TOOLBAR */}
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                    padding: '12px 16px',
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    marginBottom: '16px'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ fontSize: '13px' }}>📊</span>
+                      <span
+                        style={{
+                          fontSize: '11px',
+                          fontWeight: 800,
+                          letterSpacing: '1.2px',
+                          textTransform: 'uppercase',
+                          color: '#ffffff'
+                        }}
+                      >
+                        EXPORT SALES REPORT:
+                      </span>
+                    </div>
+
+                    <select
+                      value={exportScope}
+                      onChange={(e) => setExportScope(e.target.value)}
+                      style={{
+                        padding: '6px 32px 6px 10px',
+                        backgroundColor: '#121215',
+                        color: '#ffffff',
+                        border: '1px solid rgba(255,255,255,0.22)',
+                        borderRadius: '5px',
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="filtered">Filtered Results ({filteredOrders.length} Orders)</option>
+                      <option value="all">All Lifetime Orders ({orders.length} Orders)</option>
+                    </select>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                    <button
+                      type="button"
+                      disabled={
+                        !!exportingType ||
+                        (exportScope === 'filtered' ? filteredOrders.length === 0 : orders.length === 0)
+                      }
+                      onClick={() => handleExport('xlsx')}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '7px 14px',
+                        background: 'rgba(34, 197, 94, 0.14)',
+                        border: '1px solid rgba(34, 197, 94, 0.45)',
+                        borderRadius: '6px',
+                        color: '#86efac',
+                        fontSize: '11.5px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span>📗</span>
+                      <span>{exportingType === 'xlsx' ? 'Exporting...' : 'Export Excel (.xlsx)'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={
+                        !!exportingType ||
+                        (exportScope === 'filtered' ? filteredOrders.length === 0 : orders.length === 0)
+                      }
+                      onClick={() => handleExport('pdf')}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '7px 14px',
+                        background: 'rgba(239, 68, 68, 0.14)',
+                        border: '1px solid rgba(239, 68, 68, 0.45)',
+                        borderRadius: '6px',
+                        color: '#fca5a5',
+                        fontSize: '11.5px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span>📕</span>
+                      <span>{exportingType === 'pdf' ? 'Generating...' : 'Export PDF (.pdf)'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={
+                        !!exportingType ||
+                        (exportScope === 'filtered' ? filteredOrders.length === 0 : orders.length === 0)
+                      }
+                      onClick={() => handleExport('docx')}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '7px 14px',
+                        background: 'rgba(59, 130, 246, 0.14)',
+                        border: '1px solid rgba(59, 130, 246, 0.45)',
+                        borderRadius: '6px',
+                        color: '#93c5fd',
+                        fontSize: '11.5px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span>📘</span>
+                      <span>{exportingType === 'docx' ? 'Creating...' : 'Export Word (.docx)'}</span>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Status Pills & Search Bar with Built-in Date Filter Icon */}
                 <div
                   style={{
@@ -1076,8 +1294,8 @@ export default function AdminDashboardPage() {
                                 value={order.status}
                                 onChange={(e) => handleStatusChange(order.id, e.target.value)}
                                 style={{
-                                  padding: '6px 10px',
-                                  background: '#111113',
+                                  padding: '6px 30px 6px 10px',
+                                  backgroundColor: '#111113',
                                   color: '#ffffff',
                                   border: '1px solid rgba(255,255,255,0.28)',
                                   borderRadius: '5px',
@@ -1186,9 +1404,205 @@ export default function AdminDashboardPage() {
                   backdropFilter: 'blur(22px)',
                   border: '1px solid rgba(255,255,255,0.16)',
                   borderRadius: '12px',
-                  padding: '20px 24px'
+                  padding: '22px 26px'
                 }}
               >
+                {/* Inventory Top Overview Banner */}
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '14px',
+                    paddingBottom: '16px',
+                    marginBottom: '18px',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.12)'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <h3
+                        style={{
+                          margin: 0,
+                          fontSize: '17px',
+                          fontWeight: 800,
+                          letterSpacing: '1.2px',
+                          textTransform: 'uppercase',
+                          color: '#ffffff'
+                        }}
+                      >
+                        STORE INVENTORY & WAREHOUSE STOCK
+                      </h3>
+                      <span
+                        style={{
+                          fontSize: '10px',
+                          fontWeight: 700,
+                          padding: '2px 8px',
+                          borderRadius: '4px',
+                          background: 'rgba(74, 222, 128, 0.16)',
+                          color: '#86efac',
+                          border: '1px solid rgba(74, 222, 128, 0.35)'
+                        }}
+                      >
+                        ● LIVE DB SYNC
+                      </span>
+                    </div>
+                    <p style={{ margin: '3px 0 0', fontSize: '11.5px', color: 'rgba(255,255,255,0.55)' }}>
+                      Manage sizes, individual stock levels, store pricing, and catalog items.
+                    </p>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddProductModal((prev) => !prev)}
+                      style={{
+                        padding: '8px 16px',
+                        background: '#ffffff',
+                        color: '#000000',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: 800,
+                        letterSpacing: '1.2px',
+                        textTransform: 'uppercase',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <span>+</span>
+                      <span>ADD NEW PRODUCT</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleBulkRestockAll(10)}
+                      title="Add +10 units to each size across all catalog items"
+                      style={{
+                        padding: '8px 14px',
+                        background: 'rgba(74, 222, 128, 0.14)',
+                        border: '1px solid rgba(74, 222, 128, 0.4)',
+                        color: '#86efac',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      +10 To All Items
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleResetAllStock(15)}
+                      title="Reset all sizes to 15 units across all products"
+                      style={{
+                        padding: '8px 14px',
+                        background: 'rgba(255, 255, 255, 0.08)',
+                        border: '1px solid rgba(255, 255, 255, 0.22)',
+                        color: '#ffffff',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Reset All (15/sz)
+                    </button>
+                  </div>
+                </div>
+
+                {/* 4 Inventory Metric Stat Tiles */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '12px',
+                    marginBottom: '18px'
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      padding: '12px 14px'
+                    }}
+                  >
+                    <div style={{ fontSize: '9.5px', fontWeight: 700, letterSpacing: '1px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' }}>
+                      TOTAL CATALOG SKUs
+                    </div>
+                    <div style={{ fontSize: '20px', fontWeight: 800, margin: '4px 0 2px', color: '#ffffff' }}>
+                      {products.length} Products
+                    </div>
+                    <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>
+                      Pain Stain 2025 Series
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      padding: '12px 14px'
+                    }}
+                  >
+                    <div style={{ fontSize: '9.5px', fontWeight: 700, letterSpacing: '1px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' }}>
+                      TOTAL UNITS IN STOCK
+                    </div>
+                    <div style={{ fontSize: '20px', fontWeight: 800, margin: '4px 0 2px', color: '#4ade80' }}>
+                      {totalCatalogStock} Units
+                    </div>
+                    <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>
+                      Across all sizes & variants
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      padding: '12px 14px'
+                    }}
+                  >
+                    <div style={{ fontSize: '9.5px', fontWeight: 700, letterSpacing: '1px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' }}>
+                      INVENTORY VALUATION
+                    </div>
+                    <div style={{ fontSize: '20px', fontWeight: 800, margin: '4px 0 2px', color: '#ffffff' }}>
+                      ₱{formatPhp(totalCatalogValue)}
+                    </div>
+                    <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>
+                      Total retail asset worth
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      padding: '12px 14px'
+                    }}
+                  >
+                    <div style={{ fontSize: '9.5px', fontWeight: 700, letterSpacing: '1px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' }}>
+                      STOCK LEVEL HEALTH
+                    </div>
+                    <div style={{ fontSize: '13px', fontWeight: 800, margin: '6px 0 3px', color: '#ffffff' }}>
+                      <span style={{ color: '#4ade80' }}>{inStockProductsCount} In Stock</span> •{' '}
+                      <span style={{ color: '#fbbf24' }}>{lowStockProductsCount} Low</span> •{' '}
+                      <span style={{ color: '#f87171' }}>{outOfStockProductsCount} Sold Out</span>
+                    </div>
+                    <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>
+                      Threshold: Low stock ≤ 10 units
+                    </div>
+                  </div>
+                </div>
+
                 {/* Add New Product Drawer / Modal */}
                 {showAddProductModal && (
                   <div
@@ -1265,8 +1679,8 @@ export default function AdminDashboardPage() {
                             onChange={(e) => setNewProdCategory(e.target.value)}
                             style={{
                               width: '100%',
-                              padding: '9px 12px',
-                              background: '#121215',
+                              padding: '9px 34px 9px 12px',
+                              backgroundColor: '#121215',
                               border: '1px solid rgba(255,255,255,0.2)',
                               borderRadius: '6px',
                               color: '#ffffff',
@@ -1379,7 +1793,7 @@ export default function AdminDashboardPage() {
                   </div>
                 )}
 
-                {/* Inventory Filters & Search */}
+                {/* Inventory Category & Stock Filter Controls */}
                 <div
                   style={{
                     display: 'flex',
@@ -1424,8 +1838,8 @@ export default function AdminDashboardPage() {
                       value={stockFilter}
                       onChange={(e) => setStockFilter(e.target.value)}
                       style={{
-                        padding: '8px 12px',
-                        background: '#121215',
+                        padding: '8px 34px 8px 12px',
+                        backgroundColor: '#121215',
                         color: '#ffffff',
                         border: '1px solid rgba(255,255,255,0.22)',
                         borderRadius: '6px',
@@ -1444,9 +1858,9 @@ export default function AdminDashboardPage() {
                       type="text"
                       value={productSearch}
                       onChange={(e) => setProductSearch(e.target.value)}
-                      placeholder="Search product name..."
+                      placeholder="Search product name or category..."
                       style={{
-                        width: '210px',
+                        width: '240px',
                         padding: '8px 12px',
                         background: 'rgba(255,255,255,0.06)',
                         border: '1px solid rgba(255,255,255,0.22)',
@@ -1458,12 +1872,12 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
 
-                {/* Products Inventory Grid */}
+                {/* Products Inventory Grid (Sleek, No-Overflow Design) */}
                 <div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))',
-                    gap: '14px'
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+                    gap: '16px'
                   }}
                 >
                   {filteredProducts.map((prod) => {
@@ -1474,62 +1888,85 @@ export default function AdminDashboardPage() {
                         ? editingPriceMap[prod.id]
                         : prod.price;
 
+                    const isOutOfStock = totalStock === 0;
+                    const isLowStock = totalStock > 0 && totalStock <= 10;
+
                     return (
                       <div
                         key={prod.id}
                         style={{
-                          background: 'rgba(255,255,255,0.03)',
-                          border: '1px solid rgba(255,255,255,0.14)',
+                          background: 'rgba(14, 14, 18, 0.88)',
+                          border: isOutOfStock
+                            ? '1px solid rgba(248, 113, 113, 0.35)'
+                            : isLowStock
+                            ? '1px solid rgba(251, 191, 36, 0.35)'
+                            : '1px solid rgba(255, 255, 255, 0.12)',
                           borderRadius: '10px',
                           padding: '16px',
                           display: 'flex',
                           flexDirection: 'column',
-                          gap: '12px'
+                          gap: '12px',
+                          boxSizing: 'border-box',
+                          overflow: 'hidden'
                         }}
                       >
-                        {/* Top Row: Thumbnail, Info & Price Editor */}
+                        {/* Top Row: Thumbnail, Info & Inline Price Editor */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                           <img
                             src={prod.images?.[0] || ''}
                             alt={prod.title}
                             style={{
-                              width: '66px',
-                              height: '66px',
+                              width: '64px',
+                              height: '64px',
                               objectFit: 'contain',
-                              background: 'rgba(0,0,0,0.5)',
+                              background: 'rgba(0,0,0,0.6)',
                               borderRadius: '8px',
-                              padding: '5px'
+                              padding: '4px',
+                              flexShrink: 0
                             }}
                           />
-                          <div style={{ flex: 1 }}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
                             <div
                               style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                justifyContent: 'space-between'
+                                justifyContent: 'space-between',
+                                gap: '6px'
                               }}
                             >
-                              <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>
+                              <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' }}>
                                 {prod.category}
                               </span>
                               <span
                                 style={{
                                   fontSize: '10px',
                                   fontWeight: 800,
-                                  padding: '2px 8px',
+                                  padding: '2px 7px',
                                   borderRadius: '4px',
-                                  background:
-                                    totalStock > 0
-                                      ? 'rgba(74, 222, 128, 0.14)'
-                                      : 'rgba(248, 113, 113, 0.14)',
-                                  color: totalStock > 0 ? '#4ade80' : '#f87171'
+                                  background: isOutOfStock
+                                    ? 'rgba(248, 113, 113, 0.16)'
+                                    : isLowStock
+                                    ? 'rgba(251, 191, 36, 0.16)'
+                                    : 'rgba(74, 222, 128, 0.16)',
+                                  color: isOutOfStock ? '#f87171' : isLowStock ? '#fbbf24' : '#86efac',
+                                  whiteSpace: 'nowrap'
                                 }}
                               >
-                                {totalStock > 0 ? `${totalStock} IN STOCK` : 'OUT OF STOCK'}
+                                {isOutOfStock ? '● SOLD OUT' : isLowStock ? `● ${totalStock} LOW STOCK` : `● ${totalStock} IN STOCK`}
                               </span>
                             </div>
 
-                            <div style={{ fontSize: '15px', fontWeight: 800, marginTop: '2px' }}>
+                            <div
+                              style={{
+                                fontSize: '14.5px',
+                                fontWeight: 800,
+                                margin: '2px 0 4px',
+                                color: '#ffffff',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                              }}
+                            >
                               {prod.title}
                             </div>
 
@@ -1538,88 +1975,97 @@ export default function AdminDashboardPage() {
                               style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '6px',
-                                marginTop: '6px'
+                                justifyContent: 'space-between',
+                                gap: '6px'
                               }}
                             >
-                              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.65)' }}>
-                                Price ₱:
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.65)' }}>
+                                  Price: ₱
+                                </span>
+                                <input
+                                  type="number"
+                                  value={priceInputVal}
+                                  onChange={(e) =>
+                                    setEditingPriceMap((prev) => ({
+                                      ...prev,
+                                      [prod.id]: e.target.value
+                                    }))
+                                  }
+                                  style={{
+                                    width: '68px',
+                                    padding: '3px 6px',
+                                    background: 'rgba(255,255,255,0.07)',
+                                    border: '1px solid rgba(255,255,255,0.2)',
+                                    borderRadius: '4px',
+                                    color: '#ffffff',
+                                    fontSize: '11px',
+                                    fontWeight: 700
+                                  }}
+                                />
+                                {editingPriceMap[prod.id] !== undefined &&
+                                  Number(editingPriceMap[prod.id]) !== Number(prod.price) && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleSaveProductPrice(prod)}
+                                      style={{
+                                        padding: '3px 8px',
+                                        background: '#ffffff',
+                                        color: '#000000',
+                                        border: 'none',
+                                        borderRadius: '4px',
+                                        fontSize: '10px',
+                                        fontWeight: 800,
+                                        cursor: 'pointer'
+                                      }}
+                                    >
+                                      Save ₱
+                                    </button>
+                                  )}
+                              </div>
+
+                              <span style={{ fontSize: '10.5px', color: 'rgba(255,255,255,0.45)' }}>
+                                Val: ₱{formatPhp((Number(prod.price) || 0) * totalStock)}
                               </span>
-                              <input
-                                type="number"
-                                value={priceInputVal}
-                                onChange={(e) =>
-                                  setEditingPriceMap((prev) => ({
-                                    ...prev,
-                                    [prod.id]: e.target.value
-                                  }))
-                                }
-                                style={{
-                                  width: '78px',
-                                  padding: '4px 8px',
-                                  background: 'rgba(255,255,255,0.07)',
-                                  border: '1px solid rgba(255,255,255,0.2)',
-                                  borderRadius: '4px',
-                                  color: '#ffffff',
-                                  fontSize: '11px',
-                                  fontWeight: 700
-                                }}
-                              />
-                              {editingPriceMap[prod.id] !== undefined &&
-                                Number(editingPriceMap[prod.id]) !== Number(prod.price) && (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleSaveProductPrice(prod)}
-                                    style={{
-                                      padding: '4px 8px',
-                                      background: '#ffffff',
-                                      color: '#000000',
-                                      border: 'none',
-                                      borderRadius: '4px',
-                                      fontSize: '10px',
-                                      fontWeight: 800,
-                                      cursor: 'pointer'
-                                    }}
-                                  >
-                                    Save ₱
-                                  </button>
-                                )}
                             </div>
                           </div>
                         </div>
 
-                        {/* Middle Row: Per-Size Stock Controls */}
+                        {/* Middle Row: Per-Size Stock Controls (Contained, Never Overflowing) */}
                         <div
                           style={{
-                            background: 'rgba(0,0,0,0.35)',
+                            background: 'rgba(0,0,0,0.45)',
                             border: '1px solid rgba(255,255,255,0.08)',
                             borderRadius: '8px',
-                            padding: '10px 12px'
+                            padding: '9px 10px',
+                            boxSizing: 'border-box'
                           }}
                         >
                           <div
                             style={{
-                              fontSize: '10px',
+                              fontSize: '9.5px',
                               fontWeight: 700,
                               letterSpacing: '1px',
-                              color: 'rgba(255,255,255,0.55)',
-                              marginBottom: '8px',
+                              color: 'rgba(255,255,255,0.5)',
+                              marginBottom: '6px',
                               display: 'flex',
-                              justifyContent: 'space-between'
+                              justifyContent: 'space-between',
+                              alignItems: 'center'
                             }}
                           >
                             <span>STOCK BY SIZE / VARIANT</span>
-                            {isSaving && <span style={{ color: '#4ade80' }}>Saving...</span>}
+                            {isSaving && <span style={{ color: '#86efac', fontWeight: 800 }}>Syncing...</span>}
                           </div>
 
                           <div
                             style={{
                               display: 'grid',
-                              gridTemplateColumns: `repeat(${Math.min(
-                                4,
-                                prod.variants?.length || 1
-                              )}, 1fr)`,
-                              gap: '8px'
+                              gridTemplateColumns: `repeat(${Math.max(
+                                1,
+                                Math.min(4, prod.variants?.length || 1)
+                              )}, minmax(0, 1fr))`,
+                              gap: '6px',
+                              boxSizing: 'border-box'
                             }}
                           >
                             {(prod.variants || []).map((v) => {
@@ -1633,21 +2079,23 @@ export default function AdminDashboardPage() {
                                 <div
                                   key={v.id}
                                   style={{
-                                    background: 'rgba(255,255,255,0.04)',
+                                    background: 'rgba(255,255,255,0.03)',
                                     border:
                                       st > 0
-                                        ? '1px solid rgba(255,255,255,0.16)'
-                                        : '1px solid rgba(248,113,113,0.35)',
+                                        ? '1px solid rgba(255,255,255,0.12)'
+                                        : '1px solid rgba(248,113,113,0.3)',
                                     borderRadius: '6px',
-                                    padding: '6px',
-                                    textAlign: 'center'
+                                    padding: '5px 3px',
+                                    textAlign: 'center',
+                                    boxSizing: 'border-box',
+                                    minWidth: 0
                                   }}
                                 >
                                   <div
                                     style={{
                                       fontSize: '10px',
                                       fontWeight: 800,
-                                      marginBottom: '4px',
+                                      marginBottom: '3px',
                                       color: st > 0 ? '#ffffff' : '#f87171'
                                     }}
                                   >
@@ -1658,7 +2106,7 @@ export default function AdminDashboardPage() {
                                       display: 'flex',
                                       alignItems: 'center',
                                       justifyContent: 'center',
-                                      gap: '3px'
+                                      gap: '2px'
                                     }}
                                   >
                                     <button
@@ -1669,35 +2117,33 @@ export default function AdminDashboardPage() {
                                       style={{
                                         width: '20px',
                                         height: '20px',
-                                        borderRadius: '4px',
+                                        borderRadius: '3px',
                                         border: '1px solid rgba(255,255,255,0.2)',
-                                        background: 'transparent',
+                                        background: 'rgba(255,255,255,0.06)',
                                         color: '#ffffff',
-                                        fontSize: '11px',
-                                        cursor: 'pointer'
+                                        fontSize: '12px',
+                                        fontWeight: 800,
+                                        lineHeight: 1,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        cursor: 'pointer',
+                                        padding: 0
                                       }}
                                     >
                                       -
                                     </button>
-                                    <input
-                                      type="number"
-                                      min="0"
-                                      value={st}
-                                      onChange={(e) =>
-                                        handleUpdateVariantStock(prod, v.id, e.target.value)
-                                      }
+                                    <span
                                       style={{
-                                        width: '38px',
+                                        minWidth: '22px',
                                         textAlign: 'center',
-                                        padding: '2px',
-                                        background: 'rgba(0,0,0,0.5)',
-                                        border: '1px solid rgba(255,255,255,0.15)',
-                                        borderRadius: '4px',
-                                        color: '#ffffff',
-                                        fontSize: '11px',
-                                        fontWeight: 700
+                                        color: st > 0 ? '#ffffff' : '#f87171',
+                                        fontSize: '11.5px',
+                                        fontWeight: 800
                                       }}
-                                    />
+                                    >
+                                      {st}
+                                    </span>
                                     <button
                                       type="button"
                                       onClick={() =>
@@ -1706,12 +2152,18 @@ export default function AdminDashboardPage() {
                                       style={{
                                         width: '20px',
                                         height: '20px',
-                                        borderRadius: '4px',
+                                        borderRadius: '3px',
                                         border: '1px solid rgba(255,255,255,0.2)',
-                                        background: 'transparent',
+                                        background: 'rgba(255,255,255,0.06)',
                                         color: '#ffffff',
-                                        fontSize: '11px',
-                                        cursor: 'pointer'
+                                        fontSize: '12px',
+                                        fontWeight: 800,
+                                        lineHeight: 1,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        cursor: 'pointer',
+                                        padding: 0
                                       }}
                                     >
                                       +
@@ -1739,7 +2191,7 @@ export default function AdminDashboardPage() {
                               style={{
                                 padding: '5px 10px',
                                 background: 'rgba(74, 222, 128, 0.14)',
-                                color: '#4ade80',
+                                color: '#86efac',
                                 border: '1px solid rgba(74, 222, 128, 0.35)',
                                 borderRadius: '5px',
                                 fontSize: '10px',

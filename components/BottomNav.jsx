@@ -60,7 +60,8 @@ export const BottomNav = () => {
           <Link href="/Cart">
             <button
               onClick={() => navCalls.handlePageClick('Cart')}
-              className={pathname.toLowerCase().includes('cart') ? 'active cart' : ''}
+              className={pathname.toLowerCase().includes('cart') ? 'active cart' : 'cart'}
+              aria-label="View Shopping Cart"
             >
               <CartIcon className="icons" />
               {totalQty > 0 && <sup>{totalQty}</sup>}

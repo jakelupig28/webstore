@@ -508,15 +508,8 @@ export default function LoginPage() {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    style={{
-                      width: '13px',
-                      height: '13px',
-                      accentColor: '#ffffff',
-                      cursor: 'pointer',
-                      margin: 0
-                    }}
                   />
-                  <span>Remember me</span>
+                  <span style={{ marginLeft: '2px' }}>Remember me</span>
                 </label>
 
                 <button

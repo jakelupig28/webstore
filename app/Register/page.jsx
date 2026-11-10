@@ -308,7 +308,7 @@ export default function RegisterPage() {
                   onChange={(e) => setGender(e.target.value)}
                   style={{
                     ...inputStyle,
-                    background: '#121215',
+                    backgroundColor: '#121215',
                     cursor: 'pointer'
                   }}
                 >

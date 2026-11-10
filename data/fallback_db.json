@@ -1,0 +1,68 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "LARO SPORTS Admin",
+      "email": "admin@larosports.com",
+      "password_hash": "larosalt2025:58518420f55c65cfbd4acbf93dbecdc3c904d433dc5c36ee75faa6f3e6792b19b04901c987ed7716c972d31330aedbf4403dbf058f8550b2030a2b0037a07053",
+      "role": "admin",
+      "birthdate": "2000-01-01",
+      "age": 26,
+      "gender": "Male",
+      "address": "LARO SPORTS HQ, Metro Manila",
+      "created_at": "2026-11-10T15:02:41.698Z"
+    },
+    {
+      "id": 2,
+      "name": "Demo Customer",
+      "email": "customer@larosports.com",
+      "password_hash": "larosalt2025:160678ec17b3984817dd09c1336f36565b01dbc6002cbd5029da0e4a4c90bfb05def29aea641fce5851743818cdc6bdc848288e05fbf01e8a228051b3d9b0638",
+      "role": "customer",
+      "birthdate": "2002-05-15",
+      "age": 24,
+      "gender": "Male",
+      "address": "142 Katipunan Ave, Quezon City, Metro Manila",
+      "created_at": "2026-11-10T15:02:41.698Z"
+    }
+  ],
+  "orders": [],
+  "order_items": [],
+  "products_overrides": {
+    "laro_2": {
+      "title": "EVIDENCE Tee",
+      "category": "T-Shirts",
+      "price": 400,
+      "variants": [
+        {
+          "id": "evidence-tee-s",
+          "title": "S",
+          "availableForSale": true,
+          "price": 400,
+          "stock": 55
+        },
+        {
+          "id": "evidence-tee-m",
+          "title": "M",
+          "availableForSale": true,
+          "price": 400,
+          "stock": 55
+        },
+        {
+          "id": "evidence-tee-l",
+          "title": "L",
+          "availableForSale": true,
+          "price": 400,
+          "stock": 55
+        },
+        {
+          "id": "evidence-tee-xl",
+          "title": "XL",
+          "availableForSale": true,
+          "price": 400,
+          "stock": 55
+        }
+      ]
+    }
+  },
+  "custom_products": []
+}

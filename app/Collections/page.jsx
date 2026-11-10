@@ -105,12 +105,12 @@ export default function CollectionsPage() {
                       onChange={e => setSelectedCategory(e.target.value)}
                       className="collectionSelect"
                       style={{
-                        background: '#000',
+                        backgroundColor: '#121215',
                         color: '#fff',
-                        border: '1px solid #333',
-                        padding: '8px 12px',
-                        borderRadius: '4px',
-                        fontSize: '14px',
+                        border: '1px solid rgba(255,255,255,0.25)',
+                        padding: '8px 36px 8px 12px',
+                        borderRadius: '6px',
+                        fontSize: '13px',
                         width: '100%',
                         marginTop: '10px'
                       }}

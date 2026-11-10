@@ -23,6 +23,7 @@ export const Navbar = () => {
   const isMobile = windowWidth <= 500;
   const user = authCalls?.user;
   const isCheckout = pathname?.toLowerCase().includes('checkout');
+  const isHomePage = pathname === '/';
 
   return (
     <nav style={{ paddingTop: isMobile ? '12px' : '16px' }}>
@@ -195,7 +196,7 @@ export const Navbar = () => {
             </Link>
           </div>
 
-          {!isMobile && user && !isCheckout && (
+          {!isMobile && (
             <div
               style={{
                 position: 'absolute',
@@ -208,80 +209,122 @@ export const Navbar = () => {
                 zIndex: 50
               }}
             >
-              <span
-                style={{
-                  fontSize: '11px',
-                  color: 'rgba(255,255,255,0.8)',
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
-                  fontWeight: 600,
-                  background: 'rgba(0,0,0,0.65)',
-                  backdropFilter: 'blur(8px)',
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  border: '1px solid rgba(255,255,255,0.14)'
-                }}
-              >
-                {user.role === 'admin' ? 'ADMIN:' : ''} {user.name}
-              </span>
-              {user.role === 'admin' ? (
-                <Link
-                  href="/Admin"
-                  style={{
-                    padding: '6px 14px',
-                    borderRadius: '4px',
-                    background: pathname?.toLowerCase().includes('admin') ? '#ffffff' : 'rgba(10,10,10,0.75)',
-                    backdropFilter: 'blur(8px)',
-                    color: pathname?.toLowerCase().includes('admin') ? '#000000' : '#ffffff',
-                    border: '1px solid rgba(255,255,255,0.3)',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    letterSpacing: '1.2px',
-                    textTransform: 'uppercase',
-                    textDecoration: 'none'
-                  }}
-                >
-                  Admin Panel
-                </Link>
-              ) : (
-                <Link
-                  href="/Orders"
-                  style={{
-                    padding: '6px 14px',
-                    borderRadius: '4px',
-                    background: pathname?.toLowerCase().includes('orders') ? '#ffffff' : 'rgba(10,10,10,0.75)',
-                    backdropFilter: 'blur(8px)',
-                    color: pathname?.toLowerCase().includes('orders') ? '#000000' : '#ffffff',
-                    border: '1px solid rgba(255,255,255,0.3)',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    letterSpacing: '1.2px',
-                    textTransform: 'uppercase',
-                    textDecoration: 'none'
-                  }}
-                >
-                  My Orders
-                </Link>
-              )}
-              <button
-                type="button"
-                onClick={() => authCalls.logout()}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  background: 'rgba(10,10,10,0.75)',
-                  backdropFilter: 'blur(8px)',
-                  color: 'rgba(255,255,255,0.85)',
-                  border: '1px solid rgba(255,255,255,0.22)',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer'
-                }}
-              >
-                Logout
-              </button>
+              {user && !isCheckout ? (
+                <>
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      color: 'rgba(255,255,255,0.8)',
+                      letterSpacing: '1px',
+                      textTransform: 'uppercase',
+                      fontWeight: 600,
+                      background: 'rgba(0,0,0,0.65)',
+                      backdropFilter: 'blur(8px)',
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      border: '1px solid rgba(255,255,255,0.14)'
+                    }}
+                  >
+                    {user.role === 'admin' ? 'ADMIN:' : ''} {user.name}
+                  </span>
+                  {user.role === 'admin' ? (
+                    <Link
+                      href="/Admin"
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: '4px',
+                        background: pathname?.toLowerCase().includes('admin') ? '#ffffff' : 'rgba(10,10,10,0.75)',
+                        backdropFilter: 'blur(8px)',
+                        color: pathname?.toLowerCase().includes('admin') ? '#000000' : '#ffffff',
+                        border: '1px solid rgba(255,255,255,0.3)',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        letterSpacing: '1.2px',
+                        textTransform: 'uppercase',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      Admin Panel
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/Orders"
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: '4px',
+                        background: pathname?.toLowerCase().includes('orders') ? '#ffffff' : 'rgba(10,10,10,0.75)',
+                        backdropFilter: 'blur(8px)',
+                        color: pathname?.toLowerCase().includes('orders') ? '#000000' : '#ffffff',
+                        border: '1px solid rgba(255,255,255,0.3)',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        letterSpacing: '1.2px',
+                        textTransform: 'uppercase',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      My Orders
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => authCalls.logout()}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      background: 'rgba(10,10,10,0.75)',
+                      backdropFilter: 'blur(8px)',
+                      color: 'rgba(255,255,255,0.85)',
+                      border: '1px solid rgba(255,255,255,0.22)',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      letterSpacing: '1px',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : !user && isHomePage ? (
+                <>
+                  <Link
+                    href="/Login"
+                    style={{
+                      padding: '6px 15px',
+                      borderRadius: '4px',
+                      background: 'rgba(10,10,10,0.72)',
+                      backdropFilter: 'blur(8px)',
+                      color: '#ffffff',
+                      border: '1px solid rgba(255,255,255,0.32)',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      letterSpacing: '1.2px',
+                      textTransform: 'uppercase',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/Register"
+                    style={{
+                      padding: '6px 15px',
+                      borderRadius: '4px',
+                      background: '#ffffff',
+                      color: '#000000',
+                      border: '1px solid #ffffff',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      letterSpacing: '1.2px',
+                      textTransform: 'uppercase',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    Register
+                  </Link>
+                </>
+              ) : null}
             </div>
           )}
 
